@@ -30,11 +30,12 @@
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* Pengaturan Cetak PDF yang Bersih (Menghilangkan Toast & Tombol) */
         @media print {
             html, body { background: white; height: auto !important; overflow: visible !important; display: block !important; }
-            #sidebar, #mobile-overlay, #header, .no-print, #auth-section, #user-profile-section { display: none !important; }
+            #sidebar, #mobile-overlay, #header, .no-print, #auth-section, #user-profile-section, #toast-notification, #login-modal { display: none !important; }
             #main-content, .flex-1 { margin: 0 !important; padding: 0 !important; width: 100% !important; height: auto !important; overflow: visible !important; display: block !important; position: static !important; }
-            #ai-result-container { box-shadow: none !important; padding: 0 !important; margin: 0 !important; border: none !important; display: block !important; }
+            #ai-result-container { box-shadow: none !important; padding: 0 !important; margin: 0 !important; border: none !important; display: block !important; width: 100% !important; max-width: 100% !important; }
             .generated-content h1, .generated-content h2, .generated-content h3 { page-break-after: avoid; }
             .generated-content table, .generated-content tr { page-break-inside: avoid; }
             @page { margin: 1.5cm; }
@@ -51,7 +52,7 @@
         .generated-content ul, .generated-content ol { margin-left: 1.5rem; margin-bottom: 1rem; color: #374151; font-size: 0.95rem; }
         .generated-content ul { list-style-type: disc; }
         
-        /* Pembungkus tabel responsif untuk mencegah layout pecah */
+        /* Pembungkus tabel responsif */
         .table-responsive-wrapper {
             width: 100%;
             overflow-x: auto;
@@ -68,9 +69,10 @@
         
         #login-modal { backdrop-filter: blur(5px); transition: opacity 0.3s ease; }
         
+        /* Kontainer hasil AI agar lebar optimal di desktop */
         #ai-result-container {
+            width: 100%;
             max-width: 100%;
-            overflow-x: auto;
         }
     </style>
 </head>
@@ -112,7 +114,7 @@
     <!-- Mobile Overlay -->
     <div id="mobile-overlay" class="fixed inset-0 bg-slate-900/50 z-20 hidden md:hidden transition-opacity" onclick="toggleSidebar()"></div>
 
-    <!-- Sidebar (Sticky/Fixed di desktop agar tinggi menyesuaikan halaman penuh) -->
+    <!-- Sidebar -->
     <aside id="sidebar" class="w-64 bg-slate-900 text-white flex flex-col shadow-xl z-30 fixed md:static inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out h-full min-h-screen flex-shrink-0">
         <div class="p-4 sm:p-6 border-b border-slate-800 flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -144,10 +146,10 @@
         </div>
     </aside>
 
-    <!-- Main Content (min-h-screen agar bisa scroll normal di desktop) -->
+    <!-- Main Content -->
     <main id="main-content" class="flex-1 flex flex-col min-h-screen relative bg-slate-50 w-full overflow-x-hidden">
         
-        <!-- Header Dynamic (Sticky top agar selalu rapi) -->
+        <!-- Header Dynamic -->
         <header id="header" class="bg-white shadow-sm px-4 sm:px-8 py-3 sm:py-4 flex items-center justify-between z-10 flex-shrink-0 sticky top-0">
             <div class="flex items-center gap-3 sm:gap-4">
                 <!-- Hamburger menu for mobile -->
@@ -186,7 +188,7 @@
         <div class="flex-1 p-4 sm:p-8 relative">
             
             <!-- TAB 1: AI Generator -->
-            <div id="tab-ai" class="tab-content fade-in">
+            <div id="tab-ai" class="tab-content fade-in max-w-6xl mx-auto w-full">
                 <!-- FORM GENERATOR -->
                 <div class="bg-gradient-to-br from-blue-700 via-blue-600 to-purple-700 rounded-xl sm:rounded-2xl p-5 sm:p-8 shadow-xl text-white mb-6 sm:mb-8 no-print relative overflow-hidden">
                     <!-- Background Decoration -->
@@ -241,9 +243,9 @@
                     </button>
                 </div>
 
-                <!-- Preview Area -->
-                <div id="ai-result-container" class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-8 min-h-[300px] sm:min-h-[500px] relative hidden transition-all duration-500">
-                    <div id="ai-result-content" class="generated-content text-sm sm:text-base"></div>
+                <!-- Preview Area (Full Width & Responsive) -->
+                <div id="ai-result-container" class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-12 min-h-[400px] relative hidden transition-all duration-500 w-full">
+                    <div id="ai-result-content" class="generated-content text-base sm:text-lg"></div>
                 </div>
                 
                 <div id="ai-empty-state" class="flex flex-col items-center justify-center text-slate-400 py-10 sm:py-16 px-4 no-print">
@@ -256,8 +258,8 @@
             </div>
 
             <!-- TAB 2: DB Kurikulum -->
-            <div id="tab-db" class="tab-content hidden fade-in">
-                <div class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-12 text-center max-w-2xl mx-auto mt-4 sm:mt-8">
+            <div id="tab-db" class="tab-content hidden fade-in max-w-4xl mx-auto">
+                <div class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-12 text-center mt-4 sm:mt-8">
                     <div class="w-16 h-16 sm:w-20 sm:h-20 bg-blue-50 text-blue-500 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 transform rotate-3">
                         <i class="fas fa-server text-3xl sm:text-4xl"></i>
                     </div>
@@ -277,7 +279,7 @@
     </main>
 
     <!-- Toast Notification Container -->
-    <div id="toast-notification">
+    <div id="toast-notification" class="no-print">
         <i id="toast-icon" class="fas fa-info-circle"></i>
         <span id="toast-message" class="text-sm sm:text-base"></span>
     </div>
@@ -306,7 +308,7 @@
             const toast = document.getElementById('toast-notification');
             const icon = document.getElementById('toast-icon');
             document.getElementById('toast-message').innerText = message;
-            toast.className = '';
+            toast.className = 'no-print';
             
             if (type === 'success') { toast.classList.add('toast-success'); icon.className = 'fas fa-check-circle'; }
             else if (type === 'error') { toast.classList.add('toast-error'); icon.className = 'fas fa-exclamation-circle'; }
@@ -480,7 +482,6 @@
                     document.getElementById('ai-empty-state').classList.add('hidden');
                     document.getElementById('ai-result-container').classList.remove('hidden');
                     
-                    // Membungkus tabel otomatis agar responsif dan aman di semua ukuran layar
                     let processedHtml = data.htmlData.replace(/<table\b[^>]*>/gi, '<div class="table-responsive-wrapper">$&').replace(/<\/table>/gi, '</table></div>');
                     document.getElementById('ai-result-content').innerHTML = processedHtml;
                     
@@ -488,7 +489,6 @@
                     document.getElementById('saldo-koin').innerText = currentUser.koin;
                     showToast(data.message, 'success');
                     
-                    // Scroll to result smoothly
                     setTimeout(() => {
                         document.getElementById('ai-result-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }, 300);
