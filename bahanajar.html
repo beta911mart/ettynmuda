@@ -246,6 +246,12 @@
         </div>
     </main>
 
+    <!-- Toast Notification Container -->
+    <div id="toast-notification">
+        <i id="toast-icon" class="fas fa-info-circle"></i>
+        <span id="toast-message"></span>
+    </div>
+
     <script>
         // =========================================================================
         // URL WEB APP GOOGLE APPS SCRIPT ANDA (BACKEND SAAS)
@@ -413,7 +419,7 @@
             btn.classList.replace('bg-white', 'bg-blue-100');
 
             // SIMULASI JIKA BELUM ADA URL GAS 
-            if (GAS_WEBAPP_URL === "Mhttps://script.google.com/macros/s/AKfycbxjzV09u3X1mhbSwgZE3m3E4aynL6-kM3FMFMbRIJSPAupoX3703B4pjJpjQN_sWW8c/exec") {
+            if (GAS_WEBAPP_URL === "https://script.google.com/macros/s/AKfycbxjzV09u3X1mhbSwgZE3m3E4aynL6-kM3FMFMbRIJSPAupoX3703B4pjJpjQN_sWW8c/exec") {
                  showToast("Simulasi: Mengurangi koin lokal karena URL backend belum dipasang.", "info");
                  setTimeout(() => {
                      document.getElementById('ai-empty-state').classList.add('hidden');
