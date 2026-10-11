@@ -68,12 +68,6 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         #login-modal { backdrop-filter: blur(5px); transition: opacity 0.3s ease; }
-        
-        /* Kontainer hasil AI agar lebar optimal di desktop */
-        #ai-result-container {
-            width: 100%;
-            max-width: 100%;
-        }
     </style>
 </head>
 <body class="flex flex-col md:flex-row min-h-screen bg-slate-50 text-slate-800">
@@ -184,13 +178,13 @@
             </div>
         </header>
 
-        <!-- Content Area -->
-        <div class="flex-1 p-4 sm:p-8 relative">
+        <!-- Content Area (Full Width Layout) -->
+        <div class="flex-1 p-4 sm:p-8 w-full">
             
             <!-- TAB 1: AI Generator -->
-            <div id="tab-ai" class="tab-content fade-in max-w-6xl mx-auto w-full">
+            <div id="tab-ai" class="tab-content fade-in w-full">
                 <!-- FORM GENERATOR -->
-                <div class="bg-gradient-to-br from-blue-700 via-blue-600 to-purple-700 rounded-xl sm:rounded-2xl p-5 sm:p-8 shadow-xl text-white mb-6 sm:mb-8 no-print relative overflow-hidden">
+                <div class="bg-gradient-to-br from-blue-700 via-blue-600 to-purple-700 rounded-xl sm:rounded-2xl p-5 sm:p-8 shadow-xl text-white mb-6 sm:mb-8 no-print relative overflow-hidden w-full">
                     <!-- Background Decoration -->
                     <div class="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 sm:w-64 sm:h-64 rounded-full bg-white opacity-5 blur-3xl pointer-events-none"></div>
                     
@@ -243,12 +237,12 @@
                     </button>
                 </div>
 
-                <!-- Preview Area (Full Width & Responsive) -->
+                <!-- Preview Area (Full Width Lebar Penuh) -->
                 <div id="ai-result-container" class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-12 min-h-[400px] relative hidden transition-all duration-500 w-full">
-                    <div id="ai-result-content" class="generated-content text-base sm:text-lg"></div>
+                    <div id="ai-result-content" class="generated-content text-base sm:text-lg w-full"></div>
                 </div>
                 
-                <div id="ai-empty-state" class="flex flex-col items-center justify-center text-slate-400 py-10 sm:py-16 px-4 no-print">
+                <div id="ai-empty-state" class="flex flex-col items-center justify-center text-slate-400 py-10 sm:py-16 px-4 no-print w-full">
                     <div class="w-16 h-16 sm:w-24 sm:h-24 bg-slate-100 rounded-full flex items-center justify-center mb-4 sm:mb-6">
                         <i class="fas fa-file-signature text-3xl sm:text-5xl text-slate-300"></i>
                     </div>
@@ -258,8 +252,8 @@
             </div>
 
             <!-- TAB 2: DB Kurikulum -->
-            <div id="tab-db" class="tab-content hidden fade-in max-w-4xl mx-auto">
-                <div class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-12 text-center mt-4 sm:mt-8">
+            <div id="tab-db" class="tab-content hidden fade-in w-full">
+                <div class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-12 text-center w-full mt-4 sm:mt-8">
                     <div class="w-16 h-16 sm:w-20 sm:h-20 bg-blue-50 text-blue-500 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 transform rotate-3">
                         <i class="fas fa-server text-3xl sm:text-4xl"></i>
                     </div>
