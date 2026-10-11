@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teman Akademik - Solusi Tugas & Karya Ilmiahmu</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        krem: '#FAF3E0',
+                        pinkmuda: '#F4C2C2',
+                        textgelap: '#4A3B32',
+                        pastelPink: {
+                            light: '#FADADD',
+                            DEFAULT: '#F4C2C2',
+                            dark: '#D77A7A'
+                        },
+                        brown: {
+                            DEFAULT: '#6B5B53',
+                            dark: '#4A3B32'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #FAF3E0; color: #4A3B32; }
+        .bg-pink-custom { background-color: #F4C2C2; }
+        .text-pink-custom { color: #D77A7A; }
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full bg-krem/90 backdrop-blur-sm z-50 border-b border-pinkmuda">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 font-bold text-xl text-textgelap">
+                    🎓 Teman Akademik
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="#layanan" class="hover:text-pink-custom font-medium transition">Layanan</a>
+                    <a href="#spesial" class="hover:text-pink-custom font-medium transition">Les</a>
+                    <a href="#tarif" class="hover:text-pink-custom font-medium transition">Tarif</a>
+                    <a href="#syarat" class="hover:text-pink-custom font-medium transition">S&K</a>
+                    <a href="#kontak" class="hover:text-pink-custom font-medium transition">Kontak</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-16 px-4 text-center max-w-4xl mx-auto">
+        <div class="relative inline-block mb-6">
+            <img src="profile.jpeg" alt="Foto Profil Etyn" class="w-48 h-48 object-cover object-top rounded-full border-8 border-white shadow-xl mx-auto">
+            <div class="absolute -bottom-4 -right-4 bg-white px-4 py-2 rounded-full shadow-lg border border-pinkmuda animate-bounce">
+                <span class="font-bold text-sm">👋 Hai, Saya Etyn!</span>
+            </div>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 mt-4">Solusi Tugas & Karya Ilmiahmu</h1>
+        <p class="text-lg mb-8 opacity-80">Membantu mempercepat dan merapikan pekerjaan akademik Anda dengan hasil yang memuaskan.</p>
+        
+        <!-- Social Media Pills -->
+        <div class="flex justify-center gap-4 mb-10">
+            <a href="#" class="bg-white px-5 py-2 rounded-full shadow hover:shadow-md transition flex items-center gap-2 text-blue-600">
+                <i class="fab fa-facebook text-xl"></i> <span class="font-medium hidden sm:inline">Ettyn Muda</span>
+            </a>
+            <a href="#" class="bg-white px-5 py-2 rounded-full shadow hover:shadow-md transition flex items-center gap-2 text-pink-600">
+                <i class="fab fa-instagram text-xl"></i> <span class="font-medium hidden sm:inline">ettyn muda</span>
+            </a>
+            <a href="https://wa.me/6281237827324" class="bg-green-500 text-white px-5 py-2 rounded-full shadow hover:bg-green-600 transition flex items-center gap-2">
+                <i class="fab fa-whatsapp text-xl"></i> <span class="font-medium">Hubungi Saya</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Layanan Section -->
+    <section id="layanan" class="py-16 bg-white/50 px-4">
+        <div class="max-w-5xl mx-auto">
+            <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-8">
+                <h2 class="text-2xl font-bold text-textgelap">Layanan Utama Kami</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-file-alt text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Proposal Skripsi</h3>
+                    <p class="text-sm opacity-80">Pengetikan, editing format, hingga konsultasi struktur.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-presentation-screen text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Makalah & PPT</h3>
+                    <p class="text-sm opacity-80">Pembuatan PPT desain profesional dan penyuntingan makalah.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-keyboard text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Jasa Ketik & Edit</h3>
+                    <p class="text-sm opacity-80">Ketik dari foto, scan, tulisan tangan, serta merapikan layout.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-book-open text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Artikel (Jurnal, dll)</h3>
+                    <p class="text-sm opacity-80">Format artikel sesuai template jurnal dan proofreading.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-school text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Tugas Kuliah & Sekolah</h3>
+                    <p class="text-sm opacity-80">Review jurnal, resume, analisis, dan input data Excel.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-highlighter text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Rangkuman Materi</h3>
+                    <p class="text-sm opacity-80">Rangkuman terstruktur, bab buku, hingga mind map.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-chalkboard-teacher text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Modul Ajar</h3>
+                    <p class="text-sm opacity-80">Pembuatan dan format modul ajar lengkap dengan LKPD.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-search text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Cek Plagiasi</h3>
+                    <p class="text-sm opacity-80">Cek similarity untuk file pendek/panjang beserta laporan.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-sync-alt text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Parafrase Sistematis</h3>
+                    <p class="text-sm opacity-80">Penyuntingan paragraf dan revisi berdasarkan laporan similarity.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bagian Spesial Banner (Dengan class pilihan Anda) -->
+    <section id="spesial" class="py-16 px-6 max-w-5xl mx-auto flex justify-center overflow-hidden">
+        
+        <!-- INI ADALAH CLASS YANG ANDA MINTA -->
+        <div class="bg-white/90 backdrop-blur p-8 rounded-3xl shadow-xl flex flex-wrap justify-center md:justify-center items-center gap-6 md:rotate-[-2deg] transform hover:rotate-0 transition-transform border border-white relative z-10 w-full md:w-auto">
+            
+            <div class="text-center md:text-left flex-1 min-w-[280px] max-w-md">
+                <div class="inline-block bg-pinkmuda/40 px-5 py-2 rounded-full text-sm font-bold text-pastelPink-dark mb-4 shadow-sm border border-pinkmuda">
+                    🌟 Layanan Spesial!
+                </div>
+                <h3 class="text-3xl md:text-4xl font-bold mb-4 leading-tight text-brown-dark">Les Online Belajar<br>Microsoft Dasar</h3>
+                <p class="text-brown text-lg mb-0">Kuasai tools esensial agar bisa ngerjain tugas sendiri dengan lebih cepat! Kelas privat yang santai, interaktif, dan mudah dipahami.</p>
+            </div>
+            
+            <div class="flex flex-col items-center justify-center pt-4 md:pt-0">
+                <i class="fas fa-laptop-code text-7xl text-pastelPink-dark drop-shadow-md mb-6 hidden md:block"></i>
+                <a href="https://wa.me/6281237827324?text=Halo%2C%20saya%20tertarik%20dengan%20Les%20Online%20Microsoft%20Dasar" target="_blank" class="inline-block bg-pastelPink-dark text-white font-bold text-lg px-8 py-4 rounded-full hover:bg-brown-dark transition-all shadow-md whitespace-nowrap">
+                    Daftar Les Sekarang
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Tarif Section -->
+    <section id="tarif" class="py-16 px-4">
+        <div class="max-w-5xl mx-auto">
+            <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-8">
+                <h2 class="text-2xl font-bold text-textgelap">Paket Harga Promosi</h2>
+            </div>
+
+            <!-- Pricing Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <!-- Paket Pelajar -->
+                <div class="bg-white rounded-3xl p-8 shadow-md border-t-8 border-green-400 relative">
+                    <h3 class="text-xl font-bold mb-2">Paket Pelajar</h3>
+                    <div class="text-3xl font-bold mb-4">Rp25.000</div>
+                    <ul class="space-y-3 mb-8 text-sm opacity-90">
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Untuk tugas sekolah sederhana</li>
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Maksimal 5 halaman (bahan tersedia)</li>
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Format dasar Word</li>
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i>1 kali revisi kesalahan ketik</li>
+                    </ul>
+                </div>
+                <!-- Paket Mahasiswa -->
+                <div class="bg-white rounded-3xl p-8 shadow-lg border-t-8 border-pink-custom transform md:-translate-y-4 relative">
+                    <div class="absolute top-0 right-0 bg-pink-custom text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl">TERLARIS</div>
+                    <h3 class="text-xl font-bold mb-2">Paket Mahasiswa</h3>
+                    <div class="text-3xl font-bold mb-4">Rp75.000</div>
+                    <ul class="space-y-3 mb-8 text-sm opacity-90">
+                        <li><i class="fas fa-check-circle text-pink-custom mr-2"></i>Makalah & presentasi sederhana</li>
+                        <li><i class="fas fa-check-circle text-pink-custom mr-2"></i>Format makalah max 10 halaman</li>
+                        <li><i class="fas fa-check-circle text-pink-custom mr-2"></i>PPT max 5 slide</li>
+                        <li><i class="fas fa-check-circle text-pink-custom mr-2"></i>1 kali revisi minor</li>
+                    </ul>
+                </div>
+                <!-- Paket Dokumen -->
+                <div class="bg-white rounded-3xl p-8 shadow-md border-t-8 border-blue-400 relative">
+                    <h3 class="text-xl font-bold mb-2">Paket Dokumen</h3>
+                    <div class="text-3xl font-bold mb-4">Rp150.000</div>
+                    <ul class="space-y-3 mb-8 text-sm opacity-90">
+                        <li><i class="fas fa-check-circle text-blue-500 mr-2"></i>Untuk penataan proposal</li>
+                        <li><i class="fas fa-check-circle text-blue-500 mr-2"></i>Pemformatan max 30 halaman</li>
+                        <li><i class="fas fa-check-circle text-blue-500 mr-2"></i>Nomor halaman, daftar isi otomatis</li>
+                        <li><i class="fas fa-check-circle text-blue-500 mr-2"></i>1 kali revisi minor</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Daftar Harga Accordion -->
+            <h3 class="text-xl font-bold mb-6 text-center">Daftar Harga Satuan</h3>
+            <div class="bg-white rounded-2xl shadow-sm p-2">
+                <!-- 1. Skripsi -->
+                <details class="group border-b border-gray-200 last:border-0">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 hover:bg-gray-50 rounded-lg">
+                        <span>1. Skripsi</span>
+                        <span class="transition group-open:rotate-180"><i class="fas fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="text-sm opacity-80 p-4 pt-0 bg-gray-50 rounded-b-lg">
+                        <ul class="space-y-2">
+                            <li class="flex justify-between items-start">
+                                <span class="pr-4">Pengerjaan dari 0 (ada judul) sampai ACC</span>
+                                <span class="font-bold text-right">Start Rp2.500.000<br><span class="text-xs font-normal opacity-70">(Tergantung tingkat kesulitan)</span></span>
+                            </li>
+                        </ul>
+                    </div>
+                </details>
+                
+                <!-- 2. Proposal dan Hasil -->
+                <details class="group border-b border-gray-200 last:border-0">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 hover:bg-gray-50 rounded-lg">
+                        <span>2. Proposal dan Hasil</span>
+                        <span class="transition group-open:rotate-180"><i class="fas fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="text-sm opacity-80 p-4 pt-0 bg-gray-50 rounded-b-lg">
+                        <ul class="space-y-2">
+                            <li class="flex justify-between"><span>Pengerjaan dari 0 (ada judul) tanpa revisi</span> <span class="font-bold">Rp600.000</span></li>
+                            <li class="flex justify-between"><span>Pengerjaan dari 0 (ada judul) revisi 2 kali</span> <span class="font-bold">Rp800.000</span></li>
+                            <li class="flex justify-between"><span>Pengerjaan fix ACC</span> <span class="font-bold">Rp1.000.000</span></li>
+                        </ul>
+                    </div>
+                </details>
+
+                <!-- 3. Makalah dan PPT -->
+                <details class="group border-b border-gray-200 last:border-0">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 hover:bg-gray-50 rounded-lg">
+                        <span>3. Makalah dan PPT</span>
+                        <span class="transition group-open:rotate-180"><i class="fas fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="text-sm opacity-80 p-4 pt-0 bg-gray-50 rounded-b-lg">
+                        <ul class="space-y-2">
+                            <li class="flex justify-between items-start">
+                                <span class="pr-4">Makalah</span>
+                                <span class="font-bold text-right">Start Rp50.000/file<br><span class="text-xs font-normal opacity-70">(Sesuai tingkat kesulitan)</span></span>
+                            </li>
+                            <li class="flex justify-between items-start">
+                                <span class="pr-4">PPT</span>
+                                <span class="font-bold text-right">Start Rp20.000/file<br><span class="text-xs font-normal opacity-70">(Sesuai banyaknya halaman)</span></span>
+                            </li>
+                        </ul>
+                    </div>
+                </details>
+
+                <!-- 4. Cek Plagiasi dan Parafrase -->
+                <details class="group border-b border-gray-200 last:border-0">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 hover:bg-gray-50 rounded-lg">
+                        <span>4. Cek Plagiasi Sistem dan Parafrase</span>
+                        <span class="transition group-open:rotate-180"><i class="fas fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="text-sm opacity-80 p-4 pt-0 bg-gray-50 rounded-b-lg">
+                        <ul class="space-y-2">
+                            <li class="flex justify-between"><span>Cek plagiasi</span> <span class="font-bold">Rp15.000/file</span></li>
+                            <li class="flex justify-between"><span>Parafrase sistem</span> <span class="font-bold">Rp55.000/80 halaman</span></li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Syarat Ketentuan Section -->
+    <section id="syarat" class="py-16 bg-white/50 px-4">
+        <div class="max-w-5xl mx-auto">
+            <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-8">
+                <h2 class="text-2xl font-bold text-textgelap">Syarat dan Ketentuan Layanan</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-5 rounded-xl shadow-sm">
+                    <div class="font-bold text-pink-custom mb-2">1. Pemesanan</div>
+                    <p class="text-sm opacity-80">Jelaskan layanan, jumlah hal, format, dan tenggat waktu. Pengerjaan dimulai setelah pesanan dikonfirmasi.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm">
+                    <div class="font-bold text-pink-custom mb-2">2. Pembayaran</div>
+                    <p class="text-sm opacity-80">&lt;Rp50k penuh di awal. Rp50k-Rp200k DP 50%. &gt;Rp200k DP 30-50%. Pelunasan sebelum file final (tanpa watermark) diserahkan.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm">
+                    <div class="font-bold text-pink-custom mb-2">3. Waktu Pengerjaan</div>
+                    <p class="text-sm opacity-80">Dihitung setelah bahan lengkap. Pesanan normal ikut antrean, kilat dikenakan tambahan 25-50%.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm">
+                    <div class="font-bold text-pink-custom mb-2">4. Revisi</div>
+                    <p class="text-sm opacity-80">1x revisi minor (salah ketik/format). Tambah bab/halaman ada biaya tambahan. Revisi max 3 hari setelah hasil dikirim.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm">
+                    <div class="font-bold text-pink-custom mb-2">5. Tanggung Jawab</div>
+                    <p class="text-sm opacity-80">Pelanggan bertanggung jawab atas kebenaran data & sumber. Kesalahan pengerjaan dari kami diperbaiki gratis.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm">
+                    <div class="font-bold text-pink-custom mb-2">6. Etika Akademik</div>
+                    <p class="text-sm opacity-80">Tidak melayani pemalsuan data atau referensi fiktif. Tidak menjamin nilai atau kelulusan.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm">
+                    <div class="font-bold text-pink-custom mb-2">7. Kerahasiaan</div>
+                    <p class="text-sm opacity-80">Dokumen dijaga kerahasiaannya, tidak dipublikasikan tanpa izin, dan dihapus sesuai kebijakan.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm">
+                    <div class="font-bold text-pink-custom mb-2">8. Pembatalan</div>
+                    <p class="text-sm opacity-80">Setelah pengerjaan dimulai, dana tidak otomatis dikembalikan. Penyelesaian dilakukan transparan.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm">
+                    <div class="font-bold text-pink-custom mb-2">9. Persetujuan</div>
+                    <p class="text-sm opacity-80">Dengan mengonfirmasi pesanan, pelanggan dianggap telah membaca dan menyetujui semua ketentuan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="kontak" class="bg-textgelap text-white py-10 mt-10">
+        <div class="max-w-5xl mx-auto px-4 text-center">
+            <h3 class="text-2xl font-bold mb-6">Hubungi Saya untuk Konsultasi</h3>
+            <div class="flex justify-center gap-6 mb-8 text-2xl">
+                <a href="#" class="hover:text-pinkmuda transition"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="hover:text-pinkmuda transition"><i class="fab fa-instagram"></i></a>
+                <a href="https://wa.me/6281237827324" class="hover:text-green-400 transition"><i class="fab fa-whatsapp"></i></a>
+            </div>
+            <p class="opacity-70 text-sm">© 2026 Teman Akademik - Etyn Muda. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
