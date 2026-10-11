@@ -39,8 +39,6 @@
         body { background-color: #FAF3E0; color: #4A3B32; }
         .bg-pink-custom { background-color: #F4C2C2; }
         .text-pink-custom { color: #D77A7A; }
-        details > summary { list-style: none; }
-        details > summary::-webkit-details-marker { display: none; }
     </style>
 </head>
 <body class="antialiased">
@@ -66,9 +64,9 @@
     <!-- Hero Section -->
     <section class="pt-32 pb-16 px-4 text-center max-w-4xl mx-auto">
         <div class="relative inline-block mb-6">
-            <img src="profile.jpg" alt="Foto Profil Etyn" class="w-48 h-48 object-cover object-top rounded-full border-8 border-white shadow-xl mx-auto">
+            <img src="profile.jpeg" alt="Foto Profil Etyn" class="w-48 h-48 object-cover object-top rounded-full border-8 border-white shadow-xl mx-auto">
             <div class="absolute -bottom-4 -right-4 bg-white px-4 py-2 rounded-full shadow-lg border border-pinkmuda animate-bounce">
-                <span class="font-bold text-sm">👋 Hai, Saya Ettyn!</span>
+                <span class="font-bold text-sm">👋 Hai, Saya Etyn!</span>
             </div>
         </div>
         <h1 class="text-4xl md:text-5xl font-bold mb-4 mt-4">Solusi Tugas & Karya Ilmiahmu</h1>
@@ -145,10 +143,8 @@
         </div>
     </section>
 
-    <!-- Bagian Spesial Banner (Dengan class pilihan Anda) -->
+    <!-- Bagian Spesial Banner -->
     <section id="spesial" class="py-16 px-6 max-w-5xl mx-auto flex justify-center overflow-hidden">
-        
-        <!-- INI ADALAH CLASS YANG ANDA MINTA -->
         <div class="bg-white/90 backdrop-blur p-8 rounded-3xl shadow-xl flex flex-wrap justify-center md:justify-center items-center gap-6 md:rotate-[-2deg] transform hover:rotate-0 transition-transform border border-white relative z-10 w-full md:w-auto">
             
             <div class="text-center md:text-left flex-1 min-w-[280px] max-w-md">
@@ -214,73 +210,84 @@
                 </div>
             </div>
 
-            <!-- Daftar Harga Accordion -->
+            <!-- Daftar Harga Tabel (Menggantikan Accordion) -->
             <h3 class="text-xl font-bold mb-6 text-center">Daftar Harga Satuan</h3>
-            <div class="bg-white rounded-2xl shadow-sm p-2">
-                <!-- 1. Skripsi -->
-                <details class="group border-b border-gray-200 last:border-0">
-                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 hover:bg-gray-50 rounded-lg">
-                        <span>1. Skripsi</span>
-                        <span class="transition group-open:rotate-180"><i class="fas fa-chevron-down"></i></span>
-                    </summary>
-                    <div class="text-sm opacity-80 p-4 pt-0 bg-gray-50 rounded-b-lg">
-                        <ul class="space-y-2">
-                            <li class="flex justify-between items-start">
-                                <span class="pr-4">Pengerjaan dari 0 (ada judul) sampai ACC</span>
-                                <span class="font-bold text-right">Start Rp2.500.000<br><span class="text-xs font-normal opacity-70">(Tergantung tingkat kesulitan)</span></span>
-                            </li>
-                        </ul>
-                    </div>
-                </details>
-                
-                <!-- 2. Proposal dan Hasil -->
-                <details class="group border-b border-gray-200 last:border-0">
-                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 hover:bg-gray-50 rounded-lg">
-                        <span>2. Proposal dan Hasil</span>
-                        <span class="transition group-open:rotate-180"><i class="fas fa-chevron-down"></i></span>
-                    </summary>
-                    <div class="text-sm opacity-80 p-4 pt-0 bg-gray-50 rounded-b-lg">
-                        <ul class="space-y-2">
-                            <li class="flex justify-between"><span>Pengerjaan dari 0 (ada judul) tanpa revisi</span> <span class="font-bold">Rp600.000</span></li>
-                            <li class="flex justify-between"><span>Pengerjaan dari 0 (ada judul) revisi 2 kali</span> <span class="font-bold">Rp800.000</span></li>
-                            <li class="flex justify-between"><span>Pengerjaan fix ACC</span> <span class="font-bold">Rp1.000.000</span></li>
-                        </ul>
-                    </div>
-                </details>
+            
+            <div class="bg-white rounded-2xl shadow-sm border border-pinkmuda overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-pinkmuda/40 text-textgelap">
+                                <th class="py-4 px-6 font-bold whitespace-nowrap">Jenis Layanan</th>
+                                <th class="py-4 px-6 font-bold text-right whitespace-nowrap">Harga</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm md:text-base">
+                            
+                            <!-- 1. Skripsi -->
+                            <tr class="bg-krem/30 border-y border-pinkmuda/30">
+                                <td colspan="2" class="py-3 px-6 font-bold text-pastelPink-dark">1. Skripsi</td>
+                            </tr>
+                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/10 transition">
+                                <td class="py-4 px-6 opacity-80">Pengerjaan dari 0 (ada judul) sampai ACC</td>
+                                <td class="py-4 px-6 font-bold text-right text-textgelap">
+                                    Start Rp2.500.000<br>
+                                    <span class="text-xs font-normal opacity-70">(Tergantung tingkat kesulitan)</span>
+                                </td>
+                            </tr>
+                            
+                            <!-- 2. Proposal dan Hasil -->
+                            <tr class="bg-krem/30 border-y border-pinkmuda/30">
+                                <td colspan="2" class="py-3 px-6 font-bold text-pastelPink-dark">2. Proposal dan Hasil</td>
+                            </tr>
+                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/10 transition">
+                                <td class="py-4 px-6 opacity-80">Pengerjaan dari 0 (ada judul) tanpa revisi</td>
+                                <td class="py-4 px-6 font-bold text-right text-textgelap whitespace-nowrap">Rp600.000</td>
+                            </tr>
+                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/10 transition">
+                                <td class="py-4 px-6 opacity-80">Pengerjaan dari 0 (ada judul) revisi 2 kali</td>
+                                <td class="py-4 px-6 font-bold text-right text-textgelap whitespace-nowrap">Rp800.000</td>
+                            </tr>
+                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/10 transition">
+                                <td class="py-4 px-6 opacity-80">Pengerjaan fix ACC</td>
+                                <td class="py-4 px-6 font-bold text-right text-textgelap whitespace-nowrap">Rp1.000.000</td>
+                            </tr>
 
-                <!-- 3. Makalah dan PPT -->
-                <details class="group border-b border-gray-200 last:border-0">
-                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 hover:bg-gray-50 rounded-lg">
-                        <span>3. Makalah dan PPT</span>
-                        <span class="transition group-open:rotate-180"><i class="fas fa-chevron-down"></i></span>
-                    </summary>
-                    <div class="text-sm opacity-80 p-4 pt-0 bg-gray-50 rounded-b-lg">
-                        <ul class="space-y-2">
-                            <li class="flex justify-between items-start">
-                                <span class="pr-4">Makalah</span>
-                                <span class="font-bold text-right">Start Rp50.000/file<br><span class="text-xs font-normal opacity-70">(Sesuai tingkat kesulitan)</span></span>
-                            </li>
-                            <li class="flex justify-between items-start">
-                                <span class="pr-4">PPT</span>
-                                <span class="font-bold text-right">Start Rp20.000/file<br><span class="text-xs font-normal opacity-70">(Sesuai banyaknya halaman)</span></span>
-                            </li>
-                        </ul>
-                    </div>
-                </details>
+                            <!-- 3. Makalah dan PPT -->
+                            <tr class="bg-krem/30 border-y border-pinkmuda/30">
+                                <td colspan="2" class="py-3 px-6 font-bold text-pastelPink-dark">3. Makalah dan PPT</td>
+                            </tr>
+                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/10 transition">
+                                <td class="py-4 px-6 opacity-80">Makalah</td>
+                                <td class="py-4 px-6 font-bold text-right text-textgelap">
+                                    Start Rp50.000/file<br>
+                                    <span class="text-xs font-normal opacity-70">(Sesuai tingkat kesulitan)</span>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/10 transition">
+                                <td class="py-4 px-6 opacity-80">PPT</td>
+                                <td class="py-4 px-6 font-bold text-right text-textgelap">
+                                    Start Rp20.000/file<br>
+                                    <span class="text-xs font-normal opacity-70">(Sesuai banyaknya halaman)</span>
+                                </td>
+                            </tr>
 
-                <!-- 4. Cek Plagiasi dan Parafrase -->
-                <details class="group border-b border-gray-200 last:border-0">
-                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 hover:bg-gray-50 rounded-lg">
-                        <span>4. Cek Plagiasi Sistem dan Parafrase</span>
-                        <span class="transition group-open:rotate-180"><i class="fas fa-chevron-down"></i></span>
-                    </summary>
-                    <div class="text-sm opacity-80 p-4 pt-0 bg-gray-50 rounded-b-lg">
-                        <ul class="space-y-2">
-                            <li class="flex justify-between"><span>Cek plagiasi</span> <span class="font-bold">Rp15.000/file</span></li>
-                            <li class="flex justify-between"><span>Parafrase sistem</span> <span class="font-bold">Rp55.000/80 halaman</span></li>
-                        </ul>
-                    </div>
-                </details>
+                            <!-- 4. Cek Plagiasi dan Parafrase -->
+                            <tr class="bg-krem/30 border-y border-pinkmuda/30">
+                                <td colspan="2" class="py-3 px-6 font-bold text-pastelPink-dark">4. Cek Plagiasi Sistem dan Parafrase</td>
+                            </tr>
+                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/10 transition">
+                                <td class="py-4 px-6 opacity-80">Cek plagiasi</td>
+                                <td class="py-4 px-6 font-bold text-right text-textgelap whitespace-nowrap">Rp15.000/file</td>
+                            </tr>
+                            <tr class="hover:bg-pinkmuda/10 transition">
+                                <td class="py-4 px-6 opacity-80">Parafrase sistem</td>
+                                <td class="py-4 px-6 font-bold text-right text-textgelap whitespace-nowrap">Rp55.000/80 hal</td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </section>
