@@ -30,7 +30,7 @@
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Pengaturan Cetak PDF yang Bersih (Menghilangkan Toast & Tombol) */
+        /* Pengaturan Cetak PDF yang Bersih */
         @media print {
             html, body { background: white; height: auto !important; overflow: visible !important; display: block !important; }
             #sidebar, #mobile-overlay, #header, .no-print, #auth-section, #user-profile-section, #toast-notification, #login-modal { display: none !important; }
@@ -44,6 +44,7 @@
         .generated-content {
             word-break: break-word;
             overflow-wrap: break-word;
+            width: 100%;
         }
         .generated-content h1 { font-size: 1.8rem; font-weight: 700; color: #1e3a8a; margin-top: 1.5rem; margin-bottom: 1rem; border-bottom: 2px solid #bfdbfe; padding-bottom: 0.5rem; }
         .generated-content h2 { font-size: 1.5rem; font-weight: 600; color: #374151; margin-top: 1.5rem; margin-bottom: 0.75rem; }
@@ -52,7 +53,6 @@
         .generated-content ul, .generated-content ol { margin-left: 1.5rem; margin-bottom: 1rem; color: #374151; font-size: 0.95rem; }
         .generated-content ul { list-style-type: disc; }
         
-        /* Pembungkus tabel responsif */
         .table-responsive-wrapper {
             width: 100%;
             overflow-x: auto;
@@ -70,7 +70,7 @@
         #login-modal { backdrop-filter: blur(5px); transition: opacity 0.3s ease; }
     </style>
 </head>
-<body class="flex flex-col md:flex-row min-h-screen bg-slate-50 text-slate-800">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col md:flex-row">
 
     <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 hidden opacity-0 p-4">
         <div class="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 max-w-sm w-full relative transform transition-transform scale-95" id="login-modal-content">
@@ -98,9 +98,6 @@
                     <span>Masuk / Login</span>
                     <div id="login-spinner" class="loading-spinner hidden"></div>
                 </button>
-                <div class="text-center mt-4">
-                    <p class="text-xs text-slate-500">Belum punya akun? <a href="#" onclick="showToast('Silakan hubungi Administrator untuk pendaftaran akun.', 'info')" class="text-blue-600 font-semibold hover:underline">Daftar disini</a></p>
-                </div>
             </div>
         </div>
     </div>
@@ -108,8 +105,8 @@
     <!-- Mobile Overlay -->
     <div id="mobile-overlay" class="fixed inset-0 bg-slate-900/50 z-20 hidden md:hidden transition-opacity" onclick="toggleSidebar()"></div>
 
-    <!-- Sidebar -->
-    <aside id="sidebar" class="w-64 bg-slate-900 text-white flex flex-col shadow-xl z-30 fixed md:static inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out h-full min-h-screen flex-shrink-0">
+    <!-- Sidebar Fixed di Desktop -->
+    <aside id="sidebar" class="w-64 bg-slate-900 text-white flex flex-col shadow-xl z-30 fixed md:sticky top-0 inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out h-screen flex-shrink-0">
         <div class="p-4 sm:p-6 border-b border-slate-800 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg p-2 flex items-center justify-center shadow-lg">
@@ -120,7 +117,6 @@
                     <p class="text-xs text-slate-400">Master Kurikulum</p>
                 </div>
             </div>
-            <!-- Close button for mobile -->
             <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-white p-1">
                 <i class="fas fa-times text-xl"></i>
             </button>
@@ -140,13 +136,12 @@
         </div>
     </aside>
 
-    <!-- Main Content -->
-    <main id="main-content" class="flex-1 flex flex-col min-h-screen relative bg-slate-50 w-full overflow-x-hidden">
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0 bg-slate-50 min-h-screen">
         
-        <!-- Header Dynamic -->
-        <header id="header" class="bg-white shadow-sm px-4 sm:px-8 py-3 sm:py-4 flex items-center justify-between z-10 flex-shrink-0 sticky top-0">
+        <!-- Header Sticky -->
+        <header id="header" class="bg-white shadow-sm px-4 sm:px-8 py-3 sm:py-4 flex items-center justify-between z-10 sticky top-0 flex-shrink-0">
             <div class="flex items-center gap-3 sm:gap-4">
-                <!-- Hamburger menu for mobile -->
                 <button onclick="toggleSidebar()" class="md:hidden text-slate-600 hover:text-blue-600 focus:outline-none p-1">
                     <i class="fas fa-bars text-xl sm:text-2xl"></i>
                 </button>
@@ -158,34 +153,31 @@
                     <i class="fas fa-print"></i> <span class="hidden sm:inline">Cetak PDF</span>
                 </button>
 
-                <!-- Auth Section: Shows when NOT logged in -->
                 <div id="auth-section" class="no-print">
                     <button onclick="showLoginModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg sm:rounded-xl font-medium transition-colors shadow-sm flex items-center gap-2 text-sm sm:text-base">
                         <i class="fas fa-sign-in-alt"></i> <span class="hidden sm:inline">Login</span>
                     </button>
                 </div>
                 
-                <!-- Profile Section: Shows when LOGGED IN -->
                 <div id="user-profile-section" class="hidden items-center gap-2 sm:gap-4 no-print">
                     <div class="bg-amber-50 border border-amber-200 text-amber-800 px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl font-bold flex items-center gap-1.5 sm:gap-2 shadow-sm text-xs sm:text-base">
                         <i class="fas fa-coins text-amber-500"></i>
                         <span id="saldo-koin">0</span> <span class="hidden sm:inline">Koin</span>
                     </div>
-                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center font-bold shadow-md cursor-pointer hover:opacity-90 transition-opacity text-sm sm:text-base" id="user-avatar" onclick="showToast('Sistem Logout belum aktif di versi ini.', 'info')">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center font-bold shadow-md cursor-pointer" id="user-avatar">
                         ?
                     </div>
                 </div>
             </div>
         </header>
 
-        <!-- Content Area (Full Width Layout) -->
-        <div class="flex-1 p-4 sm:p-8 w-full">
+        <!-- Dynamic Body Content -->
+        <main class="flex-1 p-4 sm:p-8 w-full max-w-none">
             
             <!-- TAB 1: AI Generator -->
             <div id="tab-ai" class="tab-content fade-in w-full">
                 <!-- FORM GENERATOR -->
                 <div class="bg-gradient-to-br from-blue-700 via-blue-600 to-purple-700 rounded-xl sm:rounded-2xl p-5 sm:p-8 shadow-xl text-white mb-6 sm:mb-8 no-print relative overflow-hidden w-full">
-                    <!-- Background Decoration -->
                     <div class="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 sm:w-64 sm:h-64 rounded-full bg-white opacity-5 blur-3xl pointer-events-none"></div>
                     
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 sm:mb-6 relative z-10 gap-3">
@@ -198,11 +190,10 @@
                         </div>
                     </div>
                     
-                    <!-- Form Grid responsive -->
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 relative z-10">
                         <div>
                             <label class="block text-[10px] sm:text-xs font-bold text-blue-200 uppercase tracking-wider mb-1.5">Jenjang</label>
-                            <select id="ai-jenjang" onchange="updateAIOptions()" class="w-full bg-white/10 border border-white/20 text-white rounded-lg sm:rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all [&>option]:text-gray-800 cursor-pointer hover:bg-white/20 text-sm sm:text-base">
+                            <select id="ai-jenjang" onchange="updateAIOptions()" class="w-full bg-white/10 border border-white/20 text-white rounded-lg sm:rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 focus:outline-none focus:ring-2 focus:ring-blue-300 [&>option]:text-gray-800 cursor-pointer text-sm sm:text-base">
                                 <option value="">Pilih Jenjang...</option>
                                 <option value="TK">TK / PAUD</option>
                                 <option value="SD">SD (Fase A - C)</option>
@@ -212,13 +203,13 @@
                         </div>
                         <div>
                             <label class="block text-[10px] sm:text-xs font-bold text-blue-200 uppercase tracking-wider mb-1.5">Kelas & Fase</label>
-                            <select id="ai-kelas" onchange="updateAIMapel()" class="w-full bg-white/10 border border-white/20 text-white rounded-lg sm:rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all [&>option]:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer hover:bg-white/20 text-sm sm:text-base" disabled>
+                            <select id="ai-kelas" onchange="updateAIMapel()" class="w-full bg-white/10 border border-white/20 text-white rounded-lg sm:rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 focus:outline-none focus:ring-2 focus:ring-blue-300 [&>option]:text-gray-800 disabled:opacity-50 cursor-pointer text-sm sm:text-base" disabled>
                                 <option value="">Pilih Kelas...</option>
                             </select>
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-[10px] sm:text-xs font-bold text-blue-200 uppercase tracking-wider mb-1.5">Mata Pelajaran</label>
-                            <select id="ai-mapel" class="w-full bg-white/10 border border-white/20 text-white rounded-lg sm:rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all [&>option]:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer hover:bg-white/20 text-sm sm:text-base" disabled>
+                            <select id="ai-mapel" class="w-full bg-white/10 border border-white/20 text-white rounded-lg sm:rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 focus:outline-none focus:ring-2 focus:ring-blue-300 [&>option]:text-gray-800 disabled:opacity-50 cursor-pointer text-sm sm:text-base" disabled>
                                 <option value="">Pilih Mata Pelajaran...</option>
                             </select>
                         </div>
@@ -226,10 +217,9 @@
                     
                     <div class="mb-5 sm:mb-6 relative z-10">
                         <label class="block text-[10px] sm:text-xs font-bold text-blue-200 uppercase tracking-wider mb-1.5">Topik / Tema Pembelajaran</label>
-                        <input type="text" id="ai-topic" placeholder="Ketik topik materi... (Contoh: Sistem Tata Surya)" class="w-full bg-white/10 border border-white/20 text-white placeholder-blue-200/70 rounded-lg sm:rounded-xl px-4 py-3 sm:py-4 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all text-sm sm:text-lg font-medium hover:bg-white/20">
+                        <input type="text" id="ai-topic" placeholder="Ketik topik materi... (Contoh: Sistem Tata Surya)" class="w-full bg-white/10 border border-white/20 text-white placeholder-blue-200/70 rounded-lg sm:rounded-xl px-4 py-3 sm:py-4 focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm sm:text-lg font-medium">
                     </div>
                     
-                    <!-- THE HOOK: SMART BUTTON -->
                     <button id="btn-generate" onclick="handleGenerateClick()" class="relative z-10 w-full bg-slate-200 text-slate-500 font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-xl transition-all duration-300 shadow-md flex items-center justify-center gap-2 sm:gap-3 cursor-not-allowed group">
                         <i id="btn-gen-icon" class="fas fa-lock"></i>
                         <span id="btn-generate-text" class="text-sm sm:text-lg text-center leading-tight">Terkunci - Silakan Login</span>
@@ -237,8 +227,8 @@
                     </button>
                 </div>
 
-                <!-- Preview Area (Full Width Lebar Penuh) -->
-                <div id="ai-result-container" class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-12 min-h-[400px] relative hidden transition-all duration-500 w-full">
+                <!-- Preview Area Full Width -->
+                <div id="ai-result-container" class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-12 min-h-[400px] relative hidden transition-all duration-500 w-full mb-10">
                     <div id="ai-result-content" class="generated-content text-base sm:text-lg w-full"></div>
                 </div>
                 
@@ -269,8 +259,8 @@
                 </div>
             </div>
 
-        </div>
-    </main>
+        </main>
+    </div>
 
     <!-- Toast Notification Container -->
     <div id="toast-notification" class="no-print">
@@ -279,16 +269,11 @@
     </div>
 
     <script>
-        // =========================================================================
-        // URL WEB APP GOOGLE APPS SCRIPT ANDA (BACKEND SAAS)
-        // =========================================================================
         const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxjzV09u3X1mhbSwgZE3m3E4aynL6-kM3FMFMbRIJSPAupoX3703B4pjJpjQN_sWW8c/exec";
 
-        // Global State User
         let isLoggedin = false;
         let currentUser = { username: "", password: "", koin: 0 };
 
-        // --- SISTEM TOGGLE SIDEBAR MOBILE ---
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('mobile-overlay');
@@ -296,7 +281,6 @@
             overlay.classList.toggle('hidden');
         }
 
-        // --- SISTEM NOTIFIKASI TOAST ---
         let toastTimeout;
         function showToast(message, type = 'info') {
             const toast = document.getElementById('toast-notification');
@@ -313,7 +297,6 @@
             toastTimeout = setTimeout(() => toast.classList.remove('show'), 4000);
         }
 
-        // --- MANAJEMEN MODAL LOGIN ---
         function showLoginModal() {
             const modal = document.getElementById('login-modal');
             const modalContent = document.getElementById('login-modal-content');
@@ -334,7 +317,6 @@
             setTimeout(() => { modal.classList.add('hidden'); }, 300);
         }
 
-        // --- SISTEM LOGIN KE GAS ---
         async function prosesLogin() {
             const userInp = document.getElementById('login-username').value;
             const passInp = document.getElementById('login-password').value;
@@ -360,9 +342,7 @@
                     method: 'POST',
                     body: JSON.stringify({ action: 'login', username: userInp, password: passInp })
                 });
-                
                 const data = await response.json();
-                
                 if (data.success) {
                     currentUser = { username: userInp, password: passInp, koin: data.koin };
                     suksesLogin();
@@ -379,19 +359,12 @@
         function suksesLogin() {
             isLoggedin = true;
             hideLoginModal();
-            
-            // Ubah UI Header
             document.getElementById('auth-section').classList.add('hidden');
             document.getElementById('user-profile-section').classList.remove('hidden');
             document.getElementById('user-profile-section').classList.add('flex');
-            
-            // Set Data
             document.getElementById('saldo-koin').innerText = currentUser.koin;
             document.getElementById('user-avatar').innerText = currentUser.username.charAt(0).toUpperCase();
-            
             showToast(`Selamat datang, ${currentUser.username}!`, 'success');
-            
-            // Update State Tombol Generate
             cekStatusKoin();
         }
 
@@ -417,7 +390,6 @@
             }
         }
 
-        // --- SMART GENERATE BUTTON HANDLER ---
         function handleGenerateClick() {
             if (!isLoggedin) {
                 showLoginModal();
@@ -453,10 +425,8 @@
                  setTimeout(() => {
                      document.getElementById('ai-empty-state').classList.add('hidden');
                      document.getElementById('ai-result-container').classList.remove('hidden');
-                     
-                     let simHtml = `<h1>Modul Simulasi: ${topic}</h1><p>Ini adalah simulasi hasil modul pembelajaran untuk mata pelajaran ${mapel} kelas ${kelas}.</p><table><tr><th>No</th><th>Komponen</th><th>Deskripsi</th></tr><tr><td>1</td><td>Tujuan Pembelajaran</td><td>Peserta didik mampu memahami materi dengan baik.</td></tr></table>`;
+                     let simHtml = `<h1>Modul Simulasi: ${topic}</h1><p>Simulasi modul untuk mapel ${mapel} kelas ${kelas}.</p><table><tr><th>No</th><th>Komponen</th><th>Deskripsi</th></tr><tr><td>1</td><td>Tujuan</td><td>Siswa mampu memahami materi.</td></tr></table>`;
                      let processedHtml = simHtml.replace(/<table\b[^>]*>/gi, '<div class="table-responsive-wrapper">$&').replace(/<\/table>/gi, '</table></div>');
-                     
                      document.getElementById('ai-result-content').innerHTML = processedHtml;
                      currentUser.koin -= 1; document.getElementById('saldo-koin').innerText = currentUser.koin; cekStatusKoin();
                      btn.disabled = false; btnSpinner.classList.add('hidden'); btn.classList.replace('bg-blue-100', 'bg-white');
@@ -469,20 +439,16 @@
                     method: 'POST',
                     body: JSON.stringify({ action: 'generate', username: currentUser.username, password: currentUser.password, promptData: { jenjang, kelas, mapel, topic } })
                 });
-
                 const data = await response.json();
 
                 if (data.success) {
                     document.getElementById('ai-empty-state').classList.add('hidden');
                     document.getElementById('ai-result-container').classList.remove('hidden');
-                    
                     let processedHtml = data.htmlData.replace(/<table\b[^>]*>/gi, '<div class="table-responsive-wrapper">$&').replace(/<\/table>/gi, '</table></div>');
                     document.getElementById('ai-result-content').innerHTML = processedHtml;
-                    
                     currentUser.koin = data.sisaKoin;
                     document.getElementById('saldo-koin').innerText = currentUser.koin;
                     showToast(data.message, 'success');
-                    
                     setTimeout(() => {
                         document.getElementById('ai-result-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }, 300);
@@ -498,14 +464,11 @@
             }
         }
 
-        // --- NAVIGASI TABS ---
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
             document.getElementById(tabId).classList.remove('hidden');
-            
             document.querySelectorAll('#sidebar button').forEach(btn => btn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-sm sm:text-base");
             const activeBtn = document.getElementById('nav-' + tabId.split('-')[1]);
-            
             if(tabId === 'tab-ai') {
                 activeBtn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-600 text-white font-medium transition-colors shadow-md text-sm sm:text-base";
             } else {
@@ -513,7 +476,6 @@
             }
         }
 
-        // --- DATABASE KURIKULUM ---
         const curriculumDB = {
             "TK": {
                 "TK A (Usia 4-5)": { mapel: ["Bermain & Belajar", "Agama & Budi Pekerti", "Jati Diri (Motorik)", "Literasi & STEAM Dasar"] },
@@ -543,7 +505,6 @@
             const jenjang = document.getElementById('ai-jenjang').value;
             const kelasSelect = document.getElementById('ai-kelas');
             const mapelSelect = document.getElementById('ai-mapel');
-            
             kelasSelect.innerHTML = '<option value="">Pilih Kelas & Fase...</option>';
             mapelSelect.innerHTML = '<option value="">Pilih Mata Pelajaran...</option>';
             mapelSelect.disabled = true;
@@ -551,10 +512,8 @@
             if (jenjang && curriculumDB[jenjang]) {
                 Object.keys(curriculumDB[jenjang]).forEach(kelas => kelasSelect.appendChild(new Option(kelas, kelas)));
                 kelasSelect.disabled = false;
-                kelasSelect.classList.remove('cursor-not-allowed');
             } else { 
                 kelasSelect.disabled = true; 
-                kelasSelect.classList.add('cursor-not-allowed');
             }
         }
 
@@ -562,20 +521,16 @@
             const jenjang = document.getElementById('ai-jenjang').value;
             const kelas = document.getElementById('ai-kelas').value;
             const mapelSelect = document.getElementById('ai-mapel');
-            
             mapelSelect.innerHTML = '<option value="">Pilih Mata Pelajaran...</option>';
             
             if (jenjang && kelas && curriculumDB[jenjang][kelas]) {
                 curriculumDB[jenjang][kelas].mapel.forEach(mapel => mapelSelect.appendChild(new Option(mapel, mapel)));
                 mapelSelect.disabled = false;
-                mapelSelect.classList.remove('cursor-not-allowed');
             } else { 
                 mapelSelect.disabled = true; 
-                mapelSelect.classList.add('cursor-not-allowed');
             }
         }
         
-        // Initialize Default State
         cekStatusKoin();
     </script>
 </body>
