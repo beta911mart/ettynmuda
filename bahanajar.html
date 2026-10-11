@@ -251,7 +251,7 @@
         // URL WEB APP GOOGLE APPS SCRIPT ANDA (BACKEND SAAS)
         // Masukkan URL hasil Deploy GAS Anda di sini
         // =========================================================================
-        const GAS_WEBAPP_URL = "MASUKKAN_URL_GAS_ANDA_DISINI";
+        const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxjzV09u3X1mhbSwgZE3m3E4aynL6-kM3FMFMbRIJSPAupoX3703B4pjJpjQN_sWW8c/exec";
 
         // Global State User
         let isLoggedin = false;
@@ -305,7 +305,7 @@
 
             if (!userInp || !passInp) return showToast("Username dan Password wajib diisi!", "error");
             
-            if (GAS_WEBAPP_URL === "MASUKKAN_URL_GAS_ANDA_DISINI") {
+            if (GAS_WEBAPP_URL === "https://script.google.com/macros/s/AKfycbxjzV09u3X1mhbSwgZE3m3E4aynL6-kM3FMFMbRIJSPAupoX3703B4pjJpjQN_sWW8c/exec") {
                 // SIMULASI LOGIN LOKAL JIKA BELUM ADA BACKEND
                 btnLogin.disabled = true; spinner.classList.remove('hidden');
                 setTimeout(() => {
@@ -413,7 +413,7 @@
             btn.classList.replace('bg-white', 'bg-blue-100');
 
             // SIMULASI JIKA BELUM ADA URL GAS 
-            if (GAS_WEBAPP_URL === "MASUKKAN_URL_GAS_ANDA_DISINI") {
+            if (GAS_WEBAPP_URL === "Mhttps://script.google.com/macros/s/AKfycbxjzV09u3X1mhbSwgZE3m3E4aynL6-kM3FMFMbRIJSPAupoX3703B4pjJpjQN_sWW8c/exec") {
                  showToast("Simulasi: Mengurangi koin lokal karena URL backend belum dipasang.", "info");
                  setTimeout(() => {
                      document.getElementById('ai-empty-state').classList.add('hidden');
