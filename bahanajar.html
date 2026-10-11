@@ -10,7 +10,7 @@
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; margin: 0; padding: 0; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -35,7 +35,7 @@
             html, body { background: white; height: auto !important; overflow: visible !important; display: block !important; }
             #sidebar, #mobile-overlay, #header, .no-print, #auth-section, #user-profile-section, #toast-notification, #login-modal { display: none !important; }
             #main-content, .flex-1 { margin: 0 !important; padding: 0 !important; width: 100% !important; height: auto !important; overflow: visible !important; display: block !important; position: static !important; }
-            #ai-result-container { box-shadow: none !important; padding: 0 !important; margin: 0 !important; border: none !important; display: block !important; width: 100% !important; max-width: 100% !important; }
+            #ai-result-container { box-shadow: none !important; padding: 0 !important; margin: 0 !important; border: none !important; display: block !important; width: 100% !important; }
             .generated-content h1, .generated-content h2, .generated-content h3 { page-break-after: avoid; }
             .generated-content table, .generated-content tr { page-break-inside: avoid; }
             @page { margin: 1.5cm; }
@@ -70,7 +70,7 @@
         #login-modal { backdrop-filter: blur(5px); transition: opacity 0.3s ease; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col md:flex-row">
+<body class="bg-slate-50 text-slate-800 flex flex-col md:flex-row min-h-screen">
 
     <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 hidden opacity-0 p-4">
         <div class="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 max-w-sm w-full relative transform transition-transform scale-95" id="login-modal-content">
@@ -105,7 +105,7 @@
     <!-- Mobile Overlay -->
     <div id="mobile-overlay" class="fixed inset-0 bg-slate-900/50 z-20 hidden md:hidden transition-opacity" onclick="toggleSidebar()"></div>
 
-    <!-- Sidebar Fixed di Desktop -->
+    <!-- Sidebar (Tetap di kiri dengan lebar tetap 64 / 16rem) -->
     <aside id="sidebar" class="w-64 bg-slate-900 text-white flex flex-col shadow-xl z-30 fixed md:sticky top-0 inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out h-screen flex-shrink-0">
         <div class="p-4 sm:p-6 border-b border-slate-800 flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -136,11 +136,11 @@
         </div>
     </aside>
 
-    <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col min-w-0 bg-slate-50 min-h-screen">
+    <!-- Main Content Area (Mengisi sisa ruang di sebelah kanan sidebar secara penuh) -->
+    <div id="main-content" class="flex-1 flex flex-col min-w-0 bg-slate-50 min-h-screen">
         
         <!-- Header Sticky -->
-        <header id="header" class="bg-white shadow-sm px-4 sm:px-8 py-3 sm:py-4 flex items-center justify-between z-10 sticky top-0 flex-shrink-0">
+        <header id="header" class="bg-white shadow-sm px-4 sm:px-8 py-3 sm:py-4 flex items-center justify-between z-10 sticky top-0 flex-shrink-0 w-full">
             <div class="flex items-center gap-3 sm:gap-4">
                 <button onclick="toggleSidebar()" class="md:hidden text-slate-600 hover:text-blue-600 focus:outline-none p-1">
                     <i class="fas fa-bars text-xl sm:text-2xl"></i>
@@ -164,15 +164,15 @@
                         <i class="fas fa-coins text-amber-500"></i>
                         <span id="saldo-koin">0</span> <span class="hidden sm:inline">Koin</span>
                     </div>
-                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center font-bold shadow-md cursor-pointer" id="user-avatar">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center font-bold shadow-md" id="user-avatar">
                         ?
                     </div>
                 </div>
             </div>
         </header>
 
-        <!-- Dynamic Body Content -->
-        <main class="flex-1 p-4 sm:p-8 w-full max-w-none">
+        <!-- Dynamic Body Content (Lebar penuh 100% tanpa batasan sempit) -->
+        <main class="flex-1 p-4 sm:p-8 w-full">
             
             <!-- TAB 1: AI Generator -->
             <div id="tab-ai" class="tab-content fade-in w-full">
@@ -190,7 +190,7 @@
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 relative z-10">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 relative z-10">
                         <div>
                             <label class="block text-[10px] sm:text-xs font-bold text-blue-200 uppercase tracking-wider mb-1.5">Jenjang</label>
                             <select id="ai-jenjang" onchange="updateAIOptions()" class="w-full bg-white/10 border border-white/20 text-white rounded-lg sm:rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 focus:outline-none focus:ring-2 focus:ring-blue-300 [&>option]:text-gray-800 cursor-pointer text-sm sm:text-base">
@@ -207,7 +207,7 @@
                                 <option value="">Pilih Kelas...</option>
                             </select>
                         </div>
-                        <div class="md:col-span-2">
+                        <div>
                             <label class="block text-[10px] sm:text-xs font-bold text-blue-200 uppercase tracking-wider mb-1.5">Mata Pelajaran</label>
                             <select id="ai-mapel" class="w-full bg-white/10 border border-white/20 text-white rounded-lg sm:rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 focus:outline-none focus:ring-2 focus:ring-blue-300 [&>option]:text-gray-800 disabled:opacity-50 cursor-pointer text-sm sm:text-base" disabled>
                                 <option value="">Pilih Mata Pelajaran...</option>
@@ -507,13 +507,12 @@
             const mapelSelect = document.getElementById('ai-mapel');
             kelasSelect.innerHTML = '<option value="">Pilih Kelas & Fase...</option>';
             mapelSelect.innerHTML = '<option value="">Pilih Mata Pelajaran...</option>';
+            kelasSelect.disabled = true;
             mapelSelect.disabled = true;
 
             if (jenjang && curriculumDB[jenjang]) {
                 Object.keys(curriculumDB[jenjang]).forEach(kelas => kelasSelect.appendChild(new Option(kelas, kelas)));
                 kelasSelect.disabled = false;
-            } else { 
-                kelasSelect.disabled = true; 
             }
         }
 
@@ -522,12 +521,11 @@
             const kelas = document.getElementById('ai-kelas').value;
             const mapelSelect = document.getElementById('ai-mapel');
             mapelSelect.innerHTML = '<option value="">Pilih Mata Pelajaran...</option>';
+            mapelSelect.disabled = true;
             
             if (jenjang && kelas && curriculumDB[jenjang][kelas]) {
                 curriculumDB[jenjang][kelas].mapel.forEach(mapel => mapelSelect.appendChild(new Option(mapel, mapel)));
                 mapelSelect.disabled = false;
-            } else { 
-                mapelSelect.disabled = true; 
             }
         }
         
