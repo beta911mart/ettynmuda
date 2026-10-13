@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - Teman Akademik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>body { font-family: 'Poppins', sans-serif; background-color: #f3f4f6; }</style>
+</head>
+<body class="antialiased">
+
+    <!-- Modal Login Admin -->
+    <div id="login-modal" class="fixed inset-0 bg-gray-900/90 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-8 max-w-sm w-full shadow-2xl text-center">
+            <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-2">Panel Admin</h2>
+            <p class="text-sm text-gray-500 mb-6">Masukkan PIN rahasia untuk masuk.</p>
+            <input type="password" id="admin-pin" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-red-500 text-center text-xl tracking-widest mb-4" placeholder="••••">
+            <button onclick="loginAdmin()" class="w-full bg-gray-900 text-white font-bold py-3 rounded-xl hover:bg-black transition">Masuk Panel</button>
+            <p id="login-error" class="text-red-500 text-sm mt-3 hidden">PIN salah!</p>
+        </div>
+    </div>
+
+    <!-- Dashboard Admin (Hidden by Default) -->
+    <div id="admin-dashboard" class="hidden min-h-screen">
+        <nav class="bg-gray-900 text-white p-4 flex justify-between items-center shadow-md">
+            <div class="font-bold text-lg"><i class="fas fa-shield-alt text-red-400 mr-2"></i> Admin Panel - Teman Akademik</div>
+            <button onclick="logoutAdmin()" class="text-sm bg-red-600 px-4 py-1.5 rounded-lg hover:bg-red-700"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+        </nav>
+
+        <div class="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Panel Galeri -->
+            <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
+                <h3 class="text-xl font-bold mb-4 border-b pb-2"><i class="fas fa-images text-blue-500 mr-2"></i>Kelola Galeri</h3>
+                <div class="flex gap-2 mb-6">
+                    <input type="text" id="input-galeri-url" placeholder="Paste URL Gambar Google Drive disini..." class="flex-1 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button onclick="tambahGaleri()" class="bg-blue-600 text-white px-4 rounded-xl font-bold hover:bg-blue-700">Tambah</button>
+                </div>
+                <div id="admin-galeri-list" class="space-y-3 max-h-[400px] overflow-y-auto">
+                    <p class="text-sm text-gray-400 text-center">Memuat daftar galeri...</p>
+                </div>
+            </div>
+
+            <!-- Panel Testimoni -->
+            <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
+                <h3 class="text-xl font-bold mb-4 border-b pb-2"><i class="fas fa-comments text-green-500 mr-2"></i>Approval Testimoni</h3>
+                <div id="admin-testi-list" class="space-y-4 max-h-[500px] overflow-y-auto">
+                    <p class="text-sm text-gray-400 text-center">Memuat testimoni pending...</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // GANTI DENGAN URL WEB APP GAS ANDA
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec"; 
+        const PIN_ADMIN = "1234"; // Ganti PIN sesuai keinginan Anda
+
+        function loginAdmin() {
+            const pin = document.getElementById('admin-pin').value;
+            if (pin === PIN_ADMIN) {
+                document.getElementById('login-modal').classList.add('hidden');
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                loadAdminData();
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        }
+
+        function logoutAdmin() {
+            document.getElementById('admin-dashboard').classList.add('hidden');
+            document.getElementById('login-modal').classList.remove('hidden');
+            document.getElementById('admin-pin').value = '';
+        }
+
+        async function loadAdminData() {
+            try {
+                const response = await fetch(GAS_URL + "?action=getAdminData");
+                const data = await response.json();
+                
+                // Render Galeri di Admin
+                const galeriList = document.getElementById('admin-galeri-list');
+                if (data.galeri && data.galeri.length > 0) {
+                    galeriList.innerHTML = data.galeri.map((g, index) => `
+                        <div class="flex justify-between items-center p-3 bg-gray-50 border rounded-lg">
+                            <a href="${g.url}" target="_blank" class="text-sm text-blue-600 truncate max-w-[200px] hover:underline">Lihat Gambar ${index+1}</a>
+                            <button onclick="hapusGaleri(${g.row})" class="text-red-500 hover:bg-red-100 px-2 py-1 rounded text-sm"><i class="fas fa-trash"></i> Hapus</button>
+                        </div>
+                    `).join('');
+                } else {
+                    galeriList.innerHTML = '<p class="text-sm text-gray-400 text-center">Galeri kosong.</p>';
+                }
+
+                // Render Testimoni di Admin (Hanya yang statusnya "Pending")
+                const testiList = document.getElementById('admin-testi-list');
+                if (data.testimoni && data.testimoni.length > 0) {
+                    testiList.innerHTML = data.testimoni.map(t => `
+                        <div class="p-4 bg-orange-50 border border-orange-200 rounded-xl relative">
+                            <span class="absolute top-2 right-3 text-xs font-bold bg-orange-200 text-orange-800 px-2 py-1 rounded">PENDING</span>
+                            <div class="font-bold text-gray-800">${t.nama} <span class="font-normal text-xs text-gray-500">(${t.instansi})</span></div>
+                            <p class="text-sm mt-2 text-gray-700 italic">"${t.pesan}"</p>
+                            <div class="mt-4 flex gap-2">
+                                <button onclick="approveTestimoni(${t.row})" class="bg-green-500 text-white px-3 py-1.5 rounded text-sm hover:bg-green-600"><i class="fas fa-check"></i> Approve</button>
+                                <button onclick="hapusTestimoni(${t.row})" class="bg-red-500 text-white px-3 py-1.5 rounded text-sm hover:bg-red-600"><i class="fas fa-times"></i> Tolak</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    testiList.innerHTML = '<p class="text-sm text-gray-400 text-center">Tidak ada testimoni pending.</p>';
+                }
+
+            } catch (err) {
+                alert("Gagal memuat data dari server.");
+            }
+        }
+
+        async function tambahGaleri() {
+            const url = document.getElementById('input-galeri-url').value;
+            if(!url) return alert("URL Gambar tidak boleh kosong!");
+            
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'addGaleri', url: url }) });
+            document.getElementById('input-galeri-url').value = '';
+            loadAdminData(); // Refresh list
+        }
+
+        async function hapusGaleri(rowId) {
+            if(!confirm("Yakin hapus foto galeri ini?")) return;
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteGaleri', row: rowId }) });
+            loadAdminData();
+        }
+
+        async function approveTestimoni(rowId) {
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'approveTestimoni', row: rowId }) });
+            loadAdminData();
+        }
+
+        async function hapusTestimoni(rowId) {
+            if(!confirm("Yakin menolak & menghapus testimoni ini?")) return;
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteTestimoni', row: rowId }) });
+            loadAdminData();
+        }
+    </script>
+</body>
+</html>
