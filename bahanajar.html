@@ -487,7 +487,12 @@
             try {
                 const response = await fetch(GAS_WEBAPP_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ action: 'generate', username: currentUser.username, password: currentUser.password, promptData: { jenjang, kelas, mapel, topic } })
+                    body: JSON.stringify({ 
+                        action: 'generateBahanAjar', // PENTING: Harus sama persis
+                        username: currentUser.username, 
+                        password: currentUser.password, 
+                        promptData: { jenjang, kelas, mapel, topic } 
+                    })
                 });
                 const data = await response.json();
 
