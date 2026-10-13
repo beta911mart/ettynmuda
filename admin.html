@@ -2,55 +2,135 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Panel Admin - Teman Akademik</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>body { font-family: 'Poppins', sans-serif; background-color: #f3f4f6; }</style>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f1f5f9; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
 </head>
-<body class="antialiased">
+<body class="antialiased text-slate-800">
 
     <!-- Modal Login Admin -->
-    <div id="login-modal" class="fixed inset-0 bg-gray-900/90 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl p-8 max-w-sm w-full shadow-2xl text-center">
-            <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-                <i class="fas fa-lock"></i>
+    <div id="login-modal" class="fixed inset-0 bg-slate-900/95 z-50 flex items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center relative overflow-hidden">
+            <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-5 border border-red-100">
+                <i class="fas fa-shield-alt text-3xl text-red-500"></i>
             </div>
-            <h2 class="text-2xl font-bold mb-2">Panel Admin</h2>
-            <p class="text-sm text-gray-500 mb-6">Masukkan PIN rahasia untuk masuk.</p>
-            <input type="password" id="admin-pin" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-red-500 text-center text-xl tracking-widest mb-4" placeholder="••••">
-            <button onclick="loginAdmin()" class="w-full bg-gray-900 text-white font-bold py-3 rounded-xl hover:bg-black transition">Masuk Panel</button>
-            <p id="login-error" class="text-red-500 text-sm mt-3 hidden">PIN salah!</p>
+            <h2 class="text-2xl font-bold mb-1 text-slate-800">Admin Panel</h2>
+            <p class="text-sm text-slate-500 mb-6">Sistem Manajemen Teman Akademik</p>
+            
+            <input type="password" id="admin-pin" class="w-full px-5 py-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500 text-center text-2xl tracking-[0.5em] mb-4 bg-slate-50 font-bold text-slate-700" placeholder="••••">
+            
+            <button onclick="loginAdmin()" class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition-colors shadow-lg flex items-center justify-center gap-2">
+                <i class="fas fa-sign-in-alt"></i> Masuk Sistem
+            </button>
+            <p id="login-error" class="text-red-500 text-sm mt-4 font-medium hidden bg-red-50 py-2 rounded-lg"><i class="fas fa-exclamation-triangle"></i> PIN tidak valid!</p>
+        </div>
+    </div>
+
+    <!-- Modal Edit Testimoni -->
+    <div id="edit-modal" class="fixed inset-0 bg-slate-900/80 z-[60] hidden flex items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative">
+            <h2 class="text-xl font-bold mb-4 border-b pb-3 text-slate-800"><i class="fas fa-edit text-blue-500 mr-2"></i>Edit Testimoni</h2>
+            <input type="hidden" id="edit-row">
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Nama</label>
+                    <input type="text" id="edit-nama" class="w-full px-4 py-2.5 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Instansi</label>
+                    <input type="text" id="edit-instansi" class="w-full px-4 py-2.5 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Pesan</label>
+                    <textarea id="edit-pesan" rows="4" class="w-full px-4 py-2.5 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"></textarea>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex justify-end gap-3">
+                <button onclick="tutupEditModal()" class="px-5 py-2.5 rounded-lg text-slate-600 bg-slate-100 hover:bg-slate-200 font-medium transition">Batal</button>
+                <button onclick="simpanEditTestimoni()" id="btn-simpan-edit" class="px-5 py-2.5 rounded-lg text-white bg-blue-600 hover:bg-blue-700 font-medium transition flex items-center gap-2">
+                    <i class="fas fa-save"></i> Simpan Perubahan
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- Dashboard Admin (Hidden by Default) -->
-    <div id="admin-dashboard" class="hidden min-h-screen">
-        <nav class="bg-gray-900 text-white p-4 flex justify-between items-center shadow-md">
-            <div class="font-bold text-lg"><i class="fas fa-shield-alt text-red-400 mr-2"></i> Admin Panel - Teman Akademik</div>
-            <button onclick="logoutAdmin()" class="text-sm bg-red-600 px-4 py-1.5 rounded-lg hover:bg-red-700"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+    <div id="admin-dashboard" class="hidden min-h-screen flex flex-col">
+        <!-- Navbar Header -->
+        <nav class="bg-slate-900 text-white p-4 sticky top-0 z-40 shadow-md">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="font-bold text-base sm:text-lg flex items-center gap-2">
+                    <i class="fas fa-user-shield text-red-400"></i> <span class="hidden sm:inline">Admin Panel - Teman Akademik</span><span class="sm:hidden">Admin Panel</span>
+                </div>
+                <button onclick="logoutAdmin()" class="text-xs sm:text-sm bg-red-600/20 text-red-400 border border-red-500/30 px-4 py-2 rounded-lg hover:bg-red-600 hover:text-white transition font-medium">
+                    <i class="fas fa-power-off"></i> Keluar
+                </button>
+            </div>
         </nav>
 
-        <div class="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Main Content Area -->
+        <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 flex-1">
             
-            <!-- Panel Galeri -->
-            <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
-                <h3 class="text-xl font-bold mb-4 border-b pb-2"><i class="fas fa-images text-blue-500 mr-2"></i>Kelola Galeri</h3>
-                <div class="flex gap-2 mb-6">
-                    <input type="text" id="input-galeri-url" placeholder="Paste URL Gambar Google Drive disini..." class="flex-1 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button onclick="tambahGaleri()" class="bg-blue-600 text-white px-4 rounded-xl font-bold hover:bg-blue-700">Tambah</button>
-                </div>
-                <div id="admin-galeri-list" class="space-y-3 max-h-[400px] overflow-y-auto">
-                    <p class="text-sm text-gray-400 text-center">Memuat daftar galeri...</p>
+            <!-- PANEL 1: KELOLA GALERI (Kolom Kiri) -->
+            <div class="lg:col-span-5 flex flex-col gap-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
+                    <h3 class="text-lg font-bold mb-5 flex items-center border-b border-slate-100 pb-3">
+                        <i class="fas fa-images text-blue-500 mr-2 bg-blue-50 p-2 rounded-lg"></i> Kelola Galeri Web
+                    </h3>
+                    
+                    <div class="flex flex-col sm:flex-row gap-3 mb-6">
+                        <input type="text" id="input-galeri-url" placeholder="Paste URL Gambar Google Drive..." class="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 text-sm">
+                        <button onclick="tambahGaleri()" id="btn-tambah-galeri" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2 whitespace-nowrap">
+                            <i class="fas fa-plus"></i> Tambah
+                        </button>
+                    </div>
+                    
+                    <div class="bg-slate-50 rounded-xl p-2 border border-slate-100">
+                        <div id="admin-galeri-list" class="space-y-2 max-h-[500px] overflow-y-auto p-1">
+                            <p class="text-sm text-slate-400 text-center py-4"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat daftar galeri...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Panel Testimoni -->
-            <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
-                <h3 class="text-xl font-bold mb-4 border-b pb-2"><i class="fas fa-comments text-green-500 mr-2"></i>Approval Testimoni</h3>
-                <div id="admin-testi-list" class="space-y-4 max-h-[500px] overflow-y-auto">
-                    <p class="text-sm text-gray-400 text-center">Memuat testimoni pending...</p>
+            <!-- PANEL 2: KELOLA TESTIMONI (Kolom Kanan) -->
+            <div class="lg:col-span-7 flex flex-col gap-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+                    <div class="p-5 sm:p-6 border-b border-slate-100 bg-white">
+                        <h3 class="text-lg font-bold flex items-center">
+                            <i class="fas fa-comments text-green-500 mr-2 bg-green-50 p-2 rounded-lg"></i> Manajemen Testimoni
+                        </h3>
+                    </div>
+
+                    <!-- Area Testimoni PENDING -->
+                    <div class="p-5 sm:p-6 bg-orange-50/50">
+                        <h4 class="text-sm font-bold text-orange-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-clock"></i> Menunggu Persetujuan (Pending)
+                        </h4>
+                        <div id="admin-testi-pending" class="space-y-4 max-h-[350px] overflow-y-auto pr-2">
+                            <p class="text-sm text-slate-400 text-center py-2">Memuat data...</p>
+                        </div>
+                    </div>
+
+                    <!-- Area Testimoni APPROVED -->
+                    <div class="p-5 sm:p-6 bg-white border-t border-slate-100">
+                        <h4 class="text-sm font-bold text-green-700 mb-4 flex items-center gap-2">
+                            <i class="fas fa-check-circle"></i> Testimoni Tayang di Web (Approved)
+                        </h4>
+                        <div id="admin-testi-approved" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                            <p class="text-sm text-slate-400 text-center py-2">Memuat data...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -58,9 +138,9 @@
     </div>
 
     <script>
-        // GANTI DENGAN URL WEB APP GAS ANDA
+        // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI BAWAH INI
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec"; 
-        const PIN_ADMIN = "1234"; // Ganti PIN sesuai keinginan Anda
+        const PIN_ADMIN = "1234"; 
 
         function loginAdmin() {
             const pin = document.getElementById('admin-pin').value;
@@ -84,49 +164,87 @@
                 const response = await fetch(GAS_URL + "?action=getAdminData");
                 const data = await response.json();
                 
-                // Render Galeri di Admin
+                // 1. Render Galeri
                 const galeriList = document.getElementById('admin-galeri-list');
                 if (data.galeri && data.galeri.length > 0) {
                     galeriList.innerHTML = data.galeri.map((g, index) => `
-                        <div class="flex justify-between items-center p-3 bg-gray-50 border rounded-lg">
-                            <a href="${g.url}" target="_blank" class="text-sm text-blue-600 truncate max-w-[200px] hover:underline">Lihat Gambar ${index+1}</a>
-                            <button onclick="hapusGaleri(${g.row})" class="text-red-500 hover:bg-red-100 px-2 py-1 rounded text-sm"><i class="fas fa-trash"></i> Hapus</button>
+                        <div class="flex justify-between items-center p-3 sm:p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-blue-300 transition group">
+                            <div class="flex items-center gap-3 overflow-hidden">
+                                <div class="bg-slate-100 text-slate-400 font-bold px-3 py-1.5 rounded-lg text-xs">${index+1}</div>
+                                <a href="${g.url}" target="_blank" class="text-sm font-medium text-blue-600 truncate max-w-[150px] sm:max-w-[250px] hover:underline">${g.url}</a>
+                            </div>
+                            <button onclick="hapusGaleri(${g.row})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition" title="Hapus Gambar">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                         </div>
                     `).join('');
                 } else {
-                    galeriList.innerHTML = '<p class="text-sm text-gray-400 text-center">Galeri kosong.</p>';
+                    galeriList.innerHTML = '<p class="text-sm text-slate-400 text-center py-4">Galeri kosong.</p>';
                 }
 
-                // Render Testimoni di Admin (Hanya yang statusnya "Pending")
-                const testiList = document.getElementById('admin-testi-list');
-                if (data.testimoni && data.testimoni.length > 0) {
-                    testiList.innerHTML = data.testimoni.map(t => `
-                        <div class="p-4 bg-orange-50 border border-orange-200 rounded-xl relative">
-                            <span class="absolute top-2 right-3 text-xs font-bold bg-orange-200 text-orange-800 px-2 py-1 rounded">PENDING</span>
-                            <div class="font-bold text-gray-800">${t.nama} <span class="font-normal text-xs text-gray-500">(${t.instansi})</span></div>
-                            <p class="text-sm mt-2 text-gray-700 italic">"${t.pesan}"</p>
-                            <div class="mt-4 flex gap-2">
-                                <button onclick="approveTestimoni(${t.row})" class="bg-green-500 text-white px-3 py-1.5 rounded text-sm hover:bg-green-600"><i class="fas fa-check"></i> Approve</button>
-                                <button onclick="hapusTestimoni(${t.row})" class="bg-red-500 text-white px-3 py-1.5 rounded text-sm hover:bg-red-600"><i class="fas fa-times"></i> Tolak</button>
+                // 2. Render Testimoni PENDING
+                const testiPendingList = document.getElementById('admin-testi-pending');
+                if (data.testimoniPending && data.testimoniPending.length > 0) {
+                    testiPendingList.innerHTML = data.testimoniPending.map(t => `
+                        <div class="p-4 bg-white border border-orange-200 rounded-xl shadow-sm relative">
+                            <span class="absolute top-3 right-3 text-[10px] font-bold bg-orange-100 text-orange-600 px-2.5 py-1 rounded-md uppercase tracking-wider">Baru</span>
+                            <div class="font-bold text-slate-800 text-base">${t.nama}</div>
+                            <div class="text-xs text-slate-500 mb-2">${t.instansi}</div>
+                            <p class="text-sm text-slate-600 italic bg-slate-50 p-3 rounded-lg border border-slate-100 mb-4 whitespace-pre-line break-words">"${t.pesan}"</p>
+                            <div class="flex gap-2">
+                                <button onclick="approveTestimoni(${t.row})" class="flex-1 bg-green-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-green-600 transition shadow-sm"><i class="fas fa-check mr-1"></i> Terima</button>
+                                <button onclick="hapusTestimoni(${t.row})" class="flex-1 bg-red-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition shadow-sm"><i class="fas fa-times mr-1"></i> Tolak</button>
                             </div>
                         </div>
                     `).join('');
                 } else {
-                    testiList.innerHTML = '<p class="text-sm text-gray-400 text-center">Tidak ada testimoni pending.</p>';
+                    testiPendingList.innerHTML = '<p class="text-sm text-slate-400 text-center py-6 border border-dashed border-slate-300 rounded-xl bg-white"><i class="fas fa-inbox text-2xl mb-2 block text-slate-300"></i>Tidak ada antrean testimoni baru.</p>';
+                }
+
+                // 3. Render Testimoni APPROVED
+                const testiApprovedList = document.getElementById('admin-testi-approved');
+                if (data.testimoniApproved && data.testimoniApproved.length > 0) {
+                    testiApprovedList.innerHTML = data.testimoniApproved.map(t => `
+                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <div class="font-bold text-slate-800 text-base">${t.nama}</div>
+                                    <div class="text-xs text-slate-500">${t.instansi}</div>
+                                </div>
+                                <div class="flex gap-1.5">
+                                    <button onclick="bukaEditModal(${t.row}, '${t.nama.replace(/'/g, "\\'")}', '${t.instansi.replace(/'/g, "\\'")}', '${t.pesan.replace(/'/g, "\\'").replace(/\n/g, '\\n')}')" class="text-blue-500 hover:bg-blue-50 p-2 rounded-lg transition" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="hapusTestimoni(${t.row})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition" title="Hapus Permanen">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg whitespace-pre-line break-words border border-slate-100">"${t.pesan}"</p>
+                        </div>
+                    `).join('');
+                } else {
+                    testiApprovedList.innerHTML = '<p class="text-sm text-slate-400 text-center py-6 border border-dashed border-slate-300 rounded-xl bg-slate-50">Belum ada testimoni yang ditayangkan.</p>';
                 }
 
             } catch (err) {
-                alert("Gagal memuat data dari server.");
+                alert("Koneksi gagal. Pastikan URL Google Apps Script sudah benar.");
             }
         }
 
+        // FUNGSI GALERI
         async function tambahGaleri() {
-            const url = document.getElementById('input-galeri-url').value;
-            if(!url) return alert("URL Gambar tidak boleh kosong!");
+            const urlInput = document.getElementById('input-galeri-url');
+            const btn = document.getElementById('btn-tambah-galeri');
+            if(!urlInput.value) return alert("URL Gambar tidak boleh kosong!");
             
-            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'addGaleri', url: url }) });
-            document.getElementById('input-galeri-url').value = '';
-            loadAdminData(); // Refresh list
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'addGaleri', url: urlInput.value }) });
+            urlInput.value = '';
+            btn.innerHTML = '<i class="fas fa-plus"></i> Tambah';
+            btn.disabled = false;
+            loadAdminData(); 
         }
 
         async function hapusGaleri(rowId) {
@@ -135,14 +253,49 @@
             loadAdminData();
         }
 
+        // FUNGSI TESTIMONI
         async function approveTestimoni(rowId) {
             await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'approveTestimoni', row: rowId }) });
             loadAdminData();
         }
 
         async function hapusTestimoni(rowId) {
-            if(!confirm("Yakin menolak & menghapus testimoni ini?")) return;
+            if(!confirm("Yakin ingin menghapus testimoni ini secara permanen?")) return;
             await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteTestimoni', row: rowId }) });
+            loadAdminData();
+        }
+
+        // MODAL EDIT TESTIMONI
+        function bukaEditModal(row, nama, instansi, pesan) {
+            document.getElementById('edit-row').value = row;
+            document.getElementById('edit-nama').value = nama;
+            document.getElementById('edit-instansi').value = instansi;
+            document.getElementById('edit-pesan').value = pesan;
+            document.getElementById('edit-modal').classList.remove('hidden');
+        }
+
+        function tutupEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+        }
+
+        async function simpanEditTestimoni() {
+            const btn = document.getElementById('btn-simpan-edit');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+            btn.disabled = true;
+
+            const payload = {
+                action: 'editTestimoni',
+                row: document.getElementById('edit-row').value,
+                nama: document.getElementById('edit-nama').value,
+                instansi: document.getElementById('edit-instansi').value,
+                pesan: document.getElementById('edit-pesan').value
+            };
+
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+            
+            btn.innerHTML = '<i class="fas fa-save"></i> Simpan Perubahan';
+            btn.disabled = false;
+            tutupEditModal();
             loadAdminData();
         }
     </script>
