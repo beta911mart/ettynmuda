@@ -352,16 +352,29 @@
 
             if (!userInp || !passInp) return showToast("Username dan Password wajib diisi!", "error");
             
-            btnLogin.disabled = true; spinner.classList.remove('hidden');
+            btnLogin.disabled = true; 
+            spinner.classList.remove('hidden');
             
-            // Simulasi Login
-            setTimeout(() => {
-                currentUser = { username: userInp, password: passInp, koin: userInp === 'admin' ? 100 : 5 };
-                suksesLogin();
-                btnLogin.disabled = false; spinner.classList.add('hidden');
-            }, 1000);
+            try {
+                const response = await fetch(GAS_WEBAPP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'login', username: userInp, password: passInp })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentUser = { username: userInp, password: passInp, koin: data.koin };
+                    suksesLogin();
+                } else {
+                    showToast(data.message, "error");
+                }
+            } catch (err) {
+                showToast("Gagal terhubung ke server backend.", "error");
+            } finally {
+                btnLogin.disabled = false; 
+                spinner.classList.add('hidden');
+            }
         }
-
         function suksesLogin() {
             isLoggedin = true;
             hideLoginModal();
@@ -411,10 +424,10 @@
 
         async function mintaKeServerGAS() {
             const judul = document.getElementById('ai-topik').value;
-            const penulis = document.getElementById('ai-penulis').value || "[Nama Penulis]";
-            const nim = document.getElementById('ai-nim').value || "[NIM/NIS]";
-            const institusi = document.getElementById('ai-institusi').value || "[Nama Institusi]";
-            const kota = document.getElementById('ai-kota').value || "[Kota, Tahun]";
+            const penulis = document.getElementById('ai-penulis').value || "Mahasiswa";
+            const nim = document.getElementById('ai-nim').value || "-";
+            const institusi = document.getElementById('ai-institusi').value || "Institusi Pendidikan";
+            const kota = document.getElementById('ai-kota').value || "Indonesia, 2026";
 
             if (!judul) return showToast('Topik / Judul makalah wajib diisi!', 'error');
 
@@ -427,122 +440,47 @@
             btnSpinner.classList.remove('hidden');
             btn.classList.replace('bg-white', 'bg-emerald-50');
 
-            // Simulasi Respon Generator Makalah
-            setTimeout(() => {
-                document.getElementById('ai-empty-state').classList.add('hidden');
-                document.getElementById('ai-result-container').classList.remove('hidden');
-                
-                let htmlMakalah = `
-                    <!-- 1. Bagian Awal -->
-                    <div class="makalah-cover">
-                        <h1>MAKALAH<br>${judul}</h1>
-                        <div class="logo-placeholder">LOGO<br>INSTITUSI</div>
-                        <div class="author-info">
-                            <p class="mb-2">Disusun Oleh:</p>
-                            <p class="font-bold uppercase">${penulis}</p>
-                            <p>${nim}</p>
-                        </div>
-                        <div class="inst-info">
-                            <p>${institusi}</p>
-                            <p>${kota}</p>
-                        </div>
-                    </div>
+            try {
+                const response = await fetch(GAS_WEBAPP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ 
+                        action: 'generateMakalah', 
+                        username: currentUser.username, 
+                        password: currentUser.password, 
+                        promptData: { judul, penulis, nim, institusi, kota } 
+                    })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('ai-empty-state').classList.add('hidden');
+                    document.getElementById('ai-result-container').classList.remove('hidden');
                     
-                    <div class="page-break"></div>
+                    // Memasukkan hasil HTML asli dari Gemini ke dalam container
+                    document.getElementById('ai-result-content').innerHTML = data.htmlData;
                     
-                    <h2>KATA PENGANTAR</h2>
-                    <p>Puji syukur kami panjatkan kehadirat Tuhan Yang Maha Esa karena atas limpahan rahmat dan karunia-Nya, kami dapat menyelesaikan makalah yang berjudul "${judul}" ini dengan baik dan tepat waktu.</p>
-                    <p>Makalah ini disusun untuk memenuhi tugas akademik dan diharapkan dapat memberikan wawasan baru terkait topik yang dibahas. Kami menyadari bahwa penyusunan makalah ini tidak lepas dari bantuan berbagai pihak, oleh karena itu kami mengucapkan terima kasih kepada semua pihak yang telah mendukung proses penyusunan.</p>
-                    <p>Kami menyadari bahwa makalah ini masih jauh dari kata sempurna. Oleh karena itu, kritik dan saran yang membangun sangat kami harapkan untuk perbaikan di masa mendatang.</p>
-                    <p class="text-right mt-8 no-indent">Penyusun</p>
-
-                    <div class="page-break"></div>
-
-                    <h2>DAFTAR ISI</h2>
-                    <div class="no-indent" style="line-height: 2;">
-                        <b>KATA PENGANTAR</b> ....................................................................................... i<br>
-                        <b>DAFTAR ISI</b> .................................................................................................... ii<br>
-                        <b>BAB I PENDAHULUAN</b><br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;1.1 Latar Belakang ..................................................................................... 1<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;1.2 Rumusan Masalah ................................................................................ 2<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;1.3 Tujuan Penulisan ................................................................................. 2<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;1.4 Manfaat Penulisan ............................................................................... 3<br>
-                        <b>BAB II PEMBAHASAN</b><br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;2.1 Landasan Teori .................................................................................... 4<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;2.2 Uraian Materi / Pembahasan ............................................................... 6<br>
-                        <b>BAB III PENUTUP</b><br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;3.1 Kesimpulan .......................................................................................... 10<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;3.2 Saran .................................................................................................... 11<br>
-                        <b>DAFTAR PUSTAKA</b> ......................................................................................... 12
-                    </div>
-
-                    <!-- 2. Bagian Inti -->
-                    <div class="page-break"></div>
-                    <h2>BAB I<br>PENDAHULUAN</h2>
-                    <h3>1.1 Latar Belakang</h3>
-                    <p>Dalam era perkembangan zaman yang pesat, isu mengenai ${judul.toLowerCase()} menjadi salah satu topik krusial yang perlu dikaji lebih dalam. Berbagai fenomena yang terjadi di masyarakat menunjukkan bahwa pemahaman yang komprehensif mengenai hal ini sangat dibutuhkan. Melalui penulisan makalah ini, diharapkan dapat terurai akar masalah serta dinamika yang terjadi di lapangan.</p>
+                    // Update koin user
+                    currentUser.koin = data.sisaKoin;
+                    document.getElementById('saldo-koin').innerText = currentUser.koin;
+                    showToast(data.message, 'success');
                     
-                    <h3>1.2 Rumusan Masalah</h3>
-                    <ol>
-                        <li>Bagaimana konsep dasar dan definisi dari isu yang diangkat?</li>
-                        <li>Faktor-faktor apa saja yang mempengaruhi fenomena tersebut?</li>
-                        <li>Bagaimana implikasi dan solusi yang dapat ditawarkan?</li>
-                    </ol>
-
-                    <h3>1.3 Tujuan Penulisan</h3>
-                    <ol>
-                        <li>Mengetahui konsep dan landasan teori terkait topik kajian.</li>
-                        <li>Menganalisis faktor-faktor penyebab dan dampak yang ditimbulkan.</li>
-                        <li>Memberikan pandangan dan solusi alternatif terhadap permasalahan yang diangkat.</li>
-                    </ol>
-
-                    <h3>1.4 Manfaat Penulisan</h3>
-                    <p>Makalah ini diharapkan dapat memberikan manfaat secara teoretis sebagai tambahan literatur akademik, serta manfaat praktis bagi pembaca dan instansi terkait dalam merumuskan kebijakan atau tindakan preventif.</p>
-
-                    <div class="page-break"></div>
-                    <h2>BAB II<br>PEMBAHASAN</h2>
-                    <h3>2.1 Landasan Teori</h3>
-                    <p>Secara konseptual, kajian tentang materi ini bersandar pada berbagai literatur yang menyatakan bahwa perubahan lingkungan atau sosial berbanding lurus dengan adaptasi sistem. Teori-teori pendukung mengemukakan bahwa setiap entitas harus memiliki resiliensi untuk menghadapi tantangan. Dalam konteks makalah ini, teori struktural-fungsional dapat menjadi pisau analisis yang relevan.</p>
-
-                    <h3>2.2 Uraian Materi / Hasil Pembahasan</h3>
-                    <p>Berdasarkan rumusan masalah yang telah dipaparkan, pembahasan utama difokuskan pada analisis data dan studi literatur yang telah dikumpulkan. Kajian menunjukkan bahwa implementasi dari teori seringkali terbentur oleh kendala teknis dan sosiologis di lapangan.</p>
-                    <p>Oleh karena itu, diperlukan sinergi antar pihak (stakeholders) untuk memitigasi dampak negatif. Berbagai contoh kasus menunjukkan bahwa wilayah atau kelompok yang memiliki regulasi yang adaptif cenderung lebih berhasil mengatasi masalah terkait ${judul.toLowerCase()}.</p>
-
-                    <div class="page-break"></div>
-                    <h2>BAB III<br>PENUTUP</h2>
-                    <h3>3.1 Kesimpulan</h3>
-                    <p>Berdasarkan pembahasan pada bab sebelumnya, dapat disimpulkan bahwa permasalahan mengenai kajian ini berakar pada kurangnya integrasi sistemik dan pemahaman konsep dasar oleh para pelaku di lapangan. Upaya perbaikan harus dimulai dari penguatan regulasi dan edukasi berkelanjutan. Tidak ada data baru yang ditambahkan pada bagian ini, melainkan penegasan kembali dari intisari analisis Bab II.</p>
-
-                    <h3>3.2 Saran</h3>
-                    <p>Diperlukan adanya kajian lanjutan yang lebih komprehensif dengan pendekatan data empiris secara langsung di lapangan. Selain itu, pemerintah atau institusi terkait disarankan untuk merumuskan pedoman operasional standar yang aplikatif bagi masyarakat.</p>
-
-                    <!-- 3. Bagian Akhir -->
-                    <div class="page-break"></div>
-                    <h2>DAFTAR PUSTAKA</h2>
-                    <ul style="list-style-type: none; margin-left: 0;" class="no-indent">
-                        <li style="padding-left: 2rem; text-indent: -2rem; margin-bottom: 0.5rem;">Arikunto, S. (2020). <i>Prosedur Penelitian: Suatu Pendekatan Praktik</i>. Jakarta: Rineka Cipta.</li>
-                        <li style="padding-left: 2rem; text-indent: -2rem; margin-bottom: 0.5rem;">Moleong, L. J. (2017). <i>Metodologi Penelitian Kualitatif</i>. Bandung: PT Remaja Rosdakarya.</li>
-                        <li style="padding-left: 2rem; text-indent: -2rem; margin-bottom: 0.5rem;">Sugiyono. (2019). <i>Metode Penelitian Kuantitatif, Kualitatif, dan R&D</i>. Bandung: Alfabeta.</li>
-                    </ul>
-                `;
-                
-                document.getElementById('ai-result-content').innerHTML = htmlMakalah;
-                
-                currentUser.koin -= 1; 
-                document.getElementById('saldo-koin').innerText = currentUser.koin; 
-                cekStatusKoin();
+                    // Auto-scroll ke hasil
+                    setTimeout(() => {
+                        document.querySelector('main').scrollTo({ top: document.getElementById('ai-result-container').offsetTop - 20, behavior: 'smooth' });
+                    }, 300);
+                } else {
+                    showToast(`Error: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showToast("Gagal terhubung ke Server AI. Periksa koneksi internet.", 'error');
+            } finally {
+                cekStatusKoin(); 
                 btn.disabled = false; 
-                btnSpinner.classList.add('hidden'); 
+                btnSpinner.classList.add('hidden');
                 btn.classList.replace('bg-emerald-50', 'bg-white');
-
-                showToast("Makalah berhasil di-generate secara otomatis!", 'success');
-                setTimeout(() => {
-                    document.querySelector('main').scrollTo({ top: document.getElementById('ai-result-container').offsetTop - 20, behavior: 'smooth' });
-                }, 300);
-
-            }, 2500); // Simulasi delay API AI
+            }
         }
-
+        
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.add('hidden');
