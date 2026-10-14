@@ -52,7 +52,17 @@
         }
     </script>
     <style>
-        body { background-color: #FAF3E0; color: #4A3B32; }
+        /* 
+           Latar Belakang Edukasi: Buku, Pena, Rumus Math, Bentuk Ruang.
+           Menggunakan SVG Base64 agar cepat diload tanpa file eksternal 
+        */
+        body { 
+            background-color: #FAF3E0; 
+            color: #4A3B32; 
+            background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='%234A3B32' stroke-width='2' opacity='0.05'%3E%3C!-- Buku --%3E%3Cpath d='M50 60 h50 v60 h-50 z' /%3E%3Cpath d='M50 60 l-15 -15 h50 l15 15' /%3E%3Cpath d='M100 60 l-15 -15 v60 l15 15' /%3E%3Cpath d='M55 75 h35 M55 90 h35 M55 105 h35' /%3E%3C!-- Pena/Pensil --%3E%3Cpath d='M300 70 l25 -25 l15 15 l-25 25 z' /%3E%3Cpath d='M300 70 l-35 35 l15 15 l35 -35' /%3E%3Cpath d='M265 105 l-12 18 l18 -12' /%3E%3C!-- Rumus --%3E%3Ctext x='160' y='80' font-family='Georgia, serif' font-size='28' font-style='italic' fill='%234A3B32' stroke='none'%3EE=mc²%3C/text%3E%3Ctext x='60' y='240' font-family='Georgia, serif' font-size='36' fill='%234A3B32' stroke='none'%3Eπ%3C/text%3E%3Ctext x='290' y='280' font-family='Georgia, serif' font-size='28' fill='%234A3B32' stroke='none'%3E∫ x dx%3C/text%3E%3Ctext x='160' y='330' font-family='Georgia, serif' font-size='26' fill='%234A3B32' stroke='none'%3E√a²+b²%3C/text%3E%3C!-- Bentuk Ruang Kubus --%3E%3Crect x='170' y='210' width='60' height='60' /%3E%3Cpath d='M170 210 l20 -20 h60 l-20 20' /%3E%3Cpath d='M230 210 l20 -20 v60 l-20 20' /%3E%3C!-- Segitiga Penggaris --%3E%3Cpath d='M80 300 v60 h60 z' /%3E%3Ccircle cx='95' cy='340' r='4' fill='%234A3B32' /%3E%3Ccircle cx='115' cy='340' r='4' fill='%234A3B32' /%3E%3C!-- Bola / Atom --%3E%3Ccircle cx='330' cy='160' r='35' /%3E%3Cellipse cx='330' cy='160' rx='35' ry='12' transform='rotate(45 330 160)' /%3E%3Cellipse cx='330' cy='160' rx='35' ry='12' transform='rotate(-45 330 160)' /%3E%3Ccircle cx='330' cy='160' r='5' fill='%234A3B32' /%3E%3C/g%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-attachment: fixed; /* Latar belakang tetap diam saat di-scroll */
+        }
         .bg-pink-custom { background-color: #F4C2C2; }
         .text-pink-custom { color: #D77A7A; }
         
@@ -70,7 +80,7 @@
 <body class="antialiased" onload="loadPublicData()">
 
     <!-- Navbar -->
-    <nav class="fixed w-full bg-krem/90 backdrop-blur-sm z-50 border-b border-pinkmuda">
+    <nav class="fixed w-full bg-krem/90 backdrop-blur-md z-50 border-b border-pinkmuda shadow-sm">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex-shrink-0 font-bold text-xl text-textgelap">
@@ -110,7 +120,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="pt-32 pb-16 px-4 text-center max-w-4xl mx-auto">
+    <section class="pt-32 pb-16 px-4 text-center max-w-4xl mx-auto relative z-10">
         <div class="relative w-full mx-auto mb-10 mt-4">
             <img src="profile.jpg" alt="Banner Teman Akademik Etyn" class="profile-glow w-full h-auto rounded-3xl mx-auto transition-transform duration-500 hover:scale-[1.02]">
             
@@ -118,8 +128,8 @@
                 <span class="font-bold text-sm text-orange-600">👋 Hai, Saya Etyn!</span>
             </div>
         </div>
-        <h1 class="text-3xl md:text-5xl font-bold mb-4 mt-2">Solusi Tugas & Karya Ilmiahmu</h1>
-        <p class="text-lg mb-8 opacity-80">Membantu mempercepat dan merapikan pekerjaan akademik Anda dengan hasil yang memuaskan.</p>
+        <h1 class="text-3xl md:text-5xl font-bold mb-4 mt-2 drop-shadow-sm">Solusi Tugas & Karya Ilmiahmu</h1>
+        <p class="text-lg mb-8 opacity-90 font-medium">Membantu mempercepat dan merapikan pekerjaan akademik Anda dengan hasil yang memuaskan.</p>
         
         <!-- Social Media Pills -->
         <div class="flex justify-center gap-4 mb-10">
@@ -136,54 +146,54 @@
     </section>
 
     <!-- Layanan Section -->
-    <section id="layanan" class="py-16 bg-white/50 px-4">
+    <section id="layanan" class="py-16 bg-white/70 backdrop-blur-sm px-4">
         <div class="max-w-5xl mx-auto">
-            <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-8">
+            <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-8 shadow-sm">
                 <h2 class="text-2xl font-bold text-textgelap">Layanan Utama Kami</h2>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
                     <i class="fas fa-file-alt text-3xl text-pink-custom mb-4"></i>
                     <h3 class="font-bold text-lg mb-2">Proposal Skripsi</h3>
                     <p class="text-sm opacity-80">Pengetikan, editing format, hingga konsultasi struktur.</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
                     <i class="fas fa-file-powerpoint text-3xl text-pink-custom mb-4"></i>
                     <h3 class="font-bold text-lg mb-2">Makalah & PPT</h3>
                     <p class="text-sm opacity-80">Pembuatan PPT desain profesional dan penyuntingan makalah.</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
                     <i class="fas fa-keyboard text-3xl text-pink-custom mb-4"></i>
                     <h3 class="font-bold text-lg mb-2">Jasa Ketik & Edit</h3>
                     <p class="text-sm opacity-80">Ketik dari foto, scan, tulisan tangan, serta merapikan layout.</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
                     <i class="fas fa-book-open text-3xl text-pink-custom mb-4"></i>
                     <h3 class="font-bold text-lg mb-2">Artikel (Jurnal, dll)</h3>
                     <p class="text-sm opacity-80">Format artikel sesuai template jurnal dan proofreading.</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
                     <i class="fas fa-school text-3xl text-pink-custom mb-4"></i>
                     <h3 class="font-bold text-lg mb-2">Tugas Kuliah & Sekolah</h3>
                     <p class="text-sm opacity-80">Review jurnal, resume, analisis, dan input data Excel.</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
                     <i class="fas fa-highlighter text-3xl text-pink-custom mb-4"></i>
                     <h3 class="font-bold text-lg mb-2">Rangkuman Materi</h3>
                     <p class="text-sm opacity-80">Rangkuman terstruktur, bab buku, hingga mind map.</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
                     <i class="fas fa-chalkboard-teacher text-3xl text-pink-custom mb-4"></i>
                     <h3 class="font-bold text-lg mb-2">Modul Ajar</h3>
                     <p class="text-sm opacity-80">Pembuatan dan format modul ajar lengkap dengan LKPD.</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
                     <i class="fas fa-search text-3xl text-pink-custom mb-4"></i>
                     <h3 class="font-bold text-lg mb-2">Cek Plagiasi</h3>
                     <p class="text-sm opacity-80">Cek similarity untuk file pendek/panjang beserta laporan.</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
                     <i class="fas fa-sync-alt text-3xl text-pink-custom mb-4"></i>
                     <h3 class="font-bold text-lg mb-2">Parafrase Sistematis</h3>
                     <p class="text-sm opacity-80">Penyuntingan paragraf dan revisi berdasarkan laporan similarity.</p>
@@ -193,17 +203,17 @@
     </section>
 
     <!-- Daftar Harga Layanan Tabel -->
-    <section id="tarif" class="py-16 px-4">
+    <section id="tarif" class="py-16 px-4 relative z-10">
         <div class="max-w-5xl mx-auto">
-            <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-8">
+            <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-8 shadow-sm">
                 <h2 class="text-2xl font-bold text-textgelap">Daftar Harga Layanan</h2>
             </div>
             
-            <div class="bg-white rounded-2xl shadow-sm border border-pinkmuda overflow-hidden">
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-sm border border-pinkmuda overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-pinkmuda/40 text-textgelap">
+                            <tr class="bg-pinkmuda/60 text-textgelap">
                                 <th class="py-4 px-6 font-bold whitespace-nowrap">Jenis Layanan</th>
                                 <th class="py-4 px-6 font-bold text-right whitespace-nowrap">Harga</th>
                             </tr>
@@ -211,10 +221,10 @@
                         <tbody class="text-sm md:text-base">
                             
                             <!-- 1. Skripsi -->
-                            <tr class="bg-krem/30 border-y border-pinkmuda/30">
+                            <tr class="bg-krem/60 border-y border-pinkmuda/30">
                                 <td colspan="2" class="py-3 px-6 font-bold text-pastelPink-dark">1. Skripsi</td>
                             </tr>
-                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/10 transition">
+                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/20 transition">
                                 <td class="py-4 px-6 opacity-80">Pengerjaan dari 0 (ada judul) sampai ACC</td>
                                 <td class="py-4 px-6 font-bold text-right text-textgelap">
                                     Start Rp2.500.000 <span class="inline-block bg-red-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ml-1 align-middle">PROMO</span><br>
@@ -223,22 +233,22 @@
                             </tr>
                             
                             <!-- 2. Proposal dan Hasil -->
-                            <tr class="bg-krem/30 border-y border-pinkmuda/30">
+                            <tr class="bg-krem/60 border-y border-pinkmuda/30">
                                 <td colspan="2" class="py-3 px-6 font-bold text-pastelPink-dark">2. Proposal dan Hasil</td>
                             </tr>
-                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/10 transition">
+                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/20 transition">
                                 <td class="py-4 px-6 opacity-80">Pengerjaan dari 0 (ada judul) tanpa revisi</td>
                                 <td class="py-4 px-6 font-bold text-right text-textgelap whitespace-nowrap">
                                     Rp600.000 <span class="inline-block bg-red-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ml-1 align-middle">PROMO</span>
                                 </td>
                             </tr>
-                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/10 transition">
+                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/20 transition">
                                 <td class="py-4 px-6 opacity-80">Pengerjaan dari 0 (ada judul) revisi 2 kali</td>
                                 <td class="py-4 px-6 font-bold text-right text-textgelap whitespace-nowrap">
                                     Rp800.000 <span class="inline-block bg-red-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ml-1 align-middle">PROMO</span>
                                 </td>
                             </tr>
-                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/10 transition">
+                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/20 transition">
                                 <td class="py-4 px-6 opacity-80">Pengerjaan fix ACC</td>
                                 <td class="py-4 px-6 font-bold text-right text-textgelap whitespace-nowrap">
                                     Rp1.000.000 <span class="inline-block bg-red-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ml-1 align-middle">PROMO</span>
@@ -246,17 +256,17 @@
                             </tr>
 
                             <!-- 3. Makalah dan PPT -->
-                            <tr class="bg-krem/30 border-y border-pinkmuda/30">
+                            <tr class="bg-krem/60 border-y border-pinkmuda/30">
                                 <td colspan="2" class="py-3 px-6 font-bold text-pastelPink-dark">3. Makalah dan PPT</td>
                             </tr>
-                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/10 transition">
+                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/20 transition">
                                 <td class="py-4 px-6 opacity-80">Makalah</td>
                                 <td class="py-4 px-6 font-bold text-right text-textgelap">
                                     Start Rp50.000/file <span class="inline-block bg-red-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ml-1 align-middle">PROMO</span><br>
                                     <span class="text-xs font-normal opacity-70">(Sesuai tingkat kesulitan)</span>
                                 </td>
                             </tr>
-                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/10 transition">
+                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/20 transition">
                                 <td class="py-4 px-6 opacity-80">PPT</td>
                                 <td class="py-4 px-6 font-bold text-right text-textgelap">
                                     Start Rp20.000/file <span class="inline-block bg-red-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ml-1 align-middle">PROMO</span><br>
@@ -265,16 +275,16 @@
                             </tr>
 
                             <!-- 4. Cek Plagiasi dan Parafrase -->
-                            <tr class="bg-krem/30 border-y border-pinkmuda/30">
+                            <tr class="bg-krem/60 border-y border-pinkmuda/30">
                                 <td colspan="2" class="py-3 px-6 font-bold text-pastelPink-dark">4. Cek Plagiasi Sistem dan Parafrase</td>
                             </tr>
-                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/10 transition">
+                            <tr class="border-b border-gray-100 hover:bg-pinkmuda/20 transition">
                                 <td class="py-4 px-6 opacity-80">Cek plagiasi</td>
                                 <td class="py-4 px-6 font-bold text-right text-textgelap whitespace-nowrap">
                                     Rp15.000/file <span class="inline-block bg-red-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ml-1 align-middle">PROMO</span>
                                 </td>
                             </tr>
-                            <tr class="hover:bg-pinkmuda/10 transition">
+                            <tr class="hover:bg-pinkmuda/20 transition">
                                 <td class="py-4 px-6 opacity-80">Parafrase sistem</td>
                                 <td class="py-4 px-6 font-bold text-right text-textgelap whitespace-nowrap">
                                     Rp55.000/80 hal <span class="inline-block bg-red-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ml-1 align-middle">PROMO</span>
@@ -292,7 +302,7 @@
     <section id="spesial" class="py-16 px-6 max-w-5xl mx-auto space-y-8">
         
         <!-- Kontainer Spesial 1: Les Online Microsoft Dasar -->
-        <div class="bg-white/90 backdrop-blur p-8 rounded-3xl shadow-xl flex flex-wrap justify-center md:justify-between items-center gap-6 md:rotate-[-1deg] transform hover:rotate-0 transition-transform border border-white relative z-10 w-full">
+        <div class="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl flex flex-wrap justify-center md:justify-between items-center gap-6 md:rotate-[-1deg] transform hover:rotate-0 transition-transform border border-white relative z-10 w-full">
             <div class="text-center md:text-left flex-1 min-w-[280px] max-w-md">
                 <div class="inline-block bg-pinkmuda/40 px-5 py-2 rounded-full text-sm font-bold text-pastelPink-dark mb-4 shadow-sm border border-pinkmuda">
                     ✨ Layanan Spesial!
@@ -310,7 +320,7 @@
         </div>
 
         <!-- Kontainer Spesial 3: Jasa Pembuatan Website -->
-        <div class="bg-white/90 backdrop-blur p-8 rounded-3xl shadow-xl flex flex-wrap justify-center md:justify-between items-center gap-6 md:rotate-[-1deg] transform hover:rotate-0 transition-transform border border-white relative z-10 w-full">
+        <div class="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl flex flex-wrap justify-center md:justify-between items-center gap-6 md:rotate-[-1deg] transform hover:rotate-0 transition-transform border border-white relative z-10 w-full">
             <div class="text-center md:text-left flex-1 min-w-[280px] max-w-md">
                 <div class="inline-block bg-pinkmuda/40 px-5 py-2 rounded-full text-sm font-bold text-pastelPink-dark mb-4 shadow-sm border border-pinkmuda">
                     ✨ Layanan Spesial Web!
@@ -332,16 +342,16 @@
     </section>
 
     <!-- Paket Harga Promosi Section -->
-    <section id="promosi" class="py-16 px-4 bg-white/50">
+    <section id="promosi" class="py-16 px-4 bg-white/70 backdrop-blur-sm">
         <div class="max-w-5xl mx-auto">
-            <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-8">
+            <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-8 shadow-sm">
                 <h2 class="text-2xl font-bold text-textgelap">Paket Teman AKRAB Akedemik</h2>
             </div>
 
             <!-- Pricing Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Paket Pelajar -->
-                <div class="bg-white rounded-3xl p-8 shadow-md border-t-8 border-green-400 relative hover:shadow-lg transition">
+                <div class="bg-white/95 rounded-3xl p-8 shadow-md border-t-8 border-green-400 relative hover:shadow-lg transition">
                     <h3 class="text-xl font-bold mb-2">Paket Pelajar</h3>
                     <div class="text-3xl font-bold mb-4">Rp25.000</div>
                     <ul class="space-y-3 mb-8 text-sm opacity-90">
@@ -352,7 +362,7 @@
                     </ul>
                 </div>
                 <!-- Paket Mahasiswa -->
-                <div class="bg-white rounded-3xl p-8 shadow-lg border-t-8 border-pink-custom transform md:-translate-y-4 relative hover:shadow-xl transition">
+                <div class="bg-white/95 rounded-3xl p-8 shadow-lg border-t-8 border-pink-custom transform md:-translate-y-4 relative hover:shadow-xl transition">
                     <div class="absolute top-0 right-0 bg-pink-custom text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl">TERLARIS</div>
                     <h3 class="text-xl font-bold mb-2">Paket Mahasiswa</h3>
                     <div class="text-3xl font-bold mb-4">Rp75.000</div>
@@ -364,7 +374,7 @@
                     </ul>
                 </div>
                 <!-- Paket Dokumen -->
-                <div class="bg-white rounded-3xl p-8 shadow-md border-t-8 border-blue-400 relative hover:shadow-lg transition">
+                <div class="bg-white/95 rounded-3xl p-8 shadow-md border-t-8 border-blue-400 relative hover:shadow-lg transition">
                     <h3 class="text-xl font-bold mb-2">Paket Dokumen</h3>
                     <div class="text-3xl font-bold mb-4">Rp150.000</div>
                     <ul class="space-y-3 mb-8 text-sm opacity-90">
@@ -379,46 +389,46 @@
     </section>
 
     <!-- Syarat Ketentuan Section -->
-    <section id="syarat" class="py-16 px-4">
+    <section id="syarat" class="py-16 px-4 relative z-10">
         <div class="max-w-5xl mx-auto">
-            <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-8">
+            <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-8 shadow-sm">
                 <h2 class="text-2xl font-bold text-textgelap">Syarat dan Ketentuan Layanan</h2>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white p-5 rounded-xl shadow-sm">
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
                     <div class="font-bold text-pink-custom mb-2">1. Pemesanan</div>
                     <p class="text-sm opacity-80">Jelaskan layanan, jumlah hal, format, dan tenggat waktu. Pengerjaan dimulai setelah pesanan dikonfirmasi.</p>
                 </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm">
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
                     <div class="font-bold text-pink-custom mb-2">2. Pembayaran</div>
                     <p class="text-sm opacity-80">&lt;Rp50k penuh di awal. Rp50k-Rp200k DP 50%. &gt;Rp200k DP 30-50%. Pelunasan sebelum file final (tanpa watermark) diserahkan.</p>
                 </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm">
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
                     <div class="font-bold text-pink-custom mb-2">3. Waktu Pengerjaan</div>
                     <p class="text-sm opacity-80">Dihitung setelah bahan lengkap. Pesanan normal ikut antrean, kilat dikenakan tambahan 25-50%.</p>
                 </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm">
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
                     <div class="font-bold text-pink-custom mb-2">4. Revisi</div>
                     <p class="text-sm opacity-80">1x revisi minor (salah ketik/format). Tambah bab/halaman ada biaya tambahan. Revisi max 3 hari setelah hasil dikirim.</p>
                 </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm">
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
                     <div class="font-bold text-pink-custom mb-2">5. Tanggung Jawab</div>
                     <p class="text-sm opacity-80">Pelanggan bertanggung jawab atas kebenaran data & sumber. Kesalahan pengerjaan dari kami diperbaiki gratis.</p>
                 </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm">
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
                     <div class="font-bold text-pink-custom mb-2">6. Etika Akademik</div>
                     <p class="text-sm opacity-80">Tidak melayani pemalsuan data atau referensi fiktif. Tidak menjamin nilai atau kelulusan.</p>
                 </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm">
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
                     <div class="font-bold text-pink-custom mb-2">7. Kerahasiaan</div>
                     <p class="text-sm opacity-80">Dokumen dijaga kerahasiaannya, tidak dipublikasikan tanpa izin, dan dihapus sesuai kebijakan.</p>
                 </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm">
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
                     <div class="font-bold text-pink-custom mb-2">8. Pembatalan</div>
                     <p class="text-sm opacity-80">Setelah pengerjaan dimulai, dana tidak otomatis dikembalikan. Penyelesaian dilakukan transparan.</p>
                 </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm">
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
                     <div class="font-bold text-pink-custom mb-2">9. Persetujuan</div>
                     <p class="text-sm opacity-80">Dengan mengonfirmasi pesanan, pelanggan dianggap telah membaca dan menyetujui semua ketentuan.</p>
                 </div>
@@ -427,13 +437,13 @@
     </section>
 
     <!-- GALERI SLIDER (Efek Kartu Slide) -->
-    <section id="galeri" class="py-16 px-4 bg-white/30 border-t border-pinkmuda/30">
+    <section id="galeri" class="py-16 px-4 bg-white/40 backdrop-blur-sm border-t border-pinkmuda/30">
         <div class="max-w-6xl mx-auto relative">
             <div class="text-center mb-10">
-                <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-4">
+                <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-4 shadow-sm">
                     <h2 class="text-2xl font-bold text-textgelap">Galeri & Portofolio</h2>
                 </div>
-                <p class="text-brown opacity-80 text-sm">Geser untuk melihat beberapa cuplikan hasil karya dan layanan kami.</p>
+                <p class="text-brown opacity-80 text-sm font-medium">Geser untuk melihat beberapa cuplikan hasil karya dan layanan kami.</p>
             </div>
             
             <!-- Tombol Navigasi Slider Kiri -->
@@ -457,13 +467,13 @@
     </section>
 
     <!-- TESTIMONI KLIEN -->
-    <section id="testimoni" class="py-16 bg-white/50 px-4 border-t border-pinkmuda/30">
+    <section id="testimoni" class="py-16 bg-white/70 backdrop-blur-sm px-4 border-t border-pinkmuda/30">
         <div class="max-w-5xl mx-auto">
             <div class="text-center mb-10">
-                <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-4">
+                <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-4 shadow-sm">
                     <h2 class="text-2xl font-bold text-textgelap">Testimoni Klien</h2>
                 </div>
-                <p class="text-brown opacity-80 text-sm">Apa kata mereka yang telah menggunakan jasa Teman Akademik?</p>
+                <p class="text-brown opacity-80 text-sm font-medium">Apa kata mereka yang telah menggunakan jasa Teman Akademik?</p>
             </div>
             
             <!-- List Testimoni Approved -->
@@ -474,7 +484,7 @@
             </div>
 
             <!-- Form Submit Testimoni Baru -->
-            <div class="bg-white p-8 rounded-3xl shadow-lg border border-pinkmuda max-w-2xl mx-auto relative overflow-hidden">
+            <div class="bg-white/95 p-8 rounded-3xl shadow-lg border border-pinkmuda max-w-2xl mx-auto relative overflow-hidden backdrop-blur-md">
                 <!-- Dekorasi Background -->
                 <div class="absolute top-0 right-0 w-32 h-32 bg-pinkmuda opacity-20 rounded-bl-full pointer-events-none"></div>
                 
@@ -485,16 +495,16 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                             <label class="block text-sm font-semibold mb-1 text-brown-dark">Nama / Panggilan</label>
-                            <input type="text" id="testi-nama" required class="w-full px-4 py-3 rounded-xl border border-pinkmuda/50 focus:outline-none focus:ring-2 focus:ring-pastelPink-dark bg-krem/30 shadow-inner placeholder-gray-400" placeholder="Misal: Andi">
+                            <input type="text" id="testi-nama" required class="w-full px-4 py-3 rounded-xl border border-pinkmuda/50 focus:outline-none focus:ring-2 focus:ring-pastelPink-dark bg-krem/50 shadow-inner placeholder-gray-400" placeholder="Misal: Andi">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold mb-1 text-brown-dark">Asal Kampus / Instansi</label>
-                            <input type="text" id="testi-instansi" required class="w-full px-4 py-3 rounded-xl border border-pinkmuda/50 focus:outline-none focus:ring-2 focus:ring-pastelPink-dark bg-krem/30 shadow-inner placeholder-gray-400" placeholder="Misal: Univ. Nusa Cendana">
+                            <input type="text" id="testi-instansi" required class="w-full px-4 py-3 rounded-xl border border-pinkmuda/50 focus:outline-none focus:ring-2 focus:ring-pastelPink-dark bg-krem/50 shadow-inner placeholder-gray-400" placeholder="Misal: Univ. Nusa Cendana">
                         </div>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold mb-1 text-brown-dark">Pesan Testimoni</label>
-                        <textarea id="testi-pesan" rows="4" required class="w-full px-4 py-3 rounded-xl border border-pinkmuda/50 focus:outline-none focus:ring-2 focus:ring-pastelPink-dark bg-krem/30 shadow-inner placeholder-gray-400" placeholder="Ketik ulasan Anda di sini..."></textarea>
+                        <textarea id="testi-pesan" rows="4" required class="w-full px-4 py-3 rounded-xl border border-pinkmuda/50 focus:outline-none focus:ring-2 focus:ring-pastelPink-dark bg-krem/50 shadow-inner placeholder-gray-400" placeholder="Ketik ulasan Anda di sini..."></textarea>
                     </div>
                     <button type="submit" id="btn-kirim-testi" class="w-full bg-pastelPink-dark text-white font-bold py-3.5 rounded-xl hover:bg-brown-dark transition-all shadow-md hover:shadow-lg flex justify-center items-center gap-2">
                         <i class="fas fa-paper-plane"></i> <span>Kirim Testimoni</span>
@@ -510,7 +520,7 @@
     </section>
 
     <!-- Footer -->
-    <footer id="kontak" class="bg-textgelap text-white py-12 mt-4">
+    <footer id="kontak" class="bg-textgelap text-white py-12 mt-4 relative z-20">
         <div class="max-w-5xl mx-auto px-4 text-center">
             <h3 class="text-2xl font-bold mb-6">Hubungi Saya untuk Konsultasi</h3>
             <div class="flex justify-center gap-6 mb-8 text-2xl">
@@ -580,7 +590,7 @@
                 if (data.testimoni && data.testimoni.length > 0) {
                     testiContainer.innerHTML = data.testimoni.map(t => `
                         <!-- Kartu Testimoni -->
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-pinkmuda/50 hover:shadow-md transition relative transform hover:-translate-y-1">
+                        <div class="bg-white/95 p-6 rounded-2xl shadow-sm border border-pinkmuda/50 hover:shadow-md transition relative transform hover:-translate-y-1">
                             <i class="fas fa-quote-right text-4xl text-pinkmuda/30 absolute top-4 right-4"></i>
                             <div class="flex text-yellow-400 text-xs mb-3">
                                 <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
