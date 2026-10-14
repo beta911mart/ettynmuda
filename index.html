@@ -52,10 +52,7 @@
         }
     </script>
     <style>
-        /* 
-           Latar Belakang Edukasi: Buku, Pena, Rumus Math, Bentuk Ruang.
-           Menggunakan SVG Base64 agar cepat diload tanpa file eksternal 
-        */
+        /* Latar Belakang Edukasi: Buku, Pena, Rumus Math, Bentuk Ruang */
         body { 
             background-color: #FAF3E0; 
             color: #4A3B32; 
@@ -87,8 +84,9 @@
                     🎓 Teman Akademik
                 </div>
                 
-                <!-- Desktop Menu (Tampil di Layar Sedang ke Atas) -->
+                <!-- Desktop Menu -->
                 <div class="hidden md:flex space-x-5 items-center">
+                    <a href="ettynshop.html" class="hover:text-pink-custom font-bold text-pastelPink-dark transition text-sm flex items-center gap-1.5"><i class="fas fa-store"></i> Shop</a>
                     <a href="#layanan" class="hover:text-pink-custom font-medium transition text-sm">Layanan</a>
                     <a href="#tarif" class="hover:text-pink-custom font-medium transition text-sm">Tarif</a>
                     <a href="#spesial" class="hover:text-pink-custom font-medium transition text-sm">Spesial</a>
@@ -98,7 +96,7 @@
                     <a href="admin.html" target="_blank" class="ml-2 text-xs bg-brown-dark text-white px-3 py-1.5 rounded-lg hover:bg-brown transition"><i class="fas fa-lock"></i> Admin</a>
                 </div>
 
-                <!-- Tombol Hamburger Mobile (Tampil Khusus di Tampilan HP) -->
+                <!-- Tombol Hamburger Mobile -->
                 <div class="flex md:hidden items-center">
                     <button onclick="toggleMobileMenu()" class="text-textgelap text-2xl focus:outline-none p-2" aria-label="Toggle Navigation">
                         <i class="fas fa-bars" id="hamburger-icon"></i>
@@ -109,6 +107,7 @@
 
         <!-- Menu Mobile Dropdown -->
         <div id="mobile-menu" class="hidden md:hidden bg-krem/95 border-b border-pinkmuda px-6 pt-2 pb-5 space-y-3 shadow-lg">
+            <a href="ettynshop.html" onclick="toggleMobileMenu()" class="block text-pastelPink-dark font-bold hover:text-pink-custom transition py-1.5 text-sm border-b border-pinkmuda/30 flex items-center gap-2"><i class="fas fa-store"></i> Shop</a>
             <a href="#layanan" onclick="toggleMobileMenu()" class="block text-textgelap hover:text-pink-custom font-medium transition py-1.5 text-sm border-b border-pinkmuda/30">Layanan</a>
             <a href="#tarif" onclick="toggleMobileMenu()" class="block text-textgelap hover:text-pink-custom font-medium transition py-1.5 text-sm border-b border-pinkmuda/30">Tarif</a>
             <a href="#spesial" onclick="toggleMobileMenu()" class="block text-textgelap hover:text-pink-custom font-medium transition py-1.5 text-sm border-b border-pinkmuda/30">Spesial</a>
@@ -120,7 +119,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="pt-32 pb-16 px-4 text-center max-w-4xl mx-auto relative z-10">
+    <section class="pt-32 pb-12 px-4 text-center max-w-4xl mx-auto relative z-10">
         <div class="relative w-full mx-auto mb-10 mt-4">
             <img src="profile.jpg" alt="Banner Teman Akademik Etyn" class="profile-glow w-full h-auto rounded-3xl mx-auto transition-transform duration-500 hover:scale-[1.02]">
             
@@ -132,7 +131,7 @@
         <p class="text-lg mb-8 opacity-90 font-medium">Membantu mempercepat dan merapikan pekerjaan akademik Anda dengan hasil yang memuaskan.</p>
         
         <!-- Social Media Pills -->
-        <div class="flex justify-center gap-4 mb-10">
+        <div class="flex justify-center gap-4">
             <a href="https://www.facebook.com/etynd.muda/" class="bg-white px-5 py-2 rounded-full shadow hover:shadow-md transition flex items-center gap-2 text-blue-600">
                 <i class="fab fa-facebook text-xl"></i> <span class="font-medium hidden sm:inline">Ettyn Muda</span>
             </a>
@@ -142,6 +141,31 @@
             <a href="https://wa.me/6281237827324" class="bg-green-500 text-white px-5 py-2 rounded-full shadow hover:bg-green-600 transition flex items-center gap-2">
                 <i class="fab fa-whatsapp text-xl"></i> <span class="font-medium">Hubungi Saya</span>
             </a>
+        </div>
+    </section>
+
+    <!-- ETTYN SHOP Section (Kontainer Spesial) -->
+    <section class="pb-16 px-4 relative z-10">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white/90 backdrop-blur-md border-2 border-pinkmuda rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 transform hover:scale-[1.01] transition-transform">
+                <div class="flex flex-col sm:flex-row items-center text-center sm:text-left gap-5">
+                    <div class="w-20 h-20 bg-pinkmuda/30 rounded-2xl flex items-center justify-center text-pastelPink-dark shrink-0">
+                        <i class="fas fa-store text-4xl"></i>
+                    </div>
+                    <div>
+                        <div class="inline-block bg-pinkmuda/50 text-pastelPink-dark text-xs font-bold px-3 py-1 rounded-full mb-2 uppercase tracking-wider">
+                            Baru!
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-textgelap mb-1">ETTYN SHOP</h2>
+                        <p class="text-sm sm:text-base text-brown opacity-90">Kunjungi toko kami untuk mendapatkan berbagai produk digital, template tugas, dan *tools* penunjang akademik Anda.</p>
+                    </div>
+                </div>
+                <div class="w-full md:w-auto shrink-0">
+                    <a href="ettynshop.html" class="w-full md:w-auto inline-flex items-center justify-center bg-pastelPink-dark text-white font-bold text-base sm:text-lg px-8 py-4 rounded-xl hover:bg-brown-dark transition-all shadow-md group">
+                        Buka Toko <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
         </div>
     </section>
 
