@@ -106,17 +106,60 @@
     <!-- Main Content (Etalase) -->
     <main class="max-w-6xl mx-auto p-4 sm:p-6 mt-4 flex-grow w-full relative z-10">
         
-        <div class="mb-8 text-center md:text-left">
+        <div class="mb-6 text-center md:text-left">
             <div class="inline-block bg-pinkmuda/60 px-5 py-2 rounded-full mb-3 shadow-sm border border-pinkmuda/50">
                 <h2 class="text-xl font-bold text-textgelap">Katalog Produk Digital</h2>
             </div>
-            <p class="text-brown opacity-90 text-sm font-medium">Klik tombol "Perbesar Preview" untuk melihat cuplikan halaman materi.</p>
+            <p class="text-brown opacity-90 text-sm font-medium">Temukan berbagai dokumen dan materi pendukung belajar Anda.</p>
         </div>
 
-        <!-- Grid Produk Dinamis dari Google Sheets -->
+        <!-- PANEL KONTROL: Pencarian, Kategori, Format, Sortir -->
+        <div class="bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-pinkmuda shadow-sm flex flex-col md:flex-row gap-3 mb-8">
+            
+            <!-- Pencarian (Search Bar) -->
+            <div class="flex-1 relative">
+                <i class="fas fa-search absolute left-4 top-3.5 text-brown opacity-50"></i>
+                <input type="text" id="searchInput" oninput="terapkanFilter()" placeholder="Cari nama materi..." class="w-full pl-11 pr-4 py-3 rounded-xl border border-pinkmuda/70 bg-white focus:outline-none focus:border-pastelPink-dark focus:ring-2 focus:ring-pastelPink-light transition-all text-sm text-textgelap font-medium shadow-sm">
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <!-- Filter Kategori -->
+                <select id="filterKategori" onchange="terapkanFilter()" class="px-4 py-3 rounded-xl border border-pinkmuda/70 bg-white focus:outline-none focus:border-pastelPink-dark text-sm text-textgelap font-medium shadow-sm cursor-pointer hover:bg-krem/50 transition">
+                    <option value="all">Semua Kategori</option>
+                    <option value="Proposal">Proposal</option>
+                    <option value="Modul">Modul</option>
+                    <option value="LKPD">LKPD</option>
+                    <option value="Presentasi">Presentasi</option>
+                    <option value="Laporan">Laporan</option>
+                    <option value="Surat">Surat</option>
+                    <option value="Bahan ajar">Bahan Ajar</option>
+                </select>
+
+                <!-- Filter Format -->
+                <select id="filterFormat" onchange="terapkanFilter()" class="px-4 py-3 rounded-xl border border-pinkmuda/70 bg-white focus:outline-none focus:border-pastelPink-dark text-sm text-textgelap font-medium shadow-sm cursor-pointer hover:bg-krem/50 transition">
+                    <option value="all">Semua Format</option>
+                    <option value="PDF">PDF</option>
+                    <option value="PPT">PPT</option>
+                    <option value="Word">Word</option>
+                    <option value="Image">Image</option>
+                    <option value="Video">Video</option>
+                </select>
+
+                <!-- Sortir (ShortBy) -->
+                <select id="sortUrutan" onchange="terapkanFilter()" class="px-4 py-3 rounded-xl border border-pinkmuda/70 bg-white focus:outline-none focus:border-pastelPink-dark text-sm text-textgelap font-medium shadow-sm cursor-pointer hover:bg-krem/50 transition">
+                    <option value="default">Urutkan</option>
+                    <option value="harga_asc">Harga: Termurah</option>
+                    <option value="harga_desc">Harga: Termahal</option>
+                    <option value="nama_asc">Nama: A - Z</option>
+                    <option value="nama_desc">Nama: Z - A</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Grid Produk -->
         <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-12">
             <!-- Indikator Loading -->
-            <div class="col-span-full text-center py-12 text-brown font-medium">
+            <div class="col-span-full text-center py-12 text-brown font-medium" id="loadingIndicator">
                 <i class="fas fa-spinner fa-spin text-3xl mb-3 text-pastelPink-dark"></i><br>
                 Memuat katalog produk...
             </div>
@@ -155,57 +198,115 @@
     <script>
         // Ganti URL di bawah ini dengan URL Web App Google Apps Script Anda
         const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec";
+        
+        let semuaProduk = []; // Variabel penampung seluruh data dari Google Sheets
 
         async function muatProduk() {
             const container = document.getElementById('product-grid');
             try {
                 let response = await fetch(SHEET_API_URL);
-                let products = await response.json();
+                semuaProduk = await response.json();
 
-                if (products.length === 0) {
+                if (semuaProduk.length === 0) {
                     container.innerHTML = '<div class="col-span-full text-center py-12 text-brown font-medium bg-white/70 backdrop-blur-sm rounded-2xl border border-pinkmuda/30 shadow-sm">Belum ada produk di etalase.</div>';
                     return;
                 }
 
-                container.innerHTML = ''; // Kosongkan loading
+                // Setelah data termuat, tampilkan ke layar (dengan filter default)
+                terapkanFilter();
 
-                products.forEach(p => {
-                    let hargaFormatted = Number(p.harga).toLocaleString('id-ID');
-                    let card = `
-                    <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-sm border border-pinkmuda/50 overflow-hidden flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                        <div>
-                            <div class="preview-container h-48 bg-gray-200 relative group cursor-pointer border-b border-pinkmuda/30" onclick="bukaModal('${p.imgUrl}', '${p.nama}')">
-                                <img src="${p.imgUrl}" alt="Preview" class="w-full h-full object-cover">
-                                <div class="watermark-overlay">
-                                    <div class="watermark-text">Etyyn Muda</div>
-                                </div>
-                                <div class="absolute inset-0 bg-textgelap/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                                    <span class="bg-white/90 text-textgelap text-xs px-4 py-2 rounded-full font-bold shadow-lg flex items-center gap-1.5 transform scale-95 group-hover:scale-100 transition-transform">
-                                        <i class="fas fa-search-plus"></i> Perbesar
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="p-5 pb-3">
-                                <h3 class="font-bold text-lg text-textgelap line-clamp-2 leading-tight">${p.nama}</h3>
-                                <p class="text-xs text-brown opacity-80 mt-1.5 font-medium"><i class="fas fa-file-alt mr-1"></i> ${p.format}</p>
-                            </div>
-                        </div>
-                        <div class="p-5 pt-3 flex justify-between items-center border-t border-pinkmuda/20 bg-krem/30">
-                            <span class="font-bold text-pastelPink-dark text-lg">Rp ${hargaFormatted}</span>
-                            <button onclick="beliProduk('${p.nama.replace(/'/g, "\\'")}')" class="bg-pastelPink-dark text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-brown-dark transition-colors shadow-sm flex items-center gap-1.5">
-                                <i class="fab fa-whatsapp text-base"></i> Beli
-                            </button>
-                        </div>
-                    </div>`;
-                    container.innerHTML += card;
-                });
             } catch (error) {
                 container.innerHTML = '<div class="col-span-full text-center py-12 text-red-500 font-medium bg-white/70 backdrop-blur-sm rounded-2xl border border-red-200 shadow-sm"><i class="fas fa-exclamation-triangle text-3xl mb-3"></i><br>Gagal memuat data produk. Periksa kembali koneksi atau URL API Anda.</div>';
                 console.error("Error:", error);
             }
         }
 
-        // Jalankan fungsi saat halaman dibuka
+        // FUNGSI INTI UNTUK MENGELOLA PENCARIAN, FILTER, DAN SORTIR
+        function terapkanFilter() {
+            const container = document.getElementById('product-grid');
+            
+            // 1. Ambil Nilai dari Panel Kontrol
+            let kataKunci = document.getElementById('searchInput').value.toLowerCase();
+            let katDipilih = document.getElementById('filterKategori').value;
+            let formatDipilih = document.getElementById('filterFormat').value;
+            let urutanDipilih = document.getElementById('sortUrutan').value;
+
+            // 2. Lakukan Penyaringan (Filter & Search)
+            let produkTersaring = semuaProduk.filter(p => {
+                // Pastikan variabel string aman untuk di-toLowercase()
+                let namaProduk = (p.nama || "").toLowerCase();
+                let kategoriProduk = (p.kategori || "").toLowerCase();
+                let formatProduk = (p.format || "").toLowerCase();
+
+                let cocokKataKunci = namaProduk.includes(kataKunci);
+                let cocokKategori = (katDipilih === 'all') || (kategoriProduk === katDipilih.toLowerCase());
+                let cocokFormat = (formatDipilih === 'all') || (formatProduk === formatDipilih.toLowerCase());
+
+                return cocokKataKunci && cocokKategori && cocokFormat;
+            });
+
+            // 3. Lakukan Pengurutan (Sort)
+            if (urutanDipilih === 'harga_asc') {
+                produkTersaring.sort((a, b) => Number(a.harga) - Number(b.harga));
+            } else if (urutanDipilih === 'harga_desc') {
+                produkTersaring.sort((a, b) => Number(b.harga) - Number(a.harga));
+            } else if (urutanDipilih === 'nama_asc') {
+                produkTersaring.sort((a, b) => (a.nama || "").localeCompare(b.nama || ""));
+            } else if (urutanDipilih === 'nama_desc') {
+                produkTersaring.sort((a, b) => (b.nama || "").localeCompare(a.nama || ""));
+            }
+
+            // 4. Render Hasil ke HTML
+            container.innerHTML = ''; // Bersihkan kontainer
+
+            if (produkTersaring.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-12 text-brown font-medium bg-white/70 backdrop-blur-sm rounded-2xl border border-pinkmuda/30 shadow-sm"><i class="fas fa-box-open text-3xl mb-3 text-pastelPink"></i><br>Oops! Produk yang Anda cari tidak ditemukan.</div>';
+                return;
+            }
+
+            produkTersaring.forEach(p => {
+                let hargaFormatted = Number(p.harga).toLocaleString('id-ID');
+                let kategoriBadge = p.kategori ? p.kategori : 'Lainnya';
+                
+                let card = `
+                <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-sm border border-pinkmuda/50 overflow-hidden flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                    <div>
+                        <!-- Area Gambar -->
+                        <div class="preview-container h-48 bg-gray-200 relative group cursor-pointer border-b border-pinkmuda/30" onclick="bukaModal('${p.imgUrl}', '${p.nama}')">
+                            <img src="${p.imgUrl}" alt="Preview" class="w-full h-full object-cover">
+                            <div class="watermark-overlay">
+                                <div class="watermark-text">Etyyn Muda</div>
+                            </div>
+                            <div class="absolute inset-0 bg-textgelap/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                                <span class="bg-white/90 text-textgelap text-xs px-4 py-2 rounded-full font-bold shadow-lg flex items-center gap-1.5 transform scale-95 group-hover:scale-100 transition-transform">
+                                    <i class="fas fa-search-plus"></i> Perbesar
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Area Info Produk -->
+                        <div class="p-5 pb-3">
+                            <div class="mb-2">
+                                <span class="inline-block bg-pastelPink-light text-brown-dark text-[10px] px-2.5 py-0.5 rounded-md font-bold uppercase tracking-wider border border-pinkmuda/40 shadow-sm">${kategoriBadge}</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-textgelap line-clamp-2 leading-tight">${p.nama}</h3>
+                            <p class="text-xs text-brown opacity-80 mt-2 font-medium flex items-center gap-1.5"><i class="fas fa-file-alt text-pastelPink-dark"></i> Format: ${p.format || '-'}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Area Harga dan Tombol -->
+                    <div class="p-5 pt-3 flex justify-between items-center border-t border-pinkmuda/20 bg-krem/30">
+                        <span class="font-bold text-pastelPink-dark text-lg">Rp ${hargaFormatted}</span>
+                        <button onclick="beliProduk('${p.nama.replace(/'/g, "\\'")}')" class="bg-pastelPink-dark text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-brown-dark transition-colors shadow-sm flex items-center gap-1.5">
+                            <i class="fab fa-whatsapp text-base"></i> Beli
+                        </button>
+                    </div>
+                </div>`;
+                container.innerHTML += card;
+            });
+        }
+
+        // Mulai memuat saat halaman diakses
         muatProduk();
 
         // Keamanan: Blokir klik kanan
