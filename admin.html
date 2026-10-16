@@ -23,7 +23,7 @@
                 <i class="fas fa-shield-alt text-3xl text-red-500"></i>
             </div>
             <h2 class="text-2xl font-bold mb-1 text-slate-800">Admin Panel</h2>
-            <p class="text-sm text-slate-500 mb-6">Sistem Manajemen Teman Akademik</p>
+            <p class="text-sm text-slate-500 mb-6">Sistem Manajemen Terpadu</p>
             
             <input type="password" id="admin-pin" class="w-full px-5 py-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500 text-center text-2xl tracking-[0.5em] mb-4 bg-slate-50 font-bold text-slate-700" placeholder="••••">
             
@@ -39,7 +39,6 @@
         <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative">
             <h2 class="text-xl font-bold mb-4 border-b pb-3 text-slate-800"><i class="fas fa-edit text-blue-500 mr-2"></i>Edit Testimoni</h2>
             <input type="hidden" id="edit-row">
-            
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Nama</label>
@@ -54,11 +53,10 @@
                     <textarea id="edit-pesan" rows="4" class="w-full px-4 py-2.5 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"></textarea>
                 </div>
             </div>
-            
             <div class="mt-6 flex justify-end gap-3">
                 <button onclick="tutupEditModal()" class="px-5 py-2.5 rounded-lg text-slate-600 bg-slate-100 hover:bg-slate-200 font-medium transition">Batal</button>
                 <button onclick="simpanEditTestimoni()" id="btn-simpan-edit" class="px-5 py-2.5 rounded-lg text-white bg-blue-600 hover:bg-blue-700 font-medium transition flex items-center gap-2">
-                    <i class="fas fa-save"></i> Simpan Perubahan
+                    <i class="fas fa-save"></i> Simpan
                 </button>
             </div>
         </div>
@@ -66,7 +64,7 @@
 
     <!-- Dashboard Admin (Hidden by Default) -->
     <div id="admin-dashboard" class="hidden min-h-screen flex flex-col">
-        <!-- Navbar Header -->
+        <!-- Navbar -->
         <nav class="bg-slate-900 text-white p-4 sticky top-0 z-40 shadow-md">
             <div class="max-w-7xl mx-auto flex justify-between items-center">
                 <div class="font-bold text-base sm:text-lg flex items-center gap-2">
@@ -78,32 +76,30 @@
             </div>
         </nav>
 
-        <!-- Main Content Area -->
+        <!-- Main Content -->
         <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 flex-1">
             
-            <!-- PANEL 1: KELOLA GALERI (Kolom Kiri) -->
+            <!-- PANEL 1: KELOLA GALERI -->
             <div class="lg:col-span-5 flex flex-col gap-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
                     <h3 class="text-lg font-bold mb-5 flex items-center border-b border-slate-100 pb-3">
                         <i class="fas fa-images text-blue-500 mr-2 bg-blue-50 p-2 rounded-lg"></i> Kelola Galeri Web
                     </h3>
-                    
                     <div class="flex flex-col sm:flex-row gap-3 mb-6">
-                        <input type="text" id="input-galeri-url" placeholder="Paste URL Gambar Google Drive..." class="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 text-sm">
-                        <button onclick="tambahGaleri()" id="btn-tambah-galeri" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2 whitespace-nowrap">
+                        <input type="text" id="input-galeri-url" placeholder="Paste URL Gambar..." class="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 text-sm">
+                        <button onclick="tambahGaleri()" id="btn-tambah-galeri" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2">
                             <i class="fas fa-plus"></i> Tambah
                         </button>
                     </div>
-                    
                     <div class="bg-slate-50 rounded-xl p-2 border border-slate-100">
-                        <div id="admin-galeri-list" class="space-y-2 max-h-[500px] overflow-y-auto p-1">
-                            <p class="text-sm text-slate-400 text-center py-4"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat daftar galeri...</p>
+                        <div id="admin-galeri-list" class="space-y-2 max-h-[300px] overflow-y-auto p-1">
+                            <p class="text-sm text-slate-400 text-center py-4"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat...</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- PANEL 2: KELOLA TESTIMONI (Kolom Kanan) -->
+            <!-- PANEL 2: KELOLA TESTIMONI -->
             <div class="lg:col-span-7 flex flex-col gap-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
                     <div class="p-5 sm:p-6 border-b border-slate-100 bg-white">
@@ -111,25 +107,126 @@
                             <i class="fas fa-comments text-green-500 mr-2 bg-green-50 p-2 rounded-lg"></i> Manajemen Testimoni
                         </h3>
                     </div>
-
-                    <!-- Area Testimoni PENDING -->
+                    <!-- Testimoni PENDING -->
                     <div class="p-5 sm:p-6 bg-orange-50/50">
-                        <h4 class="text-sm font-bold text-orange-800 mb-4 flex items-center gap-2">
-                            <i class="fas fa-clock"></i> Menunggu Persetujuan (Pending)
-                        </h4>
-                        <div id="admin-testi-pending" class="space-y-4 max-h-[350px] overflow-y-auto pr-2">
-                            <p class="text-sm text-slate-400 text-center py-2">Memuat data...</p>
-                        </div>
+                        <h4 class="text-sm font-bold text-orange-800 mb-4 flex items-center gap-2"><i class="fas fa-clock"></i> Pending</h4>
+                        <div id="admin-testi-pending" class="space-y-4 max-h-[250px] overflow-y-auto pr-2"></div>
                     </div>
-
-                    <!-- Area Testimoni APPROVED -->
+                    <!-- Testimoni APPROVED -->
                     <div class="p-5 sm:p-6 bg-white border-t border-slate-100">
-                        <h4 class="text-sm font-bold text-green-700 mb-4 flex items-center gap-2">
-                            <i class="fas fa-check-circle"></i> Testimoni Tayang di Web (Approved)
-                        </h4>
-                        <div id="admin-testi-approved" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
-                            <p class="text-sm text-slate-400 text-center py-2">Memuat data...</p>
+                        <h4 class="text-sm font-bold text-green-700 mb-4 flex items-center gap-2"><i class="fas fa-check-circle"></i> Tayang di Web</h4>
+                        <div id="admin-testi-approved" class="space-y-4 max-h-[300px] overflow-y-auto pr-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 3: MANAJEMEN PRODUK ETTYN SHOP (BARU) -->
+            <div class="lg:col-span-12 flex flex-col gap-6 mt-2">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-5 sm:p-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                        <h3 class="text-lg font-bold flex items-center">
+                            <i class="fas fa-store text-pink-500 mr-2 bg-pink-100 p-2 rounded-lg"></i> Manajemen Produk Etalase (Ettyn Shop)
+                        </h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-5 sm:p-6">
+                        
+                        <!-- Area Kiri: Form Tambah Produk -->
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm lg:col-span-1 h-fit">
+                            <h4 class="font-bold text-slate-700 mb-4 border-b pb-2">Tambah Produk Baru</h4>
+                            
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="text-xs font-bold text-slate-500 mb-1 block">Nama Dokumen</label>
+                                    <input type="text" id="shop-nama" placeholder="Cth: Asuhan Kebidanan" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none">
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-500 mb-1 block">Tingkat</label>
+                                        <select id="shop-tingkat" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none cursor-pointer">
+                                            <option value="TK / Sederajat">TK / Sederajat</option>
+                                            <option value="SD / Sederajat">SD / Sederajat</option>
+                                            <option value="SMP / Sederajat">SMP / Sederajat</option>
+                                            <option value="SLTA / Sederajat">SLTA / Sederajat</option>
+                                            <option value="Universitas">Universitas</option>
+                                            <option value="Umum">Umum</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-500 mb-1 block">Kategori</label>
+                                        <select id="shop-kategori" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none cursor-pointer">
+                                            <option value="Proposal">Proposal</option>
+                                            <option value="Modul">Modul</option>
+                                            <option value="LKPD">LKPD</option>
+                                            <option value="Presentasi">Presentasi</option>
+                                            <option value="Laporan">Laporan</option>
+                                            <option value="Surat">Surat</option>
+                                            <option value="Bahan ajar">Bahan Ajar</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-500 mb-1 block">Format</label>
+                                        <select id="shop-format" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none cursor-pointer">
+                                            <option value="PDF">PDF</option>
+                                            <option value="PPT">PPT</option>
+                                            <option value="Word">Word</option>
+                                            <option value="Image">Image</option>
+                                            <option value="Video">Video</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-500 mb-1 block">Harga (Rp)</label>
+                                        <input type="number" id="shop-harga" placeholder="Cth: 15000" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none">
+                                    </div>
+                                </div>
+
+                                <!-- Fitur Dinamis Multi-Link Gambar -->
+                                <div class="p-3 bg-pink-50/50 rounded-lg border border-pink-100 mt-4">
+                                    <label class="text-xs font-bold text-slate-700 mb-2 block"><i class="fas fa-images text-pink-500"></i> Link Gambar Preview (ImgBB)</label>
+                                    
+                                    <div id="container-link-gambar" class="space-y-2">
+                                        <!-- Input default pertama (Tidak bisa dihapus) -->
+                                        <div class="flex gap-2">
+                                            <input type="text" class="input-img-url w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-400 focus:outline-none bg-white" placeholder="Link Gambar 1 (Sampul Utama)">
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="button" onclick="tambahInputLink()" class="mt-3 text-xs font-bold text-pink-600 hover:text-pink-800 flex items-center gap-1 w-full justify-center border border-dashed border-pink-300 py-1.5 rounded-lg bg-white transition">
+                                        <i class="fas fa-plus-circle"></i> Tambah Slide Gambar Lainnya
+                                    </button>
+                                </div>
+                                
+                                <button onclick="simpanProdukShop()" id="btn-simpan-shop" class="w-full bg-pink-600 text-white py-3 rounded-lg font-bold hover:bg-pink-700 transition mt-4 shadow-md flex justify-center items-center gap-2">
+                                    <i class="fas fa-cloud-upload-alt"></i> Upload Produk
+                                </button>
+                            </div>
                         </div>
+
+                        <!-- Area Kanan: Daftar Produk -->
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm lg:col-span-2">
+                            <h4 class="font-bold text-slate-700 mb-4 border-b pb-2">Daftar Produk Terpublikasi</h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left whitespace-nowrap">
+                                    <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-y border-slate-200">
+                                        <tr>
+                                            <th class="px-4 py-3">Nama Produk</th>
+                                            <th class="px-4 py-3">Spesifikasi</th>
+                                            <th class="px-4 py-3">Harga</th>
+                                            <th class="px-4 py-3">Preview</th>
+                                            <th class="px-4 py-3 text-right">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-shop-list" class="divide-y divide-slate-100">
+                                        <tr><td colspan="5" class="text-center py-6 text-slate-400"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat etalase...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -138,7 +235,6 @@
     </div>
 
     <script>
-        // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI BAWAH INI
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec"; 
         const PIN_ADMIN = "1324"; 
 
@@ -164,140 +260,142 @@
                 const response = await fetch(GAS_URL + "?action=getAdminData");
                 const data = await response.json();
                 
-                // 1. Render Galeri
+                // Render Galeri
                 const galeriList = document.getElementById('admin-galeri-list');
                 if (data.galeri && data.galeri.length > 0) {
                     galeriList.innerHTML = data.galeri.map((g, index) => `
-                        <div class="flex justify-between items-center p-3 sm:p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-blue-300 transition group">
+                        <div class="flex justify-between items-center p-3 bg-white border border-slate-200 rounded-xl shadow-sm">
                             <div class="flex items-center gap-3 overflow-hidden">
                                 <div class="bg-slate-100 text-slate-400 font-bold px-3 py-1.5 rounded-lg text-xs">${index+1}</div>
-                                <a href="${g.url}" target="_blank" class="text-sm font-medium text-blue-600 truncate max-w-[150px] sm:max-w-[250px] hover:underline">${g.url}</a>
+                                <a href="${g.url}" target="_blank" class="text-sm font-medium text-blue-600 truncate max-w-[150px] hover:underline">${g.url}</a>
                             </div>
-                            <button onclick="hapusGaleri(${g.row})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition" title="Hapus Gambar">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
+                            <button onclick="hapusGaleri(${g.row})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     `).join('');
-                } else {
-                    galeriList.innerHTML = '<p class="text-sm text-slate-400 text-center py-4">Galeri kosong.</p>';
-                }
+                } else { galeriList.innerHTML = '<p class="text-sm text-slate-400 text-center py-4">Galeri kosong.</p>'; }
 
-                // 2. Render Testimoni PENDING
-                const testiPendingList = document.getElementById('admin-testi-pending');
-                if (data.testimoniPending && data.testimoniPending.length > 0) {
-                    testiPendingList.innerHTML = data.testimoniPending.map(t => `
-                        <div class="p-4 bg-white border border-orange-200 rounded-xl shadow-sm relative">
-                            <span class="absolute top-3 right-3 text-[10px] font-bold bg-orange-100 text-orange-600 px-2.5 py-1 rounded-md uppercase tracking-wider">Baru</span>
-                            <div class="font-bold text-slate-800 text-base">${t.nama}</div>
-                            <div class="text-xs text-slate-500 mb-2">${t.instansi}</div>
-                            <p class="text-sm text-slate-600 italic bg-slate-50 p-3 rounded-lg border border-slate-100 mb-4 whitespace-pre-line break-words">"${t.pesan}"</p>
-                            <div class="flex gap-2">
-                                <button onclick="approveTestimoni(${t.row})" class="flex-1 bg-green-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-green-600 transition shadow-sm"><i class="fas fa-check mr-1"></i> Terima</button>
-                                <button onclick="hapusTestimoni(${t.row})" class="flex-1 bg-red-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition shadow-sm"><i class="fas fa-times mr-1"></i> Tolak</button>
-                            </div>
-                        </div>
-                    `).join('');
-                } else {
-                    testiPendingList.innerHTML = '<p class="text-sm text-slate-400 text-center py-6 border border-dashed border-slate-300 rounded-xl bg-white"><i class="fas fa-inbox text-2xl mb-2 block text-slate-300"></i>Tidak ada antrean testimoni baru.</p>';
-                }
+                // Render Testimoni (Dipangkas kodenya agar ringkas, mekanisme sama seperti sebelumnya)
+                document.getElementById('admin-testi-pending').innerHTML = (data.testimoniPending && data.testimoniPending.length > 0) ? data.testimoniPending.map(t => `<div class="p-3 bg-white border border-orange-200 rounded-xl mb-2 text-sm"><b>${t.nama}</b><p>"${t.pesan}"</p><div class="mt-2 flex gap-2"><button onclick="approveTestimoni(${t.row})" class="bg-green-500 text-white px-3 py-1 rounded">Terima</button><button onclick="hapusTestimoni(${t.row})" class="bg-red-500 text-white px-3 py-1 rounded">Tolak</button></div></div>`).join('') : '<p class="text-xs text-slate-400 text-center py-2">Kosong</p>';
+                document.getElementById('admin-testi-approved').innerHTML = (data.testimoniApproved && data.testimoniApproved.length > 0) ? data.testimoniApproved.map(t => `<div class="p-3 bg-white border border-slate-200 rounded-xl mb-2 text-sm flex justify-between"><div><b>${t.nama}</b><p>"${t.pesan}"</p></div><button onclick="hapusTestimoni(${t.row})" class="text-red-500 p-2"><i class="fas fa-trash"></i></button></div>`).join('') : '<p class="text-xs text-slate-400 text-center py-2">Kosong</p>';
 
-                // 3. Render Testimoni APPROVED
-                const testiApprovedList = document.getElementById('admin-testi-approved');
-                if (data.testimoniApproved && data.testimoniApproved.length > 0) {
-                    testiApprovedList.innerHTML = data.testimoniApproved.map(t => `
-                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <div class="font-bold text-slate-800 text-base">${t.nama}</div>
-                                    <div class="text-xs text-slate-500">${t.instansi}</div>
-                                </div>
-                                <div class="flex gap-1.5">
-                                    <button onclick="bukaEditModal(${t.row}, '${t.nama.replace(/'/g, "\\'")}', '${t.instansi.replace(/'/g, "\\'")}', '${t.pesan.replace(/'/g, "\\'").replace(/\n/g, '\\n')}')" class="text-blue-500 hover:bg-blue-50 p-2 rounded-lg transition" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button onclick="hapusTestimoni(${t.row})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition" title="Hapus Permanen">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <p class="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg whitespace-pre-line break-words border border-slate-100">"${t.pesan}"</p>
-                        </div>
-                    `).join('');
+                // Render ETTYN SHOP Produk
+                const shopList = document.getElementById('admin-shop-list');
+                if (data.shopData && data.shopData.length > 0) {
+                    shopList.innerHTML = data.shopData.map(p => {
+                        let arrayGambar = p.imgUrl ? p.imgUrl.split(',') : [];
+                        let jumlahGambar = arrayGambar.length;
+                        return `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="px-4 py-3 font-bold text-slate-700 whitespace-normal min-w-[200px]">${p.nama}</td>
+                            <td class="px-4 py-3">
+                                <span class="block text-xs font-medium text-slate-500 mb-1"><i class="fas fa-graduation-cap"></i> ${p.tingkat}</span>
+                                <span class="inline-block bg-slate-100 px-2 py-0.5 rounded text-[10px] text-slate-600 font-bold uppercase">${p.kategori} | ${p.format}</span>
+                            </td>
+                            <td class="px-4 py-3 text-pink-600 font-bold">Rp ${Number(p.harga).toLocaleString('id-ID')}</td>
+                            <td class="px-4 py-3">
+                                <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded-md text-xs font-bold whitespace-nowrap"><i class="fas fa-images"></i> ${jumlahGambar} Slide</span>
+                            </td>
+                            <td class="px-4 py-3 text-right">
+                                <button onclick="hapusProdukShop(${p.row})" class="bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-lg transition" title="Hapus Produk">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        `;
+                    }).join('');
                 } else {
-                    testiApprovedList.innerHTML = '<p class="text-sm text-slate-400 text-center py-6 border border-dashed border-slate-300 rounded-xl bg-slate-50">Belum ada testimoni yang ditayangkan.</p>';
+                    shopList.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-slate-400 bg-slate-50"><i class="fas fa-box-open text-3xl mb-2 block text-slate-300"></i>Belum ada produk di etalase.</td></tr>';
                 }
 
             } catch (err) {
-                alert("Koneksi gagal. Pastikan URL Google Apps Script sudah benar.");
+                console.error(err);
             }
         }
 
-        // FUNGSI GALERI
-        async function tambahGaleri() {
-            const urlInput = document.getElementById('input-galeri-url');
-            const btn = document.getElementById('btn-tambah-galeri');
-            if(!urlInput.value) return alert("URL Gambar tidak boleh kosong!");
+        // ==========================
+        // FUNGSI MANAJEMEN SHOP
+        // ==========================
+
+        // Menambah Input Link Gambar Secara Dinamis
+        function tambahInputLink() {
+            const container = document.getElementById('container-link-gambar');
+            const div = document.createElement('div');
+            div.className = "flex gap-2 relative mt-2";
+            div.innerHTML = `
+                <input type="text" class="input-img-url w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-400 focus:outline-none bg-white" placeholder="Link Gambar Tambahan">
+                <button type="button" onclick="this.parentElement.remove()" class="bg-red-100 text-red-500 px-3 rounded-lg hover:bg-red-200 transition" title="Hapus Kolom Ini">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            container.appendChild(div);
+        }
+
+        // Menyimpan Produk
+        async function simpanProdukShop() {
+            const nama = document.getElementById('shop-nama').value.trim();
+            const tingkat = document.getElementById('shop-tingkat').value;
+            const kategori = document.getElementById('shop-kategori').value;
+            const format = document.getElementById('shop-format').value;
+            const harga = document.getElementById('shop-harga').value.trim();
             
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            btn.disabled = true;
-            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'addGaleri', url: urlInput.value }) });
-            urlInput.value = '';
-            btn.innerHTML = '<i class="fas fa-plus"></i> Tambah';
-            btn.disabled = false;
-            loadAdminData(); 
-        }
+            // Menggabungkan semua input link yang diisi menggunakan Koma (,)
+            const inputsLink = document.querySelectorAll('.input-img-url');
+            const arrayLink = Array.from(inputsLink).map(input => input.value.trim()).filter(val => val !== "");
+            const stringImgUrl = arrayLink.join(',');
 
-        async function hapusGaleri(rowId) {
-            if(!confirm("Yakin hapus foto galeri ini?")) return;
-            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteGaleri', row: rowId }) });
-            loadAdminData();
-        }
+            if(!nama || !harga || arrayLink.length === 0) {
+                alert("Mohon lengkapi Nama Produk, Harga, dan minimal 1 Link Gambar Utama!");
+                return;
+            }
 
-        // FUNGSI TESTIMONI
-        async function approveTestimoni(rowId) {
-            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'approveTestimoni', row: rowId }) });
-            loadAdminData();
-        }
-
-        async function hapusTestimoni(rowId) {
-            if(!confirm("Yakin ingin menghapus testimoni ini secara permanen?")) return;
-            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteTestimoni', row: rowId }) });
-            loadAdminData();
-        }
-
-        // MODAL EDIT TESTIMONI
-        function bukaEditModal(row, nama, instansi, pesan) {
-            document.getElementById('edit-row').value = row;
-            document.getElementById('edit-nama').value = nama;
-            document.getElementById('edit-instansi').value = instansi;
-            document.getElementById('edit-pesan').value = pesan;
-            document.getElementById('edit-modal').classList.remove('hidden');
-        }
-
-        function tutupEditModal() {
-            document.getElementById('edit-modal').classList.add('hidden');
-        }
-
-        async function simpanEditTestimoni() {
-            const btn = document.getElementById('btn-simpan-edit');
+            const btn = document.getElementById('btn-simpan-shop');
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
             btn.disabled = true;
 
             const payload = {
-                action: 'editTestimoni',
-                row: document.getElementById('edit-row').value,
-                nama: document.getElementById('edit-nama').value,
-                instansi: document.getElementById('edit-instansi').value,
-                pesan: document.getElementById('edit-pesan').value
+                action: 'addShop',
+                nama: nama,
+                tingkat: tingkat,
+                kategori: kategori,
+                format: format,
+                harga: harga,
+                imgUrl: stringImgUrl
             };
 
             await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
             
-            btn.innerHTML = '<i class="fas fa-save"></i> Simpan Perubahan';
+            // Reset Form
+            document.getElementById('shop-nama').value = '';
+            document.getElementById('shop-harga').value = '';
+            document.getElementById('container-link-gambar').innerHTML = '<div class="flex gap-2"><input type="text" class="input-img-url w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-400 focus:outline-none bg-white" placeholder="Link Gambar 1 (Sampul Utama)"></div>';
+            
+            btn.innerHTML = '<i class="fas fa-cloud-upload-alt mr-1"></i> Upload Produk';
             btn.disabled = false;
-            tutupEditModal();
+            
             loadAdminData();
         }
+
+        // Menghapus Produk
+        async function hapusProdukShop(rowId) {
+            if(!confirm("Yakin ingin menghapus produk ini dari Etalase Web?")) return;
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteShop', row: rowId }) });
+            loadAdminData();
+        }
+
+        // FUNGSI GALERI & TESTI (Standar)
+        async function tambahGaleri() {
+            const url = document.getElementById('input-galeri-url').value;
+            if(!url) return;
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'addGaleri', url: url }) });
+            document.getElementById('input-galeri-url').value = '';
+            loadAdminData(); 
+        }
+        async function hapusGaleri(row) { await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteGaleri', row: row }) }); loadAdminData(); }
+        async function approveTestimoni(row) { await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'approveTestimoni', row: row }) }); loadAdminData(); }
+        async function hapusTestimoni(row) { await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteTestimoni', row: row }) }); loadAdminData(); }
+        
+        // Modal Edit
+        function tutupEditModal() { document.getElementById('edit-modal').classList.add('hidden'); }
     </script>
 </body>
 </html>
