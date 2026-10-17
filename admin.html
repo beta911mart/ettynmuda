@@ -24,9 +24,7 @@
             </div>
             <h2 class="text-2xl font-bold mb-1 text-slate-800">Admin Panel</h2>
             <p class="text-sm text-slate-500 mb-6">Sistem Manajemen Terpadu</p>
-            
             <input type="password" id="admin-pin" class="w-full px-5 py-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500 text-center text-2xl tracking-[0.5em] mb-4 bg-slate-50 font-bold text-slate-700" placeholder="••••">
-            
             <button onclick="loginAdmin()" class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition-colors shadow-lg flex items-center justify-center gap-2">
                 <i class="fas fa-sign-in-alt"></i> Masuk Sistem
             </button>
@@ -34,29 +32,73 @@
         </div>
     </div>
 
-    <!-- Modal Edit Testimoni -->
-    <div id="edit-modal" class="fixed inset-0 bg-slate-900/80 z-[60] hidden flex items-center justify-center p-4 transition-opacity">
-        <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative">
-            <h2 class="text-xl font-bold mb-4 border-b pb-3 text-slate-800"><i class="fas fa-edit text-blue-500 mr-2"></i>Edit Testimoni</h2>
-            <input type="hidden" id="edit-row">
+    <!-- Modal Edit Produk (ETTYN SHOP) -->
+    <div id="edit-shop-modal" class="fixed inset-0 bg-slate-900/80 z-[70] hidden flex items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <h2 class="text-xl font-bold mb-4 border-b pb-3 text-slate-800"><i class="fas fa-edit text-pink-500 mr-2"></i>Edit Produk Etalase</h2>
+            <input type="hidden" id="edit-shop-row">
+            
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Nama</label>
-                    <input type="text" id="edit-nama" class="w-full px-4 py-2.5 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50">
+                    <label class="text-xs font-bold text-slate-500 mb-1 block">Nama Dokumen</label>
+                    <input type="text" id="edit-shop-nama" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none">
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Instansi</label>
-                    <input type="text" id="edit-instansi" class="w-full px-4 py-2.5 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50">
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">Tingkat</label>
+                        <select id="edit-shop-tingkat" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none cursor-pointer">
+                            <option value="TK / Sederajat">TK / Sederajat</option><option value="SD / Sederajat">SD / Sederajat</option>
+                            <option value="SMP / Sederajat">SMP / Sederajat</option><option value="SLTA / Sederajat">SLTA / Sederajat</option>
+                            <option value="Universitas">Universitas</option><option value="Umum">Umum</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">Kategori</label>
+                        <select id="edit-shop-kategori" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none cursor-pointer">
+                            <option value="Proposal">Proposal</option><option value="Modul">Modul</option>
+                            <option value="LKPD">LKPD</option><option value="Presentasi">Presentasi</option>
+                            <option value="Laporan">Laporan</option><option value="Surat">Surat</option>
+                            <option value="Bahan ajar">Bahan Ajar</option>
+                        </select>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Pesan</label>
-                    <textarea id="edit-pesan" rows="4" class="w-full px-4 py-2.5 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"></textarea>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">Format</label>
+                        <select id="edit-shop-format" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none cursor-pointer">
+                            <option value="PDF">PDF</option><option value="PPT">PPT</option>
+                            <option value="Word">Word</option><option value="Image">Image</option><option value="Video">Video</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">Harga (Rp) & Satuan</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="edit-shop-harga" class="w-1/2 px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none">
+                            <select id="edit-shop-unit" class="w-1/2 px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none cursor-pointer">
+                                <option value="">(Tanpa)</option>
+                                <option value="/ halaman">/ halaman</option><option value="/ file">/ file</option>
+                                <option value="/ menit">/ menit</option><option value="/ materi">/ materi</option>
+                                <option value="/ pertemuan">/ pertemuan</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-pink-50/50 rounded-lg border border-pink-100 mt-2">
+                    <label class="text-xs font-bold text-slate-700 mb-2 block"><i class="fas fa-images text-pink-500"></i> Link Gambar/Video (Dipisah Koma di sistem)</label>
+                    <div id="edit-container-link-gambar" class="space-y-2"></div>
+                    <button type="button" onclick="tambahInputLinkEdit()" class="mt-3 text-xs font-bold text-pink-600 hover:text-pink-800 flex items-center gap-1 w-full justify-center border border-dashed border-pink-300 py-1.5 rounded-lg bg-white transition">
+                        <i class="fas fa-plus-circle"></i> Tambah Slide Media Lainnya
+                    </button>
                 </div>
             </div>
+            
             <div class="mt-6 flex justify-end gap-3">
-                <button onclick="tutupEditModal()" class="px-5 py-2.5 rounded-lg text-slate-600 bg-slate-100 hover:bg-slate-200 font-medium transition">Batal</button>
-                <button onclick="simpanEditTestimoni()" id="btn-simpan-edit" class="px-5 py-2.5 rounded-lg text-white bg-blue-600 hover:bg-blue-700 font-medium transition flex items-center gap-2">
-                    <i class="fas fa-save"></i> Simpan
+                <button onclick="tutupEditShop()" class="px-5 py-2.5 rounded-lg text-slate-600 bg-slate-100 hover:bg-slate-200 font-medium transition">Batal</button>
+                <button onclick="simpanEditProdukShop()" id="btn-simpan-edit-shop" class="px-5 py-2.5 rounded-lg text-white bg-pink-600 hover:bg-pink-700 font-medium transition flex items-center gap-2">
+                    <i class="fas fa-save"></i> Update Produk
                 </button>
             </div>
         </div>
@@ -68,9 +110,9 @@
         <nav class="bg-slate-900 text-white p-4 sticky top-0 z-40 shadow-md">
             <div class="max-w-7xl mx-auto flex justify-between items-center">
                 <div class="font-bold text-base sm:text-lg flex items-center gap-2">
-                    <i class="fas fa-user-shield text-red-400"></i> <span class="hidden sm:inline">Admin Panel - Teman Akademik</span><span class="sm:hidden">Admin Panel</span>
+                    <i class="fas fa-user-shield text-red-400"></i> Admin Panel
                 </div>
-                <button onclick="logoutAdmin()" class="text-xs sm:text-sm bg-red-600/20 text-red-400 border border-red-500/30 px-4 py-2 rounded-lg hover:bg-red-600 hover:text-white transition font-medium">
+                <button onclick="logoutAdmin()" class="text-xs sm:text-sm bg-red-600/20 text-red-400 border border-red-500/30 px-4 py-2 rounded-lg hover:bg-red-600 transition font-medium">
                     <i class="fas fa-power-off"></i> Keluar
                 </button>
             </div>
@@ -79,48 +121,7 @@
         <!-- Main Content -->
         <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 flex-1">
             
-            <!-- PANEL 1: KELOLA GALERI -->
-            <div class="lg:col-span-5 flex flex-col gap-6">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
-                    <h3 class="text-lg font-bold mb-5 flex items-center border-b border-slate-100 pb-3">
-                        <i class="fas fa-images text-blue-500 mr-2 bg-blue-50 p-2 rounded-lg"></i> Kelola Galeri Web
-                    </h3>
-                    <div class="flex flex-col sm:flex-row gap-3 mb-6">
-                        <input type="text" id="input-galeri-url" placeholder="Paste URL Gambar..." class="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 text-sm">
-                        <button onclick="tambahGaleri()" id="btn-tambah-galeri" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2">
-                            <i class="fas fa-plus"></i> Tambah
-                        </button>
-                    </div>
-                    <div class="bg-slate-50 rounded-xl p-2 border border-slate-100">
-                        <div id="admin-galeri-list" class="space-y-2 max-h-[300px] overflow-y-auto p-1">
-                            <p class="text-sm text-slate-400 text-center py-4"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PANEL 2: KELOLA TESTIMONI -->
-            <div class="lg:col-span-7 flex flex-col gap-6">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
-                    <div class="p-5 sm:p-6 border-b border-slate-100 bg-white">
-                        <h3 class="text-lg font-bold flex items-center">
-                            <i class="fas fa-comments text-green-500 mr-2 bg-green-50 p-2 rounded-lg"></i> Manajemen Testimoni
-                        </h3>
-                    </div>
-                    <!-- Testimoni PENDING -->
-                    <div class="p-5 sm:p-6 bg-orange-50/50">
-                        <h4 class="text-sm font-bold text-orange-800 mb-4 flex items-center gap-2"><i class="fas fa-clock"></i> Pending</h4>
-                        <div id="admin-testi-pending" class="space-y-4 max-h-[250px] overflow-y-auto pr-2"></div>
-                    </div>
-                    <!-- Testimoni APPROVED -->
-                    <div class="p-5 sm:p-6 bg-white border-t border-slate-100">
-                        <h4 class="text-sm font-bold text-green-700 mb-4 flex items-center gap-2"><i class="fas fa-check-circle"></i> Tayang di Web</h4>
-                        <div id="admin-testi-approved" class="space-y-4 max-h-[300px] overflow-y-auto pr-2"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PANEL 3: MANAJEMEN PRODUK ETTYN SHOP (BARU) -->
+            <!-- PANEL 3: MANAJEMEN PRODUK ETTYN SHOP -->
             <div class="lg:col-span-12 flex flex-col gap-6 mt-2">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="p-5 sm:p-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
@@ -144,24 +145,18 @@
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
                                         <label class="text-xs font-bold text-slate-500 mb-1 block">Tingkat</label>
-                                        <select id="shop-tingkat" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none cursor-pointer">
-                                            <option value="TK / Sederajat">TK / Sederajat</option>
-                                            <option value="SD / Sederajat">SD / Sederajat</option>
-                                            <option value="SMP / Sederajat">SMP / Sederajat</option>
-                                            <option value="SLTA / Sederajat">SLTA / Sederajat</option>
-                                            <option value="Universitas">Universitas</option>
-                                            <option value="Umum">Umum</option>
+                                        <select id="shop-tingkat" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 cursor-pointer">
+                                            <option value="TK / Sederajat">TK / Sederajat</option><option value="SD / Sederajat">SD / Sederajat</option>
+                                            <option value="SMP / Sederajat">SMP / Sederajat</option><option value="SLTA / Sederajat">SLTA / Sederajat</option>
+                                            <option value="Universitas">Universitas</option><option value="Umum">Umum</option>
                                         </select>
                                     </div>
                                     <div>
                                         <label class="text-xs font-bold text-slate-500 mb-1 block">Kategori</label>
-                                        <select id="shop-kategori" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none cursor-pointer">
-                                            <option value="Proposal">Proposal</option>
-                                            <option value="Modul">Modul</option>
-                                            <option value="LKPD">LKPD</option>
-                                            <option value="Presentasi">Presentasi</option>
-                                            <option value="Laporan">Laporan</option>
-                                            <option value="Surat">Surat</option>
+                                        <select id="shop-kategori" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 cursor-pointer">
+                                            <option value="Proposal">Proposal</option><option value="Modul">Modul</option>
+                                            <option value="LKPD">LKPD</option><option value="Presentasi">Presentasi</option>
+                                            <option value="Laporan">Laporan</option><option value="Surat">Surat</option>
                                             <option value="Bahan ajar">Bahan Ajar</option>
                                         </select>
                                     </div>
@@ -170,37 +165,40 @@
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
                                         <label class="text-xs font-bold text-slate-500 mb-1 block">Format</label>
-                                        <select id="shop-format" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none cursor-pointer">
-                                            <option value="PDF">PDF</option>
-                                            <option value="PPT">PPT</option>
-                                            <option value="Word">Word</option>
-                                            <option value="Image">Image</option>
-                                            <option value="Video">Video</option>
+                                        <select id="shop-format" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 cursor-pointer">
+                                            <option value="PDF">PDF</option><option value="PPT">PPT</option>
+                                            <option value="Word">Word</option><option value="Image">Image</option><option value="Video">Video</option>
                                         </select>
                                     </div>
+                                    
+                                    <!-- TAMBAHAN: OPSI SATUAN HARGA -->
                                     <div>
-                                        <label class="text-xs font-bold text-slate-500 mb-1 block">Harga (Rp)</label>
-                                        <input type="number" id="shop-harga" placeholder="Cth: 15000" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none">
+                                        <label class="text-xs font-bold text-slate-500 mb-1 block">Harga (Rp) & Satuan</label>
+                                        <div class="flex gap-2">
+                                            <input type="number" id="shop-harga" placeholder="15000" class="w-1/2 px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none">
+                                            <select id="shop-unit" class="w-1/2 px-2 py-2 border rounded-lg text-xs bg-slate-50 focus:ring-2 focus:ring-pink-400 cursor-pointer">
+                                                <option value="">(Tanpa)</option>
+                                                <option value="/ halaman">/ halaman</option>
+                                                <option value="/ file">/ file</option>
+                                                <option value="/ menit">/ menit</option>
+                                                <option value="/ materi">/ materi</option>
+                                                <option value="/ pertemuan">/ pertemuan</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- Fitur Dinamis Multi-Link Gambar -->
                                 <div class="p-3 bg-pink-50/50 rounded-lg border border-pink-100 mt-4">
-                                    <label class="text-xs font-bold text-slate-700 mb-2 block"><i class="fas fa-images text-pink-500"></i> Link Gambar Preview (ImgBB)</label>
-                                    
+                                    <label class="text-xs font-bold text-slate-700 mb-2 block"><i class="fas fa-images text-pink-500"></i> Link Gambar/Video Preview</label>
                                     <div id="container-link-gambar" class="space-y-2">
-                                        <!-- Input default pertama (Tidak bisa dihapus) -->
-                                        <div class="flex gap-2">
-                                            <input type="text" class="input-img-url w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-400 focus:outline-none bg-white" placeholder="Link Gambar 1 (Sampul Utama)">
-                                        </div>
+                                        <div class="flex gap-2"><input type="text" class="input-img-url w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Link Media 1 (Sampul)"></div>
                                     </div>
-                                    
-                                    <button type="button" onclick="tambahInputLink()" class="mt-3 text-xs font-bold text-pink-600 hover:text-pink-800 flex items-center gap-1 w-full justify-center border border-dashed border-pink-300 py-1.5 rounded-lg bg-white transition">
-                                        <i class="fas fa-plus-circle"></i> Tambah Slide Gambar Lainnya
+                                    <button type="button" onclick="tambahInputLink('container-link-gambar', 'input-img-url')" class="mt-3 text-xs font-bold text-pink-600 flex items-center gap-1 w-full justify-center border border-dashed border-pink-300 py-1.5 rounded-lg bg-white">
+                                        <i class="fas fa-plus-circle"></i> Tambah Slide Lainnya
                                     </button>
                                 </div>
                                 
-                                <button onclick="simpanProdukShop()" id="btn-simpan-shop" class="w-full bg-pink-600 text-white py-3 rounded-lg font-bold hover:bg-pink-700 transition mt-4 shadow-md flex justify-center items-center gap-2">
+                                <button onclick="simpanProdukShop()" id="btn-simpan-shop" class="w-full bg-pink-600 text-white py-3 rounded-lg font-bold hover:bg-pink-700 transition mt-4 flex justify-center items-center gap-2">
                                     <i class="fas fa-cloud-upload-alt"></i> Upload Produk
                                 </button>
                             </div>
@@ -216,31 +214,28 @@
                                             <th class="px-4 py-3">Nama Produk</th>
                                             <th class="px-4 py-3">Spesifikasi</th>
                                             <th class="px-4 py-3">Harga</th>
-                                            <th class="px-4 py-3">Preview</th>
                                             <th class="px-4 py-3 text-right">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody id="admin-shop-list" class="divide-y divide-slate-100">
-                                        <tr><td colspan="5" class="text-center py-6 text-slate-400"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat etalase...</td></tr>
+                                        <tr><td colspan="4" class="text-center py-6 text-slate-400">Memuat etalase...</td></tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
     <script>
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec"; 
         const PIN_ADMIN = "1324"; 
+        let globalShopData = []; // Variabel untuk menyimpan data etalase saat ini
 
         function loginAdmin() {
-            const pin = document.getElementById('admin-pin').value;
-            if (pin === PIN_ADMIN) {
+            if (document.getElementById('admin-pin').value === PIN_ADMIN) {
                 document.getElementById('login-modal').classList.add('hidden');
                 document.getElementById('admin-dashboard').classList.remove('hidden');
                 loadAdminData();
@@ -248,154 +243,174 @@
                 document.getElementById('login-error').classList.remove('hidden');
             }
         }
-
-        function logoutAdmin() {
-            document.getElementById('admin-dashboard').classList.add('hidden');
-            document.getElementById('login-modal').classList.remove('hidden');
-            document.getElementById('admin-pin').value = '';
-        }
+        function logoutAdmin() { location.reload(); }
 
         async function loadAdminData() {
             try {
                 const response = await fetch(GAS_URL + "?action=getAdminData");
                 const data = await response.json();
                 
-                // Render Galeri
-                const galeriList = document.getElementById('admin-galeri-list');
-                if (data.galeri && data.galeri.length > 0) {
-                    galeriList.innerHTML = data.galeri.map((g, index) => `
-                        <div class="flex justify-between items-center p-3 bg-white border border-slate-200 rounded-xl shadow-sm">
-                            <div class="flex items-center gap-3 overflow-hidden">
-                                <div class="bg-slate-100 text-slate-400 font-bold px-3 py-1.5 rounded-lg text-xs">${index+1}</div>
-                                <a href="${g.url}" target="_blank" class="text-sm font-medium text-blue-600 truncate max-w-[150px] hover:underline">${g.url}</a>
-                            </div>
-                            <button onclick="hapusGaleri(${g.row})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                    `).join('');
-                } else { galeriList.innerHTML = '<p class="text-sm text-slate-400 text-center py-4">Galeri kosong.</p>'; }
-
-                // Render Testimoni (Dipangkas kodenya agar ringkas, mekanisme sama seperti sebelumnya)
-                document.getElementById('admin-testi-pending').innerHTML = (data.testimoniPending && data.testimoniPending.length > 0) ? data.testimoniPending.map(t => `<div class="p-3 bg-white border border-orange-200 rounded-xl mb-2 text-sm"><b>${t.nama}</b><p>"${t.pesan}"</p><div class="mt-2 flex gap-2"><button onclick="approveTestimoni(${t.row})" class="bg-green-500 text-white px-3 py-1 rounded">Terima</button><button onclick="hapusTestimoni(${t.row})" class="bg-red-500 text-white px-3 py-1 rounded">Tolak</button></div></div>`).join('') : '<p class="text-xs text-slate-400 text-center py-2">Kosong</p>';
-                document.getElementById('admin-testi-approved').innerHTML = (data.testimoniApproved && data.testimoniApproved.length > 0) ? data.testimoniApproved.map(t => `<div class="p-3 bg-white border border-slate-200 rounded-xl mb-2 text-sm flex justify-between"><div><b>${t.nama}</b><p>"${t.pesan}"</p></div><button onclick="hapusTestimoni(${t.row})" class="text-red-500 p-2"><i class="fas fa-trash"></i></button></div>`).join('') : '<p class="text-xs text-slate-400 text-center py-2">Kosong</p>';
-
-                // Render ETTYN SHOP Produk
                 const shopList = document.getElementById('admin-shop-list');
                 if (data.shopData && data.shopData.length > 0) {
+                    globalShopData = data.shopData; // Simpan ke global agar mudah diedit
                     shopList.innerHTML = data.shopData.map(p => {
                         let arrayGambar = p.imgUrl ? p.imgUrl.split(',') : [];
-                        let jumlahGambar = arrayGambar.length;
+                        
+                        // Memecah Harga dan Satuan
+                        let hArr = p.harga.toString().split('|');
+                        let nominal = hArr[0] || 0;
+                        let satuan = hArr[1] ? `<span class="text-[10px] text-slate-500 font-normal ml-1">${hArr[1]}</span>` : '';
+                        let hargaTampil = `Rp ${Number(nominal).toLocaleString('id-ID')} ${satuan}`;
+
                         return `
                         <tr class="hover:bg-slate-50 transition">
-                            <td class="px-4 py-3 font-bold text-slate-700 whitespace-normal min-w-[200px]">${p.nama}</td>
+                            <td class="px-4 py-3 font-bold text-slate-700 whitespace-normal min-w-[180px]">
+                                ${p.nama}
+                                <div class="text-[10px] font-normal text-pink-500 mt-1"><i class="fas fa-images"></i> ${arrayGambar.length} Slide Media</div>
+                            </td>
                             <td class="px-4 py-3">
                                 <span class="block text-xs font-medium text-slate-500 mb-1"><i class="fas fa-graduation-cap"></i> ${p.tingkat}</span>
                                 <span class="inline-block bg-slate-100 px-2 py-0.5 rounded text-[10px] text-slate-600 font-bold uppercase">${p.kategori} | ${p.format}</span>
                             </td>
-                            <td class="px-4 py-3 text-pink-600 font-bold">Rp ${Number(p.harga).toLocaleString('id-ID')}</td>
-                            <td class="px-4 py-3">
-                                <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded-md text-xs font-bold whitespace-nowrap"><i class="fas fa-images"></i> ${jumlahGambar} Slide</span>
-                            </td>
+                            <td class="px-4 py-3 text-pink-600 font-bold">${hargaTampil}</td>
                             <td class="px-4 py-3 text-right">
-                                <button onclick="hapusProdukShop(${p.row})" class="bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-lg transition" title="Hapus Produk">
+                                <button onclick="bukaEditShop(${p.row})" class="bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-1.5 rounded-lg transition mr-1" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="hapusProdukShop(${p.row})" class="bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-lg transition" title="Hapus">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </td>
-                        </tr>
-                        `;
+                        </tr>`;
                     }).join('');
                 } else {
-                    shopList.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-slate-400 bg-slate-50"><i class="fas fa-box-open text-3xl mb-2 block text-slate-300"></i>Belum ada produk di etalase.</td></tr>';
+                    shopList.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-slate-400 bg-slate-50">Belum ada produk di etalase.</td></tr>';
                 }
-
-            } catch (err) {
-                console.error(err);
-            }
+            } catch (err) { console.error(err); }
         }
 
         // ==========================
         // FUNGSI MANAJEMEN SHOP
         // ==========================
 
-        // Menambah Input Link Gambar Secara Dinamis
-        function tambahInputLink() {
-            const container = document.getElementById('container-link-gambar');
+        function tambahInputLink(containerId, inputClass) {
+            const container = document.getElementById(containerId);
             const div = document.createElement('div');
             div.className = "flex gap-2 relative mt-2";
             div.innerHTML = `
-                <input type="text" class="input-img-url w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-400 focus:outline-none bg-white" placeholder="Link Gambar Tambahan">
-                <button type="button" onclick="this.parentElement.remove()" class="bg-red-100 text-red-500 px-3 rounded-lg hover:bg-red-200 transition" title="Hapus Kolom Ini">
+                <input type="text" class="${inputClass} w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white" placeholder="Link Media Tambahan">
+                <button type="button" onclick="this.parentElement.remove()" class="bg-red-100 text-red-500 px-3 rounded-lg hover:bg-red-200 transition">
                     <i class="fas fa-trash"></i>
-                </button>
-            `;
+                </button>`;
             container.appendChild(div);
         }
+        function tambahInputLinkEdit() { tambahInputLink('edit-container-link-gambar', 'input-edit-img-url'); }
 
-        // Menyimpan Produk
         async function simpanProdukShop() {
             const nama = document.getElementById('shop-nama').value.trim();
             const tingkat = document.getElementById('shop-tingkat').value;
             const kategori = document.getElementById('shop-kategori').value;
             const format = document.getElementById('shop-format').value;
-            const harga = document.getElementById('shop-harga').value.trim();
+            const hargaNominal = document.getElementById('shop-harga').value.trim();
+            const hargaUnit = document.getElementById('shop-unit').value;
             
-            // Menggabungkan semua input link yang diisi menggunakan Koma (,)
             const inputsLink = document.querySelectorAll('.input-img-url');
             const arrayLink = Array.from(inputsLink).map(input => input.value.trim()).filter(val => val !== "");
-            const stringImgUrl = arrayLink.join(',');
-
-            if(!nama || !harga || arrayLink.length === 0) {
-                alert("Mohon lengkapi Nama Produk, Harga, dan minimal 1 Link Gambar Utama!");
-                return;
-            }
+            
+            if(!nama || !hargaNominal || arrayLink.length === 0) return alert("Lengkapi Nama, Harga, dan minimal 1 Link Media!");
 
             const btn = document.getElementById('btn-simpan-shop');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...'; btn.disabled = true;
 
-            const payload = {
-                action: 'addShop',
-                nama: nama,
-                tingkat: tingkat,
-                kategori: kategori,
-                format: format,
-                harga: harga,
-                imgUrl: stringImgUrl
-            };
-
-            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+            await fetch(GAS_URL, { 
+                method: 'POST', 
+                body: JSON.stringify({
+                    action: 'addShop', nama: nama, tingkat: tingkat, kategori: kategori, format: format,
+                    harga: hargaNominal + '|' + hargaUnit, // Penggabungan Harga
+                    imgUrl: arrayLink.join(',')
+                }) 
+            });
             
-            // Reset Form
-            document.getElementById('shop-nama').value = '';
-            document.getElementById('shop-harga').value = '';
-            document.getElementById('container-link-gambar').innerHTML = '<div class="flex gap-2"><input type="text" class="input-img-url w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-400 focus:outline-none bg-white" placeholder="Link Gambar 1 (Sampul Utama)"></div>';
+            document.getElementById('shop-nama').value = ''; document.getElementById('shop-harga').value = '';
+            document.getElementById('shop-unit').value = '';
+            document.getElementById('container-link-gambar').innerHTML = '<div class="flex gap-2"><input type="text" class="input-img-url w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Link Media 1 (Sampul Utama)"></div>';
             
-            btn.innerHTML = '<i class="fas fa-cloud-upload-alt mr-1"></i> Upload Produk';
-            btn.disabled = false;
-            
+            btn.innerHTML = '<i class="fas fa-cloud-upload-alt mr-1"></i> Upload Produk'; btn.disabled = false;
             loadAdminData();
         }
 
-        // Menghapus Produk
         async function hapusProdukShop(rowId) {
-            if(!confirm("Yakin ingin menghapus produk ini dari Etalase Web?")) return;
+            if(!confirm("Yakin hapus produk ini?")) return;
             await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteShop', row: rowId }) });
             loadAdminData();
         }
 
-        // FUNGSI GALERI & TESTI (Standar)
-        async function tambahGaleri() {
-            const url = document.getElementById('input-galeri-url').value;
-            if(!url) return;
-            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'addGaleri', url: url }) });
-            document.getElementById('input-galeri-url').value = '';
-            loadAdminData(); 
+        // ==========================
+        // FUNGSI EDIT PRODUK SHOP
+        // ==========================
+        function bukaEditShop(rowId) {
+            const produk = globalShopData.find(p => p.row === rowId);
+            if(!produk) return;
+            
+            document.getElementById('edit-shop-row').value = produk.row;
+            document.getElementById('edit-shop-nama').value = produk.nama;
+            document.getElementById('edit-shop-tingkat').value = produk.tingkat;
+            document.getElementById('edit-shop-kategori').value = produk.kategori;
+            document.getElementById('edit-shop-format').value = produk.format;
+            
+            // Pecah harga dan satuan
+            let hArr = produk.harga.toString().split('|');
+            document.getElementById('edit-shop-harga').value = hArr[0] || '';
+            document.getElementById('edit-shop-unit').value = hArr[1] || '';
+
+            // Generate ulang kolom link gambar
+            const imgArr = produk.imgUrl ? produk.imgUrl.split(',').map(u => u.trim()) : [];
+            const container = document.getElementById('edit-container-link-gambar');
+            container.innerHTML = ''; 
+            if(imgArr.length === 0) imgArr.push('');
+            
+            imgArr.forEach((url, index) => {
+                container.innerHTML += `
+                <div class="flex gap-2 relative mt-2">
+                    <input type="text" value="${url}" class="input-edit-img-url w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white" placeholder="Link Media">
+                    ${index > 0 ? `<button type="button" onclick="this.parentElement.remove()" class="bg-red-100 text-red-500 px-3 rounded-lg"><i class="fas fa-trash"></i></button>` : ''}
+                </div>`;
+            });
+            
+            document.getElementById('edit-shop-modal').classList.remove('hidden');
         }
-        async function hapusGaleri(row) { await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteGaleri', row: row }) }); loadAdminData(); }
-        async function approveTestimoni(row) { await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'approveTestimoni', row: row }) }); loadAdminData(); }
-        async function hapusTestimoni(row) { await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteTestimoni', row: row }) }); loadAdminData(); }
-        
-        // Modal Edit
-        function tutupEditModal() { document.getElementById('edit-modal').classList.add('hidden'); }
+
+        function tutupEditShop() { document.getElementById('edit-shop-modal').classList.add('hidden'); }
+
+        async function simpanEditProdukShop() {
+            const rowId = document.getElementById('edit-shop-row').value;
+            const nama = document.getElementById('edit-shop-nama').value.trim();
+            const tingkat = document.getElementById('edit-shop-tingkat').value;
+            const kategori = document.getElementById('edit-shop-kategori').value;
+            const format = document.getElementById('edit-shop-format').value;
+            const hargaNominal = document.getElementById('edit-shop-harga').value.trim();
+            const hargaUnit = document.getElementById('edit-shop-unit').value;
+            
+            const inputsLink = document.querySelectorAll('.input-edit-img-url');
+            const arrayLink = Array.from(inputsLink).map(input => input.value.trim()).filter(val => val !== "");
+
+            if(!nama || !hargaNominal || arrayLink.length === 0) return alert("Data belum lengkap!");
+
+            const btn = document.getElementById('btn-simpan-edit-shop');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memperbarui...'; btn.disabled = true;
+
+            await fetch(GAS_URL, { 
+                method: 'POST', 
+                body: JSON.stringify({
+                    action: 'editShop', row: rowId, nama: nama, tingkat: tingkat, kategori: kategori, format: format,
+                    harga: hargaNominal + '|' + hargaUnit,
+                    imgUrl: arrayLink.join(',')
+                }) 
+            });
+            
+            btn.innerHTML = '<i class="fas fa-save"></i> Update Produk'; btn.disabled = false;
+            tutupEditShop(); loadAdminData();
+        }
     </script>
 </body>
 </html>
