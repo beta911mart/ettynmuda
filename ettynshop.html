@@ -215,7 +215,10 @@
             }
 
             produkTersaring.forEach(p => {
-                let hargaFormatted = Number(p.harga).toLocaleString('id-ID');
+                let hargaArray = p.harga.toString().split('|');
+                let nominal = hargaArray[0] || 0;
+                let satuan = hargaArray[1] ? `<span class="text-xs font-medium text-pink-700 ml-1">${hargaArray[1]}</span>` : '';
+                let hargaFormatted = Number(nominal).toLocaleString('id-ID') + satuan;
                 
                 let daftarGambarArray = p.imgUrl ? p.imgUrl.split(',') : [''];
                 let thumbnailUtama = daftarGambarArray[0].trim();
