@@ -345,7 +345,9 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    textInput.value = data.data.url; // Tulis link secara otomatis!
+                    // Otomatis ubah domain agar lolos blokir Internet Positif
+                    let linkAman = data.data.url.replace("i.ibb.co", "i.ibb.co.com");
+                    textInput.value = linkAman; 
                 } else {
                     alert("Gagal mengunggah: " + (data.error.message || "Unknown error"));
                 }
