@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Artikel - Teman Akademik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .output-gemini h1 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem; line-height: 1.3; }
+        .output-gemini h2 { font-size: 1.25rem; font-weight: 700; color: #1e293b; margin-top: 1.5rem; margin-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.25rem; }
+        .output-gemini h3 { font-size: 1.1rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; color: #334155; }
+        .output-gemini p { margin-bottom: 1rem; color: #475569; line-height: 1.7; font-size: 0.95rem; }
+        .output-gemini ul, .output-gemini ol { margin-left: 1.5rem; margin-bottom: 1rem; color: #475569; font-size: 0.95rem; }
+        .output-gemini ul { list-style-type: disc; }
+        .output-gemini ol { list-style-type: decimal; }
+        .output-gemini li { margin-bottom: 0.5rem; }
+        .output-gemini blockquote { border-left: 4px solid #3b82f6; padding-left: 1rem; font-style: italic; color: #64748b; margin-bottom: 1rem; background: #eff6ff; padding: 1rem; rounded-r-lg; }
+        .output-gemini strong { color: #0f172a; font-weight: 600; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col items-center py-10 px-4">
+
+    <!-- Header Umum -->
+    <div class="text-center mb-8">
+        <div class="inline-block bg-indigo-100 text-indigo-600 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-3 shadow-sm border border-indigo-200">
+            <i class="fas fa-newspaper mr-1"></i> Penulis AI
+        </div>
+        <h1 class="text-3xl font-bold text-slate-800 mb-2">Artikel Instan</h1>
+        <p class="text-slate-500 text-sm max-w-lg mx-auto">Buat artikel SEO, blog, atau opini jurnalistik berkualitas tinggi dalam hitungan detik.</p>
+    </div>
+
+    <!-- BAGIAN 1: FORM LOGIN -->
+    <div id="login-section" class="max-w-sm w-full bg-white p-8 rounded-3xl shadow-sm border border-slate-200 transition-all duration-500">
+        <div class="text-center mb-6">
+            <div class="w-16 h-16 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl border border-indigo-100">
+                <i class="fas fa-user-lock"></i>
+            </div>
+            <h2 class="text-xl font-bold text-slate-800">Masuk Akun</h2>
+            <p class="text-xs text-slate-500 mt-1">Silakan login untuk mengecek saldo koin.</p>
+        </div>
+        
+        <div class="space-y-4">
+            <div><input type="text" id="login-user" placeholder="Username" class="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-slate-50 text-sm font-medium"></div>
+            <div><input type="password" id="login-pass" placeholder="Password" class="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-slate-50 text-sm font-medium"></div>
+            <button onclick="prosesLogin()" id="btn-login" class="w-full bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-indigo-600 transition-colors shadow-md mt-2 flex justify-center items-center gap-2">
+                <i class="fas fa-sign-in-alt"></i> Masuk Sekarang
+            </button>
+        </div>
+    </div>
+
+    <!-- BAGIAN 2: PANEL GENERATOR -->
+    <div id="app-section" class="max-w-6xl w-full hidden opacity-0 transition-opacity duration-500">
+        
+        <!-- Bar Status User & Koin -->
+        <div class="bg-white px-6 py-4 rounded-2xl shadow-sm border border-slate-200 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Selamat Datang</p>
+                    <p class="font-bold text-slate-800 text-sm" id="display-user">Nama User</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="bg-amber-100 border border-amber-200 px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm">
+                    <i class="fas fa-coins text-amber-500 text-lg"></i>
+                    <div class="flex flex-col leading-none">
+                        <span class="text-[10px] text-amber-700 font-bold uppercase">Saldo Anda</span>
+                        <span class="font-bold text-amber-600 text-sm"><span id="display-koin">0</span> Koin</span>
+                    </div>
+                </div>
+                <button onclick="prosesLogout()" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors" title="Keluar">
+                    <i class="fas fa-power-off text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- PANEL KIRI: FORM INPUT -->
+            <div class="lg:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
+                <h2 class="font-bold text-lg border-b border-slate-100 pb-3 mb-5 flex items-center">
+                    <i class="fas fa-pen-nib text-indigo-500 mr-2"></i> Konsep Artikel
+                </h2>
+                
+                <div class="space-y-4 text-sm">
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Topik / Judul Utama <span class="text-red-500">*</span></label>
+                        <textarea id="input-topik" rows="2" placeholder="Cth: Dampak Kecerdasan Buatan Terhadap Dunia Pendidikan di Era Digital" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-slate-50"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Target Pembaca <span class="text-red-500">*</span></label>
+                        <select id="input-target" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-slate-50 cursor-pointer">
+                            <option value="Masyarakat Umum">Masyarakat Umum</option>
+                            <option value="Mahasiswa / Pelajar">Mahasiswa / Pelajar</option>
+                            <option value="Profesional / Akademisi">Profesional / Akademisi</option>
+                            <option value="Anak Muda / Gen Z">Anak Muda / Gen Z</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Gaya Bahasa <span class="text-red-500">*</span></label>
+                        <select id="input-gaya" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-slate-50 cursor-pointer">
+                            <option value="Informatif dan Profesional">Informatif & Profesional</option>
+                            <option value="Santai dan Engaging (Blogging)">Santai & Engaging (Blogging)</option>
+                            <option value="Akademis dan Kritis">Akademis & Kritis</option>
+                            <option value="Jurnalistik dan Objektif">Jurnalistik & Objektif</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Kata Kunci Utama (Opsional)</label>
+                        <input type="text" id="input-keyword" placeholder="Cth: AI, Pendidikan, Teknologi, Kurikulum" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-slate-50">
+                    </div>
+
+                    <button onclick="generateArtikel()" id="btn-generate" class="w-full bg-indigo-600 text-white font-bold py-3.5 rounded-xl hover:bg-indigo-700 transition-colors shadow-md mt-4 flex justify-center items-center gap-2">
+                        <i class="fas fa-magic"></i> Generate Artikel (-1 Koin)
+                    </button>
+                </div>
+            </div>
+
+            <!-- PANEL KANAN: OUTPUT HASIL -->
+            <div class="lg:col-span-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative min-h-[600px] flex flex-col">
+                
+                <!-- Animasi Loading -->
+                <div id="loading-state" class="hidden absolute inset-0 bg-white/95 rounded-2xl flex flex-col items-center justify-center z-10 backdrop-blur-sm">
+                    <div class="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
+                    <p class="text-slate-700 font-bold text-lg">AI sedang merangkai kata...</p>
+                    <p class="text-sm text-slate-500 mt-2">Menganalisis topik dan gaya bahasa (10-25 detik)</p>
+                </div>
+
+                <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                    <h2 class="font-bold text-lg flex items-center">
+                        <i class="fas fa-align-left text-green-500 mr-2 bg-green-50 p-2 rounded-lg"></i> Hasil Artikel
+                    </h2>
+                    <button onclick="copyHasil()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5 border border-slate-200">
+                        <i class="fas fa-copy text-indigo-500"></i> Salin Teks
+                    </button>
+                </div>
+
+                <div id="result-container" class="output-gemini overflow-auto pr-2 flex-grow">
+                    <!-- Placeholder -->
+                    <div class="h-full flex flex-col items-center justify-center text-slate-300 py-20">
+                        <i class="fas fa-keyboard text-6xl mb-4 opacity-50 text-indigo-200"></i>
+                        <p class="font-medium text-slate-400">Hasil artikel cerdas akan muncul di sini</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec";
+        let sessionUser = "";
+        let sessionPass = "";
+
+        async function prosesLogin() {
+            const user = document.getElementById('login-user').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
+            const btn = document.getElementById('btn-login');
+
+            if (!user || !pass) return alert("Silakan masukkan Username dan Password!");
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memverifikasi...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'login', username: user, password: pass })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    sessionUser = user; sessionPass = pass;
+                    document.getElementById('display-user').innerText = user;
+                    document.getElementById('display-koin').innerText = data.koin;
+
+                    document.getElementById('login-section').classList.add('hidden');
+                    const appSection = document.getElementById('app-section');
+                    appSection.classList.remove('hidden');
+                    setTimeout(() => { appSection.classList.remove('opacity-0'); }, 50);
+                } else { alert(data.message || "Username atau password salah!"); }
+            } catch (error) { alert("Gagal terhubung ke server."); } 
+            finally { btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk Sekarang'; btn.disabled = false; }
+        }
+
+        function prosesLogout() {
+            sessionUser = ""; sessionPass = "";
+            document.getElementById('login-user').value = ""; document.getElementById('login-pass').value = "";
+            document.getElementById('app-section').classList.add('opacity-0');
+            setTimeout(() => {
+                document.getElementById('app-section').classList.add('hidden');
+                document.getElementById('login-section').classList.remove('hidden');
+                document.getElementById('result-container').innerHTML = `<div class="h-full flex flex-col items-center justify-center text-slate-300 py-20"><i class="fas fa-keyboard text-6xl mb-4 opacity-50 text-indigo-200"></i><p class="font-medium text-slate-400">Hasil artikel cerdas akan muncul di sini</p></div>`;
+            }, 500);
+        }
+
+        async function generateArtikel() {
+            const topik = document.getElementById('input-topik').value.trim();
+            const target = document.getElementById('input-target').value;
+            const gaya = document.getElementById('input-gaya').value;
+            const keyword = document.getElementById('input-keyword').value.trim();
+
+            if (!topik) return alert("Topik/Judul Utama wajib diisi!");
+
+            document.getElementById('loading-state').classList.remove('hidden');
+            const btn = document.getElementById('btn-generate'); btn.disabled = true;
+
+            const payload = {
+                action: 'generateArtikel', // Aksi baru untuk GAS
+                username: sessionUser, password: sessionPass,
+                promptData: { topik: topik, target: target, gaya: gaya, keyword: keyword }
+            };
+
+            try {
+                const response = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('result-container').innerHTML = data.htmlData;
+                    document.getElementById('display-koin').innerText = data.sisaKoin;
+                } else {
+                    alert(data.message.includes("Koin") ? "Maaf, saldo koin Anda habis. Silakan top up." : "Gagal: " + data.message);
+                }
+            } catch (error) { alert("Terjadi kesalahan koneksi AI."); } 
+            finally { document.getElementById('loading-state').classList.add('hidden'); btn.disabled = false; }
+        }
+
+        function copyHasil() {
+            const konten = document.getElementById('result-container').innerText;
+            if(!konten || konten.includes("akan muncul di sini")) return alert("Belum ada teks untuk disalin!");
+            navigator.clipboard.writeText(konten).then(() => { alert("Berhasil disalin! Silakan Paste ke MS Word atau Blog Anda."); })
+            .catch(err => { alert("Blok teks secara manual lalu Ctrl+C."); });
+        }
+    </script>
+</body>
+</html>
