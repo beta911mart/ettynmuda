@@ -41,13 +41,13 @@
             <div class="space-y-4">
                 <div>
                     <label class="text-xs font-bold text-slate-500 mb-1 block">Nama Dokumen</label>
-                    <input type="text" id="edit-shop-nama" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none">
+                    <input type="text" id="edit-shop-nama" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400">
                 </div>
                 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="text-xs font-bold text-slate-500 mb-1 block">Tingkat</label>
-                        <select id="edit-shop-tingkat" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 cursor-pointer">
+                        <select id="edit-shop-tingkat" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 cursor-pointer">
                             <option value="TK / Sederajat">TK / Sederajat</option><option value="SD / Sederajat">SD / Sederajat</option>
                             <option value="SMP / Sederajat">SMP / Sederajat</option><option value="SLTA / Sederajat">SLTA / Sederajat</option>
                             <option value="Universitas">Universitas</option><option value="Umum">Umum</option>
@@ -55,7 +55,7 @@
                     </div>
                     <div>
                         <label class="text-xs font-bold text-slate-500 mb-1 block">Kategori</label>
-                        <select id="edit-shop-kategori" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 cursor-pointer">
+                        <select id="edit-shop-kategori" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 cursor-pointer">
                             <option value="Proposal">Proposal</option><option value="Modul">Modul</option>
                             <option value="LKPD">LKPD</option><option value="Presentasi">Presentasi</option>
                             <option value="Laporan">Laporan</option><option value="Surat">Surat</option>
@@ -67,7 +67,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="text-xs font-bold text-slate-500 mb-1 block">Format</label>
-                        <select id="edit-shop-format" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 cursor-pointer">
+                        <select id="edit-shop-format" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 cursor-pointer">
                             <option value="PDF">PDF</option><option value="PPT">PPT</option>
                             <option value="Word">Word</option><option value="Image">Image</option><option value="Video">Video</option>
                         </select>
@@ -75,8 +75,8 @@
                     <div>
                         <label class="text-xs font-bold text-slate-500 mb-1 block">Harga (Rp) & Satuan</label>
                         <div class="flex gap-2">
-                            <input type="number" id="edit-shop-harga" class="w-1/2 px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400">
-                            <select id="edit-shop-unit" class="w-1/2 px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-pink-400 cursor-pointer">
+                            <input type="number" id="edit-shop-harga" class="w-1/2 px-3 py-2 border rounded-lg text-sm bg-slate-50">
+                            <select id="edit-shop-unit" class="w-1/2 px-3 py-2 border rounded-lg text-sm bg-slate-50 cursor-pointer">
                                 <option value="">(Tanpa)</option>
                                 <option value="/ halaman">/ halaman</option><option value="/ file">/ file</option>
                                 <option value="/ menit">/ menit</option><option value="/ materi">/ materi</option>
@@ -87,9 +87,7 @@
                 </div>
 
                 <div class="p-3 bg-pink-50/50 rounded-lg border border-pink-100 mt-2">
-                    <label class="text-xs font-bold text-slate-700 mb-2 block flex items-center justify-between">
-                        <span><i class="fas fa-images text-pink-500"></i> Link Gambar/Video (Dipisah Koma)</span>
-                    </label>
+                    <label class="text-xs font-bold text-slate-700 mb-2 block">Link Gambar/Video (Dipisah Koma)</label>
                     <div id="edit-container-link-gambar" class="space-y-2"></div>
                     <button type="button" onclick="tambahInputLinkEdit()" class="mt-3 text-xs font-bold text-pink-600 hover:text-pink-800 flex items-center gap-1 w-full justify-center border border-dashed border-pink-300 py-1.5 rounded-lg bg-white transition">
                         <i class="fas fa-plus-circle"></i> Tambah Slide Media Lainnya
@@ -98,8 +96,8 @@
             </div>
             
             <div class="mt-6 flex justify-end gap-3">
-                <button onclick="tutupEditShop()" class="px-5 py-2.5 rounded-lg text-slate-600 bg-slate-100 hover:bg-slate-200 font-medium transition">Batal</button>
-                <button onclick="simpanEditProdukShop()" id="btn-simpan-edit-shop" class="px-5 py-2.5 rounded-lg text-white bg-pink-600 hover:bg-pink-700 font-medium transition flex items-center gap-2">
+                <button onclick="tutupEditShop()" class="px-5 py-2.5 rounded-lg text-slate-600 bg-slate-100 hover:bg-slate-200 font-medium">Batal</button>
+                <button onclick="simpanEditProdukShop()" id="btn-simpan-edit-shop" class="px-5 py-2.5 rounded-lg text-white bg-pink-600 hover:bg-pink-700 font-medium flex items-center gap-2">
                     <i class="fas fa-save"></i> Update Produk
                 </button>
             </div>
@@ -123,7 +121,7 @@
         <!-- Main Content -->
         <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 w-full flex flex-col gap-8 flex-1">
             
-            <!-- PANEL 1: MANAJEMEN USERS (BARU) -->
+            <!-- PANEL 1: MANAJEMEN USERS -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="p-5 sm:p-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
                     <h3 class="text-lg font-bold flex items-center">
@@ -132,21 +130,20 @@
                 </div>
                 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-5 sm:p-6">
-                    <!-- Form Tambah / Update User -->
                     <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm lg:col-span-1 h-fit">
                         <h4 class="font-bold text-slate-700 mb-4 border-b pb-2">Tambah / Edit User</h4>
                         <div class="space-y-3 text-sm">
                             <div>
                                 <label class="text-xs font-bold text-slate-500 mb-1 block">Username</label>
-                                <input type="text" id="user-username" placeholder="Cth: sintia" class="w-full px-3 py-2 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                                <input type="text" id="user-username" placeholder="Cth: sintia" class="w-full px-3 py-2 border rounded-lg bg-slate-50">
                             </div>
                             <div>
                                 <label class="text-xs font-bold text-slate-500 mb-1 block">Password</label>
-                                <input type="text" id="user-password" placeholder="Cth: rahasia123" class="w-full px-3 py-2 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                                <input type="text" id="user-password" placeholder="Cth: rahasia123" class="w-full px-3 py-2 border rounded-lg bg-slate-50">
                             </div>
                             <div>
                                 <label class="text-xs font-bold text-slate-500 mb-1 block">Jumlah Koin Awal / Top-Up</label>
-                                <input type="number" id="user-koin" value="10" class="w-full px-3 py-2 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                                <input type="number" id="user-koin" value="10" class="w-full px-3 py-2 border rounded-lg bg-slate-50">
                             </div>
                             <button onclick="simpanUser()" id="btn-simpan-user" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition mt-2 flex justify-center items-center gap-2">
                                 <i class="fas fa-user-plus"></i> Simpan / Update User
@@ -154,7 +151,6 @@
                         </div>
                     </div>
 
-                    <!-- Daftar User Terdaftar -->
                     <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm lg:col-span-2">
                         <h4 class="font-bold text-slate-700 mb-4 border-b pb-2">Daftar Akun Pengguna</h4>
                         <div class="overflow-x-auto">
@@ -185,19 +181,18 @@
                 </div>
                 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-5 sm:p-6">
-                    <!-- Form Tambah Produk -->
                     <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm lg:col-span-1 h-fit">
                         <h4 class="font-bold text-slate-700 mb-4 border-b pb-2">Tambah Produk Baru</h4>
                         <div class="space-y-3 text-sm">
                             <div>
                                 <label class="text-xs font-bold text-slate-500 mb-1 block">Nama Dokumen</label>
-                                <input type="text" id="shop-nama" placeholder="Cth: Asuhan Kebidanan" class="w-full px-3 py-2 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-pink-400 focus:outline-none">
+                                <input type="text" id="shop-nama" placeholder="Cth: Asuhan Kebidanan" class="w-full px-3 py-2 border rounded-lg bg-slate-50">
                             </div>
                             
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="text-xs font-bold text-slate-500 mb-1 block">Tingkat</label>
-                                    <select id="shop-tingkat" class="w-full px-3 py-2 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-pink-400 cursor-pointer">
+                                    <select id="shop-tingkat" class="w-full px-3 py-2 border rounded-lg bg-slate-50 cursor-pointer">
                                         <option value="TK / Sederajat">TK / Sederajat</option><option value="SD / Sederajat">SD / Sederajat</option>
                                         <option value="SMP / Sederajat">SMP / Sederajat</option><option value="SLTA / Sederajat">SLTA / Sederajat</option>
                                         <option value="Universitas">Universitas</option><option value="Umum">Umum</option>
@@ -205,7 +200,7 @@
                                 </div>
                                 <div>
                                     <label class="text-xs font-bold text-slate-500 mb-1 block">Kategori</label>
-                                    <select id="shop-kategori" class="w-full px-3 py-2 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-pink-400 cursor-pointer">
+                                    <select id="shop-kategori" class="w-full px-3 py-2 border rounded-lg bg-slate-50 cursor-pointer">
                                         <option value="Proposal">Proposal</option><option value="Modul">Modul</option>
                                         <option value="LKPD">LKPD</option><option value="Presentasi">Presentasi</option>
                                         <option value="Laporan">Laporan</option><option value="Surat">Surat</option>
@@ -217,7 +212,7 @@
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="text-xs font-bold text-slate-500 mb-1 block">Format</label>
-                                    <select id="shop-format" class="w-full px-3 py-2 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-pink-400 cursor-pointer">
+                                    <select id="shop-format" class="w-full px-3 py-2 border rounded-lg bg-slate-50 cursor-pointer">
                                         <option value="PDF">PDF</option><option value="PPT">PPT</option>
                                         <option value="Word">Word</option><option value="Image">Image</option><option value="Video">Video</option>
                                     </select>
@@ -225,8 +220,8 @@
                                 <div>
                                     <label class="text-xs font-bold text-slate-500 mb-1 block">Harga (Rp) & Satuan</label>
                                     <div class="flex gap-2">
-                                        <input type="number" id="shop-harga" placeholder="15000" class="w-1/2 px-3 py-2 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-pink-400">
-                                        <select id="shop-unit" class="w-1/2 px-2 py-2 border rounded-lg text-xs bg-slate-50 focus:ring-2 focus:ring-pink-400 cursor-pointer">
+                                        <input type="number" id="shop-harga" placeholder="15000" class="w-1/2 px-3 py-2 border rounded-lg bg-slate-50">
+                                        <select id="shop-unit" class="w-1/2 px-2 py-2 border rounded-lg text-xs bg-slate-50 cursor-pointer">
                                             <option value="">(Tanpa)</option>
                                             <option value="/ halaman">/ halaman</option><option value="/ file">/ file</option>
                                             <option value="/ menit">/ menit</option><option value="/ materi">/ materi</option>
@@ -252,7 +247,6 @@
                         </div>
                     </div>
 
-                    <!-- Daftar Produk -->
                     <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm lg:col-span-2">
                         <h4 class="font-bold text-slate-700 mb-4 border-b pb-2">Daftar Produk Terpublikasi</h4>
                         <div class="overflow-x-auto">
@@ -267,6 +261,78 @@
                                 </thead>
                                 <tbody id="admin-shop-list" class="divide-y divide-slate-100">
                                     <tr><td colspan="4" class="text-center py-6 text-slate-400">Memuat etalase...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 3: KELOLA GALERI WEB (DIKEMBALIKAN) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-5 sm:p-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                    <h3 class="text-lg font-bold flex items-center">
+                        <i class="fas fa-images text-purple-500 mr-2 bg-purple-100 p-2 rounded-lg"></i> Kelola Galeri Web
+                    </h3>
+                </div>
+                <div class="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-fit">
+                        <h4 class="font-bold text-slate-700 mb-4 border-b pb-2">Tambah Foto Galeri</h4>
+                        <div class="space-y-3 text-sm">
+                            <input type="text" id="galeri-url" placeholder="URL Gambar (https://...)" class="w-full px-3 py-2 border rounded-lg bg-slate-50">
+                            <button onclick="tambahGaleri()" class="w-full bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 transition flex justify-center items-center gap-2">
+                                <i class="fas fa-plus"></i> Tambah ke Galeri
+                            </button>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <h4 class="font-bold text-slate-700 mb-4 border-b pb-2">Daftar Foto Galeri Aktif</h4>
+                        <div id="admin-galeri-list" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                            <p class="text-slate-400 text-sm">Memuat galeri...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 4: MANAJEMEN TESTIMONI (DIKEMBALIKAN) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+                <div class="p-5 sm:p-6 border-b border-slate-100 bg-slate-50">
+                    <h3 class="text-lg font-bold flex items-center">
+                        <i class="fas fa-comments text-amber-500 mr-2 bg-amber-100 p-2 rounded-lg"></i> Moderasi Testimoni Pengguna
+                    </h3>
+                </div>
+                <div class="p-5 sm:p-6 space-y-6">
+                    <div>
+                        <h4 class="font-bold text-amber-600 mb-3 text-sm flex items-center"><i class="fas fa-clock mr-1"></i> Menunggu Persetujuan (Pending)</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left whitespace-nowrap">
+                                <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-y border-slate-200">
+                                    <tr>
+                                        <th class="px-4 py-3">Nama & Instansi</th>
+                                        <th class="px-4 py-3">Pesan Testimoni</th>
+                                        <th class="px-4 py-3 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-testi-pending" class="divide-y divide-slate-100">
+                                    <tr><td colspan="3" class="text-center py-4 text-slate-400">Tidak ada testimoni pending.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-green-600 mb-3 text-sm flex items-center"><i class="fas fa-check-circle mr-1"></i> Testimoni Disetujui (Approved)</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left whitespace-nowrap">
+                                <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-y border-slate-200">
+                                    <tr>
+                                        <th class="px-4 py-3">Nama & Instansi</th>
+                                        <th class="px-4 py-3">Pesan Testimoni</th>
+                                        <th class="px-4 py-3 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-testi-approved" class="divide-y divide-slate-100">
+                                    <tr><td colspan="3" class="text-center py-4 text-slate-400">Belum ada testimoni disetujui.</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -301,7 +367,7 @@
                 const response = await fetch(GAS_URL + "?action=getAdminData");
                 const data = await response.json();
                 
-                // 1. Render Tabel Users
+                // 1. Render Users
                 const userList = document.getElementById('admin-user-list');
                 if (data.userData && data.userData.length > 0) {
                     globalUserData = data.userData;
@@ -324,7 +390,7 @@
                     userList.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-slate-400">Belum ada akun user terdaftar.</td></tr>';
                 }
 
-                // 2. Render Tabel Shop
+                // 2. Render Shop
                 const shopList = document.getElementById('admin-shop-list');
                 if (data.shopData && data.shopData.length > 0) {
                     globalShopData = data.shopData;
@@ -355,12 +421,72 @@
                 } else {
                     shopList.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-slate-400 bg-slate-50">Belum ada produk di etalase.</td></tr>';
                 }
+
+                // 3. Render Galeri
+                const galeriList = document.getElementById('admin-galeri-list');
+                if (data.galeri && data.galeri.length > 0) {
+                    galeriList.innerHTML = data.galeri.map(g => `
+                        <div class="relative group rounded-xl overflow-hidden border border-slate-200 bg-slate-100 aspect-video">
+                            <img src="${g.url}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                <button onclick="hapusGaleri(${g.row})" class="bg-red-600 text-white p-2.5 rounded-lg hover:bg-red-700 transition" title="Hapus Foto">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    galeriList.innerHTML = '<p class="text-slate-400 text-sm">Belum ada foto di galeri.</p>';
+                }
+
+                // 4. Render Testimoni
+                const testiPending = document.getElementById('admin-testi-pending');
+                if (data.testimoniPending && data.testimoniPending.length > 0) {
+                    testiPending.innerHTML = data.testimoniPending.map(t => `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="px-4 py-3">
+                                <p class="font-bold text-slate-700">${t.nama}</p>
+                                <p class="text-xs text-slate-500">${t.instansi}</p>
+                            </td>
+                            <td class="px-4 py-3 text-slate-600 whitespace-normal max-w-xs">${t.pesan}</td>
+                            <td class="px-4 py-3 text-right">
+                                <button onclick="approveTestimoni(${t.row})" class="bg-green-50 text-green-600 hover:bg-green-600 hover:text-white px-3 py-1.5 rounded-lg transition mr-1" title="Setujui">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button onclick="hapusTestimoni(${t.row})" class="bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-lg transition" title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    testiPending.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-slate-400">Tidak ada testimoni pending.</td></tr>';
+                }
+
+                const testiApproved = document.getElementById('admin-testi-approved');
+                if (data.testimoniApproved && data.testimoniApproved.length > 0) {
+                    testiApproved.innerHTML = data.testimoniApproved.map(t => `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="px-4 py-3">
+                                <p class="font-bold text-slate-700">${t.nama}</p>
+                                <p class="text-xs text-slate-500">${t.instansi}</p>
+                            </td>
+                            <td class="px-4 py-3 text-slate-600 whitespace-normal max-w-xs">${t.pesan}</td>
+                            <td class="px-4 py-3 text-right">
+                                <button onclick="hapusTestimoni(${t.row})" class="bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-lg transition" title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    testiApproved.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-slate-400">Belum ada testimoni disetujui.</td></tr>';
+                }
+
             } catch (err) { console.error(err); }
         }
 
-        // ==========================================
-        // MANAJEMEN USERS JAVASCRIPT
-        // ==========================================
+        // Fungsi Manajemen Users
         function pilihEditUser(username, password, koin) {
             document.getElementById('user-username').value = username;
             document.getElementById('user-password').value = password;
@@ -372,41 +498,23 @@
             const username = document.getElementById('user-username').value.trim();
             const password = document.getElementById('user-password').value.trim();
             const koin = document.getElementById('user-koin').value;
-
             if(!username || !password) return alert("Username dan Password wajib diisi!");
-
-            const btn = document.getElementById('btn-simpan-user');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...'; btn.disabled = true;
-
-            await fetch(GAS_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'saveUser', username, password, koin })
-            });
-
-            document.getElementById('user-username').value = '';
-            document.getElementById('user-password').value = '';
-            document.getElementById('user-koin').value = '10';
-            btn.innerHTML = '<i class="fas fa-user-plus"></i> Simpan / Update User'; btn.disabled = false;
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'saveUser', username, password, koin }) });
+            document.getElementById('user-username').value = ''; document.getElementById('user-password').value = '';
             loadAdminData();
         }
 
         async function hapusUser(username) {
-            if(!confirm(`Yakin ingin menghapus akun user "${username}"?`)) return;
-            await fetch(GAS_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'deleteUser', username })
-            });
+            if(!confirm(`Yakin hapus user "${username}"?`)) return;
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteUser', username }) });
             loadAdminData();
         }
 
-        // ==========================================
-        // MANAJEMEN SHOP JAVASCRIPT
-        // ==========================================
+        // Fungsi Manajemen Shop
         function tambahInputLink(containerId, inputClass) {
             const container = document.getElementById(containerId);
             const input = document.createElement('input');
-            input.type = "text";
-            input.className = `${inputClass} w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white mt-2`;
+            input.type = "text"; input.className = `${inputClass} w-full px-3 py-2 border rounded-lg text-sm bg-white mt-2`;
             input.placeholder = "https://...";
             container.appendChild(input);
         }
@@ -418,29 +526,11 @@
             const format = document.getElementById('shop-format').value;
             const hargaNominal = document.getElementById('shop-harga').value.trim();
             const hargaUnit = document.getElementById('shop-unit').value;
-            
             const inputsLink = document.querySelectorAll('.input-img-url');
             const arrayLink = Array.from(inputsLink).map(input => input.value.trim()).filter(val => val !== "");
             
-            if(!nama || !hargaNominal || arrayLink.length === 0) return alert("Lengkapi Nama, Harga, dan minimal 1 Link Media!");
-
-            const btn = document.getElementById('btn-simpan-shop');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...'; btn.disabled = true;
-
-            await fetch(GAS_URL, { 
-                method: 'POST', 
-                body: JSON.stringify({
-                    action: 'addShop', nama, tingkat, kategori, format,
-                    harga: hargaNominal + '|' + hargaUnit,
-                    imgUrl: arrayLink.join(',')
-                }) 
-            });
-            
-            document.getElementById('shop-nama').value = ''; document.getElementById('shop-harga').value = '';
-            document.getElementById('shop-unit').value = '';
-            document.getElementById('container-link-gambar').innerHTML = '<input type="text" class="input-img-url w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="https://...">';
-            
-            btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload Produk'; btn.disabled = false;
+            if(!nama || !hargaNominal || arrayLink.length === 0) return alert("Lengkapi Nama, Harga, dan Link Media!");
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'addShop', nama, tingkat, kategori, format, harga: hargaNominal + '|' + hargaUnit, imgUrl: arrayLink.join(',') }) });
             loadAdminData();
         }
 
@@ -453,26 +543,21 @@
         function bukaEditShop(rowId) {
             const produk = globalShopData.find(p => p.row === rowId);
             if(!produk) return;
-            
             document.getElementById('edit-shop-row').value = produk.row;
             document.getElementById('edit-shop-nama').value = produk.nama;
             document.getElementById('edit-shop-tingkat').value = produk.tingkat;
             document.getElementById('edit-shop-kategori').value = produk.kategori;
             document.getElementById('edit-shop-format').value = produk.format;
-            
             let hArr = produk.harga.toString().split('|');
             document.getElementById('edit-shop-harga').value = hArr[0] || '';
             document.getElementById('edit-shop-unit').value = hArr[1] || '';
-
             const imgArr = produk.imgUrl ? produk.imgUrl.split(',').map(u => u.trim()) : [];
             const container = document.getElementById('edit-container-link-gambar');
             container.innerHTML = ''; 
             if(imgArr.length === 0) imgArr.push('');
-            
             imgArr.forEach(url => {
-                container.innerHTML += `<input type="text" value="${url}" class="input-edit-img-url w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white mt-2" placeholder="https://...">`;
+                container.innerHTML += `<input type="text" value="${url}" class="input-edit-img-url w-full px-3 py-2 border rounded-lg text-sm bg-white mt-2" placeholder="https://...">`;
             });
-            
             document.getElementById('edit-shop-modal').classList.remove('hidden');
         }
 
@@ -486,26 +571,37 @@
             const format = document.getElementById('edit-shop-format').value;
             const hargaNominal = document.getElementById('edit-shop-harga').value.trim();
             const hargaUnit = document.getElementById('edit-shop-unit').value;
-            
             const inputsLink = document.querySelectorAll('.input-edit-img-url');
             const arrayLink = Array.from(inputsLink).map(input => input.value.trim()).filter(val => val !== "");
-
             if(!nama || !hargaNominal || arrayLink.length === 0) return alert("Data belum lengkap!");
-
-            const btn = document.getElementById('btn-simpan-edit-shop');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memperbarui...'; btn.disabled = true;
-
-            await fetch(GAS_URL, { 
-                method: 'POST', 
-                body: JSON.stringify({
-                    action: 'editShop', row: rowId, nama, tingkat, kategori, format,
-                    harga: hargaNominal + '|' + hargaUnit,
-                    imgUrl: arrayLink.join(',')
-                }) 
-            });
-            
-            btn.innerHTML = '<i class="fas fa-save"></i> Update Produk'; btn.disabled = false;
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'editShop', row: rowId, nama, tingkat, kategori, format, harga: hargaNominal + '|' + hargaUnit, imgUrl: arrayLink.join(',') }) });
             tutupEditShop(); loadAdminData();
+        }
+
+        // Fungsi Galeri & Testimoni
+        async function tambahGaleri() {
+            const url = document.getElementById('galeri-url').value.trim();
+            if(!url) return alert("Masukkan URL gambar!");
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'addGaleri', url }) });
+            document.getElementById('galeri-url').value = '';
+            loadAdminData();
+        }
+
+        async function hapusGaleri(row) {
+            if(!confirm("Hapus foto dari galeri?")) return;
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteGaleri', row }) });
+            loadAdminData();
+        }
+
+        async function approveTestimoni(row) {
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'approveTestimoni', row }) });
+            loadAdminData();
+        }
+
+        async function hapusTestimoni(row) {
+            if(!confirm("Hapus testimoni ini?")) return;
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteTestimoni', row }) });
+            loadAdminData();
         }
     </script>
 </body>
