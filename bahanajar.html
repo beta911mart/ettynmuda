@@ -15,24 +15,20 @@
             font-family: 'Inter', sans-serif; 
             background-color: #f8fafc; 
             color: #1e293b;
-            /* Mencegah scroll pada body utama agar berperilaku seperti aplikasi */
             overflow: hidden; 
         }
         
-        /* Kustomisasi Scrollbar Minimalis */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Animasi dan Komponen Khusus */
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .loading-spinner { border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 3px solid white; width: 20px; height: 20px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Styling Toast Notification */
         #toast-notification {
             transform: translateY(150%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -41,7 +37,6 @@
         .toast-error i { color: #f87171; }
         .toast-info i { color: #60a5fa; }
 
-        /* Styling Konten Hasil AI (Penting untuk Mencegah Layout Berantakan) */
         .generated-content { width: 100%; max-width: 100%; word-wrap: break-word; overflow-wrap: anywhere; }
         .generated-content h1 { font-size: 1.5rem; font-weight: 700; color: #1e3a8a; margin-top: 1.5rem; margin-bottom: 1rem; border-bottom: 2px solid #bfdbfe; padding-bottom: 0.5rem; }
         .generated-content h2 { font-size: 1.25rem; font-weight: 600; color: #374151; margin-top: 1.5rem; margin-bottom: 0.75rem; }
@@ -52,7 +47,6 @@
         .generated-content ol { list-style-type: decimal; }
         .generated-content li { margin-bottom: 0.25rem; }
         
-        /* Pembungkus Responsif untuk Tabel Hasil AI */
         .table-responsive-wrapper {
             width: 100%;
             overflow-x: auto;
@@ -67,7 +61,6 @@
         .generated-content th, .generated-content td { border: 1px solid #e5e7eb; padding: 10px 12px; text-align: left; vertical-align: top; }
         .generated-content th { background-color: #f8fafc; font-weight: 600; color: #1e293b; }
 
-        /* Mode Cetak (Print) */
         @media print {
             body { overflow: auto !important; background: white !important; }
             .no-print, #sidebar, #mobile-overlay, header { display: none !important; }
@@ -80,16 +73,12 @@
 </head>
 <body class="bg-slate-50">
 
-    <!-- Wrapper Aplikasi Utama -->
     <div class="flex h-screen overflow-hidden print-area">
         
-        <!-- Mobile Overlay -->
         <div id="mobile-overlay" class="fixed inset-0 bg-slate-900/60 z-40 hidden transition-opacity lg:hidden no-print" onclick="toggleSidebar()"></div>
 
-        <!-- Sidebar -->
         <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-white transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col shadow-2xl lg:shadow-none no-print">
             
-            <!-- Sidebar Header -->
             <div class="p-5 border-b border-slate-800 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg p-2.5 flex items-center justify-center shadow-lg">
@@ -105,7 +94,6 @@
                 </button>
             </div>
             
-            <!-- Sidebar Navigation -->
             <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
                 <button onclick="switchTab('tab-ai')" id="nav-tab-ai" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl bg-blue-600 text-white font-medium transition-colors shadow-md text-sm group">
                     <i class="fas fa-magic text-yellow-300 group-hover:scale-110 transition-transform"></i> AI Generator
@@ -115,16 +103,13 @@
                 </button>
             </nav>
             
-            <!-- Sidebar Footer -->
             <div class="p-5 border-t border-slate-800 text-xs text-slate-500 text-center">
                 Versi 2.1 &copy; 2026
             </div>
         </aside>
 
-        <!-- Main Content Area -->
         <div class="flex-1 flex flex-col w-full overflow-hidden relative">
             
-            <!-- Header Atas -->
             <header class="bg-white shadow-sm border-b border-slate-200 h-16 flex-shrink-0 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10 no-print">
                 <div class="flex items-center gap-4">
                     <button onclick="toggleSidebar()" class="lg:hidden text-slate-600 hover:text-blue-600 focus:outline-none p-2 -ml-2 rounded-lg hover:bg-slate-100">
@@ -135,12 +120,21 @@
                 </div>
                 
                 <div class="flex items-center gap-2 sm:gap-4">
-                    <!-- Tombol Cetak -->
+                    <!-- Dropdown Navigasi Pindah Tool -->
+                    <div class="relative">
+                        <select onchange="if(this.value) window.location.href=this.value;" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold py-2 px-3 rounded-lg border border-slate-200 focus:outline-none cursor-pointer">
+                            <option value="" disabled selected>📂 Pindah Tool...</option>
+                            <option value="makalah_2.html">✨ Makalah AI</option>
+                            <option value="artikel.html">📄 Artikel PTK</option>
+                            <option value="diferensiasi.html">🎯 Skenario Diferensiasi</option>
+                            <option value="bahanajar.html">📚 Bahan Ajar</option>
+                        </select>
+                    </div>
+
                     <button onclick="window.print()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 sm:px-4 py-2 rounded-lg font-medium transition flex items-center gap-2 text-xs sm:text-sm">
                         <i class="fas fa-print"></i> <span class="hidden sm:inline">Cetak PDF</span>
                     </button>
 
-                    <!-- Area Profil / Login -->
                     <div id="auth-section">
                         <button onclick="showLoginModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-5 py-2 rounded-lg font-medium transition-colors shadow-sm flex items-center gap-2 text-xs sm:text-sm">
                             <i class="fas fa-sign-in-alt"></i> <span>Login</span>
@@ -159,7 +153,6 @@
                 </div>
             </header>
 
-            <!-- Scrollable Body (Hanya area ini yang bisa di-scroll) -->
             <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 print-area relative">
                 
                 <div class="max-w-5xl mx-auto w-full">
@@ -167,12 +160,9 @@
                     <!-- TAB 1: AI Generator -->
                     <div id="tab-ai" class="tab-content fade-in w-full block">
                         
-                        <!-- Form Generator Card -->
                         <div class="bg-gradient-to-br from-blue-700 via-blue-600 to-purple-700 rounded-2xl p-5 sm:p-8 shadow-xl text-white mb-8 relative overflow-hidden w-full no-print">
-                            <!-- Dekorasi Latar -->
                             <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white opacity-10 blur-3xl pointer-events-none"></div>
                             
-                            <!-- Header Form -->
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 relative z-10 gap-4 border-b border-white/20 pb-5">
                                 <div>
                                     <h3 class="text-xl sm:text-2xl font-bold mb-1">Rancang Modul Pembelajaran</h3>
@@ -183,7 +173,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Input Grid -->
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6 relative z-10">
                                 <div>
                                     <label class="block text-xs font-bold text-blue-200 uppercase tracking-wider mb-2"><i class="fas fa-graduation-cap mr-1"></i> Jenjang</label>
@@ -209,13 +198,11 @@
                                 </div>
                             </div>
                             
-                            <!-- Topik Input -->
                             <div class="mb-6 relative z-10">
                                 <label class="block text-xs font-bold text-blue-200 uppercase tracking-wider mb-2"><i class="fas fa-pen-nib mr-1"></i> Topik / Tema Pembelajaran</label>
                                 <input type="text" id="ai-topic" placeholder="Ketik topik materi secara spesifik... (Contoh: Sistem Tata Surya dan Planet)" class="w-full bg-white/10 border border-white/20 text-white placeholder-blue-200/60 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm sm:text-base font-medium backdrop-blur-md">
                             </div>
                             
-                            <!-- Submit Button -->
                             <button id="btn-generate" onclick="handleGenerateClick()" class="relative z-10 w-full bg-slate-200 text-slate-500 font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg flex items-center justify-center gap-3 cursor-not-allowed group">
                                 <i id="btn-gen-icon" class="fas fa-lock text-lg"></i>
                                 <span id="btn-generate-text" class="text-sm sm:text-base text-center leading-tight">Terkunci - Silakan Login</span>
@@ -223,13 +210,10 @@
                             </button>
                         </div>
 
-                        <!-- Area Hasil Generate -->
                         <div id="ai-result-container" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-10 min-h-[400px] hidden transition-all duration-500 w-full mb-10 overflow-hidden">
-                            <!-- Tempat Hasil Inject HTML -->
                             <div id="ai-result-content" class="generated-content w-full"></div>
                         </div>
                         
-                        <!-- Area Kosong (Empty State) -->
                         <div id="ai-empty-state" class="flex flex-col items-center justify-center py-16 px-4 no-print w-full bg-white border border-slate-200 border-dashed rounded-2xl">
                             <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-5">
                                 <i class="fas fa-robot text-4xl text-blue-300"></i>
@@ -306,15 +290,12 @@
         <span id="toast-message" class="text-sm leading-snug"></span>
     </div>
 
-    <!-- Javascript Logic -->
     <script>
-        // GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ASLI ANDA:
         const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec";
 
         let isLoggedin = false;
         let currentUser = { username: "", password: "", koin: 0 };
 
-        // Fungsi Toggle Sidebar Mobile Menggunakan Class Tailwind
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('mobile-overlay');
@@ -322,7 +303,6 @@
             overlay.classList.toggle('hidden');
         }
 
-        // Fungsi Toast Dinamis
         let toastTimeout;
         function showToast(message, type = 'info') {
             const toast = document.getElementById('toast-notification');
@@ -340,7 +320,6 @@
             toastTimeout = setTimeout(() => toast.classList.remove('show'), 4000);
         }
 
-        // Fungsi Animasi Modal Login
         function showLoginModal() {
             const modal = document.getElementById('login-modal');
             const modalContent = document.getElementById('login-modal-content');
@@ -361,7 +340,6 @@
             setTimeout(() => { modal.classList.add('hidden'); }, 300);
         }
 
-        // Proses Login
         async function prosesLogin() {
             const userInp = document.getElementById('login-username').value;
             const passInp = document.getElementById('login-password').value;
@@ -369,16 +347,6 @@
             const spinner = document.getElementById('login-spinner');
 
             if (!userInp || !passInp) return showToast("Username dan Password wajib diisi!", "error");
-            
-            if (GAS_WEBAPP_URL === "MASUKKAN_URL_GAS_ANDA_DISINI") {
-                btnLogin.disabled = true; spinner.classList.remove('hidden');
-                setTimeout(() => {
-                    currentUser = { username: userInp, password: passInp, koin: userInp === 'admin' ? 100 : 5 };
-                    suksesLogin();
-                    btnLogin.disabled = false; spinner.classList.add('hidden');
-                }, 1000);
-                return;
-            }
 
             btnLogin.disabled = true; spinner.classList.remove('hidden');
 
@@ -413,7 +381,6 @@
             cekStatusKoin();
         }
 
-        // Status Tombol Generate berdasarkan Auth & Koin
         function cekStatusKoin() {
             const btnGenerate = document.getElementById('btn-generate');
             const btnText = document.getElementById('btn-generate-text');
@@ -436,7 +403,6 @@
             }
         }
 
-        // Action Klik Generate
         function handleGenerateClick() {
             if (!isLoggedin) {
                 showLoginModal();
@@ -450,7 +416,6 @@
             mintaKeServerGAS();
         }
 
-        // Fungsi Utama Fetch Generator AI
         async function mintaKeServerGAS() {
             const jenjang = document.getElementById('ai-jenjang').value;
             const kelas = document.getElementById('ai-kelas').value;
@@ -468,27 +433,11 @@
             btnSpinner.classList.remove('hidden');
             btn.classList.replace('bg-white', 'bg-blue-50');
 
-            if (GAS_WEBAPP_URL === "MASUKKAN_URL_GAS_ANDA_DISINI") {
-                 showToast("Simulasi: URL backend belum dipasang.", "info");
-                 setTimeout(() => {
-                     document.getElementById('ai-empty-state').classList.add('hidden');
-                     document.getElementById('ai-result-container').classList.remove('hidden');
-                     let simHtml = `<h1>Modul Pembelajaran: ${topic}</h1><p>Berikut adalah hasil simulasi rancangan modul pembelajaran mata pelajaran ${mapel} untuk jenjang ${jenjang} kelas ${kelas}.</p><table><tr><th>No</th><th>Komponen</th><th>Uraian Materi</th></tr><tr><td>1</td><td>Tujuan Pembelajaran</td><td>Peserta didik mampu memahami esensi materi dengan baik.</td></tr><tr><td>2</td><td>Kegiatan Inti</td><td>Diskusi interaktif dan latihan soal mandiri.</td></tr></table>`;
-                     // Kunci mencegah tabel merusak layout dengan div pembungkus:
-                     let processedHtml = simHtml.replace(/<table\b[^>]*>/gi, '<div class="table-responsive-wrapper">$&').replace(/<\/table>/gi, '</table></div>');
-                     document.getElementById('ai-result-content').innerHTML = processedHtml;
-                     
-                     currentUser.koin -= 1; document.getElementById('saldo-koin').innerText = currentUser.koin; cekStatusKoin();
-                     btn.disabled = false; btnSpinner.classList.add('hidden'); btn.classList.replace('bg-blue-50', 'bg-white');
-                 }, 2000);
-                 return;
-            }
-
             try {
                 const response = await fetch(GAS_WEBAPP_URL, {
                     method: 'POST',
                     body: JSON.stringify({ 
-                        action: 'generateBahanAjar', // PENTING: Harus sama persis
+                        action: 'generateBahanAjar', 
                         username: currentUser.username, 
                         password: currentUser.password, 
                         promptData: { jenjang, kelas, mapel, topic } 
@@ -500,7 +449,6 @@
                     document.getElementById('ai-empty-state').classList.add('hidden');
                     document.getElementById('ai-result-container').classList.remove('hidden');
                     
-                    // Regex ini Wajib untuk Mencegah Tabel AI Keluar Batas Layar
                     let processedHtml = data.htmlData.replace(/<table\b[^>]*>/gi, '<div class="table-responsive-wrapper">$&').replace(/<\/table>/gi, '</table></div>');
                     document.getElementById('ai-result-content').innerHTML = processedHtml;
                     
@@ -523,7 +471,6 @@
             }
         }
 
-        // Pindah Tab Menu
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.add('hidden');
@@ -532,19 +479,15 @@
             document.getElementById(tabId).classList.remove('hidden');
             document.getElementById(tabId).classList.add('block');
             
-            // Reset state button nav
             document.getElementById('nav-tab-ai').className = "w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-colors text-sm group";
             document.getElementById('nav-tab-db').className = "w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-colors text-sm group";
             
-            // Set Button Active
             const activeBtn = document.getElementById('nav-' + tabId);
             activeBtn.className = "w-full flex items-center gap-3 px-4 py-3.5 rounded-xl bg-blue-600 text-white font-medium transition-colors shadow-md text-sm group";
             
-            // Autoclose Sidebar on Mobile setelah klik
             if(window.innerWidth < 1024) { toggleSidebar(); }
         }
 
-        // Data Hierarki Kurikulum
         const curriculumDB = {
             "TK": {
                 "TK A (Usia 4-5)": { mapel: ["Bermain & Belajar", "Agama & Budi Pekerti", "Jati Diri (Motorik)", "Literasi & STEAM Dasar"] },
@@ -570,7 +513,6 @@
             }
         };
 
-        // Otomatisasi Dropdown Options
         function updateAIOptions() {
             const jenjang = document.getElementById('ai-jenjang').value;
             const kelasSelect = document.getElementById('ai-kelas');
