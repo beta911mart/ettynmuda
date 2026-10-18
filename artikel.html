@@ -9,8 +9,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         
+        .loading-spinner { border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 3px solid white; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         /* Styling khusus untuk Artikel Ilmiah / Jurnal */
         .output-gemini { font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; color: #000; text-align: justify; }
         .output-gemini h1.judul-artikel { text-align: center; font-size: 14pt; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; line-height: 1.2; }
@@ -26,63 +31,57 @@
         .output-gemini ul, .output-gemini ol { margin-left: 2cm; margin-bottom: 10px; }
     </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col items-center py-10 px-4">
+<body class="bg-slate-50 min-h-screen flex flex-col">
 
-    <!-- Header Umum -->
-    <div class="text-center mb-8">
-        <div class="inline-block bg-indigo-100 text-indigo-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-3 shadow-sm border border-indigo-200">
-            <i class="fas fa-graduation-cap mr-1"></i> Penulis Jurnal AI
-        </div>
-        <h1 class="text-3xl font-bold text-slate-800 mb-2">Generator Artikel PTK</h1>
-        <p class="text-slate-500 text-sm max-w-xl mx-auto">Buat draf artikel ilmiah atau laporan Penelitian Tindakan Kelas (PTK) terstruktur lengkap dengan Abstrak dan Tabel Data.</p>
-    </div>
-
-    <!-- BAGIAN 1: FORM LOGIN -->
-    <div id="login-section" class="max-w-sm w-full bg-white p-8 rounded-3xl shadow-sm border border-slate-200 transition-all duration-500">
-        <div class="text-center mb-6">
-            <div class="w-16 h-16 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl border border-indigo-100">
-                <i class="fas fa-user-lock"></i>
+    <!-- Header / Navbar -->
+    <header class="bg-white shadow-sm border-b border-slate-200 h-16 flex items-center justify-between px-4 sm:px-8 z-10">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center text-white shadow-md">
+                <i class="fas fa-graduation-cap"></i>
             </div>
-            <h2 class="text-xl font-bold text-slate-800">Masuk Akun</h2>
-            <p class="text-xs text-slate-500 mt-1">Silakan login untuk mengecek saldo koin.</p>
-        </div>
-        
-        <div class="space-y-4">
-            <div><input type="text" id="login-user" placeholder="Username" class="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-slate-50 text-sm font-medium"></div>
-            <div><input type="password" id="login-pass" placeholder="Password" class="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-slate-50 text-sm font-medium"></div>
-            <button onclick="prosesLogin()" id="btn-login" class="w-full bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-indigo-600 transition-colors shadow-md mt-2 flex justify-center items-center gap-2">
-                <i class="fas fa-sign-in-alt"></i> Masuk Sekarang
-            </button>
-        </div>
-    </div>
-
-    <!-- BAGIAN 2: PANEL GENERATOR -->
-    <div id="app-section" class="max-w-7xl w-full hidden opacity-0 transition-opacity duration-500">
-        
-        <!-- Bar Status User & Koin -->
-        <div class="bg-white px-6 py-4 rounded-2xl shadow-sm border border-slate-200 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center font-bold text-lg shadow-sm">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div>
-                    <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Selamat Datang</p>
-                    <p class="font-bold text-slate-800 text-sm" id="display-user">Nama User</p>
-                </div>
+            <div>
+                <h1 class="text-sm sm:text-base font-bold text-slate-800 leading-tight">Generator Artikel PTK</h1>
+                <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Teman Akademik</p>
             </div>
-            
-            <div class="flex items-center gap-4">
-                <div class="bg-amber-100 border border-amber-200 px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm">
-                    <i class="fas fa-coins text-amber-500 text-lg"></i>
-                    <div class="flex flex-col leading-none">
-                        <span class="text-[10px] text-amber-700 font-bold uppercase">Saldo Anda</span>
-                        <span class="font-bold text-amber-600 text-sm"><span id="display-koin">0</span> Koin</span>
-                    </div>
-                </div>
-                <button onclick="prosesLogout()" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors" title="Keluar">
-                    <i class="fas fa-power-off text-lg"></i>
+        </div>
+
+        <!-- Menu Pindah Tool & Auth -->
+        <div class="flex items-center gap-2 sm:gap-3">
+            <!-- Dropdown Navigasi Tool -->
+            <div class="relative">
+                <select onchange="if(this.value) window.location.href=this.value;" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold py-2 px-3 rounded-lg border border-slate-200 focus:outline-none cursor-pointer">
+                    <option value="" disabled selected>📂 Pindah Tool...</option>
+                    <option value="makalah.html">✨ Makalah AI</option>
+                    <option value="artikel.html">📄 Artikel PTK</option>
+                    <option value="diferensiasi.html">🎯 Skenario Diferensiasi</option>
+                </select>
+            </div>
+
+            <!-- Tombol Login / Profil -->
+            <div id="auth-section">
+                <button onclick="showLoginModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition shadow-sm text-xs sm:text-sm flex items-center gap-2">
+                    <i class="fas fa-sign-in-alt"></i> <span>Login</span>
                 </button>
             </div>
+            
+            <div id="user-profile-section" class="hidden items-center gap-2 sm:gap-3">
+                <div class="bg-amber-50 border border-amber-200 text-amber-800 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 shadow-sm text-xs sm:text-sm">
+                    <i class="fas fa-coins text-amber-500"></i>
+                    <span id="saldo-koin">0</span> <span class="hidden sm:inline">Koin</span>
+                </div>
+                <div class="w-8 h-8 bg-gradient-to-tr from-indigo-500 to-purple-500 text-white rounded-full flex items-center justify-center font-bold text-sm shadow" id="user-avatar">
+                    ?
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <div class="text-center mb-6">
+            <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-1">Penulis Jurnal Ilmiah PTK</h2>
+            <p class="text-slate-500 text-xs sm:text-sm max-w-xl mx-auto">Isi data penelitian di bawah, AI akan menyusun abstrak, pendahuluan, metode, hingga tabel hasil penelitian secara otomatis.</p>
         </div>
 
         <!-- Grid Layout -->
@@ -90,44 +89,47 @@
             
             <!-- PANEL KIRI: FORM INPUT DATA PTK -->
             <div class="lg:col-span-5 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
-                <h2 class="font-bold text-lg border-b border-slate-100 pb-3 mb-5 flex items-center">
+                <h3 class="font-bold text-base border-b border-slate-100 pb-3 mb-4 flex items-center text-slate-700">
                     <i class="fas fa-flask text-indigo-500 mr-2"></i> Data Penelitian
-                </h2>
+                </h3>
                 
                 <div class="space-y-4 text-sm">
                     <div>
                         <label class="block font-semibold text-slate-600 mb-1">Judul Artikel / PTK <span class="text-red-500">*</span></label>
-                        <textarea id="input-judul" rows="2" placeholder="Cth: Penerapan Metode Demonstrasi Dalam Pembelajaran Unsur-unsur Musik pada Siswa XI A..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-slate-50"></textarea>
+                        <textarea id="input-judul" rows="2" placeholder="Cth: Penerapan Metode Demonstrasi..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-slate-50"></textarea>
                     </div>
                     
                     <div>
                         <label class="block font-semibold text-slate-600 mb-1">Identitas Penulis <span class="text-red-500">*</span></label>
-                        <input type="text" id="input-penulis" placeholder="Cth: Marselina Sintia Pia, Universitas Katolik Widya Mandira" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-slate-50 mb-2">
+                        <input type="text" id="input-penulis" placeholder="Cth: Nama, Nama Universitas" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-slate-50">
                     </div>
                     
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block font-semibold text-slate-600 mb-1">Subjek / Kelas <span class="text-red-500">*</span></label>
-                            <input type="text" id="input-subjek" placeholder="Cth: 36 Siswa Kelas XI A" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 bg-slate-50">
+                            <input type="text" id="input-subjek" placeholder="Cth: 36 Siswa XI A" class="w-full px-3 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 bg-slate-50">
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-600 mb-1">Lokasi <span class="text-red-500">*</span></label>
-                            <input type="text" id="input-lokasi" placeholder="Cth: SMA N 4 Kupang" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 bg-slate-50">
+                            <input type="text" id="input-lokasi" placeholder="Cth: SMA N 4 Kupang" class="w-full px-3 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 bg-slate-50">
                         </div>
                     </div>
 
                     <div>
                         <label class="block font-semibold text-slate-600 mb-1">Metode yang Diterapkan <span class="text-red-500">*</span></label>
-                        <input type="text" id="input-metode" placeholder="Cth: Metode Demonstrasi / Praktik Langsung" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-slate-50">
+                        <input type="text" id="input-metode" placeholder="Cth: Metode Demonstrasi" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-slate-50">
                     </div>
 
                     <div>
                         <label class="block font-semibold text-slate-600 mb-1">Ringkasan Hasil Pembelajaran <span class="text-red-500">*</span></label>
-                        <textarea id="input-hasil" rows="3" placeholder="Cth: Sebelum tindakan siswa kesulitan ritme, setelah tindakan siswa menjadi paham. Nilai rata-rata meningkat dari 69,2 pada siklus I menjadi 87,5 pada siklus II." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-slate-50"></textarea>
+                        <textarea id="input-hasil" rows="3" placeholder="Cth: Nilai rata-rata meningkat dari 69,2 ke 87,5..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-slate-50"></textarea>
                     </div>
 
-                    <button onclick="generateArtikel()" id="btn-generate" class="w-full bg-indigo-600 text-white font-bold py-3.5 rounded-xl hover:bg-indigo-700 transition-colors shadow-md mt-4 flex justify-center items-center gap-2">
-                        <i class="fas fa-magic"></i> Generate Artikel Ilmiah (-1 Koin)
+                    <!-- Tombol Generate Terkunci by Default -->
+                    <button onclick="handleGenerateClick()" id="btn-generate" class="w-full bg-slate-200 text-slate-500 font-bold py-3.5 rounded-xl transition-all shadow-md mt-4 flex justify-center items-center gap-2 cursor-not-allowed">
+                        <i id="btn-gen-icon" class="fas fa-lock"></i>
+                        <span id="btn-generate-text">Terkunci - Silakan Login</span>
+                        <div id="btn-generate-spinner" class="loading-spinner hidden border-indigo-600 border-t-transparent ml-2"></div>
                     </button>
                 </div>
             </div>
@@ -135,24 +137,16 @@
             <!-- PANEL KANAN: OUTPUT HASIL -->
             <div class="lg:col-span-7 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative min-h-[600px] flex flex-col">
                 
-                <!-- Animasi Loading -->
-                <div id="loading-state" class="hidden absolute inset-0 bg-white/95 rounded-2xl flex flex-col items-center justify-center z-10 backdrop-blur-sm">
-                    <div class="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
-                    <p class="text-slate-700 font-bold text-lg">Menyusun Artikel Ilmiah...</p>
-                    <p class="text-sm text-slate-500 mt-2">Menganalisis data, membuat Abstrak, dan menata format (15-30 detik)</p>
-                </div>
-
                 <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
-                    <h2 class="font-bold text-lg flex items-center">
+                    <h3 class="font-bold text-base flex items-center text-slate-700">
                         <i class="fas fa-file-word text-blue-600 mr-2 bg-blue-50 p-2 rounded-lg"></i> Draf Artikel
-                    </h2>
+                    </h3>
                     <button onclick="copyHasil()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5 border border-slate-200">
                         <i class="fas fa-copy text-indigo-500"></i> Salin ke Word
                     </button>
                 </div>
 
-                <div id="result-container" class="output-gemini overflow-auto pr-4 flex-grow bg-gray-50 border border-gray-200 p-8 rounded-lg shadow-inner">
-                    <!-- Placeholder -->
+                <div id="result-container" class="output-gemini overflow-auto pr-4 flex-grow bg-slate-50 border border-slate-200 p-8 rounded-lg shadow-inner">
                     <div class="h-full flex flex-col items-center justify-center text-slate-300 py-20">
                         <i class="fas fa-book-open text-6xl mb-4 opacity-50 text-indigo-200"></i>
                         <p class="font-medium text-slate-400 text-center max-w-sm">Hasil draf artikel dengan format Times New Roman siap salin akan muncul di sini</p>
@@ -161,46 +155,137 @@
 
             </div>
         </div>
+    </main>
+
+    <!-- Modal Login -->
+    <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 hidden opacity-0 transition-opacity duration-300 p-4">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full relative transform scale-95 transition-transform" id="login-modal-content">
+            <button onclick="hideLoginModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-2 rounded-full">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-indigo-100">
+                    <i class="fas fa-user-lock text-2xl text-indigo-600"></i>
+                </div>
+                <h2 class="text-xl font-bold text-slate-800">Akses Masuk</h2>
+                <p class="text-xs text-slate-500 mt-1">Gunakan akun untuk menggunakan Generator PTK</p>
+            </div>
+            
+            <div class="space-y-4">
+                <input type="text" id="login-username" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm" placeholder="Username...">
+                <input type="password" id="login-password" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm" placeholder="Password...">
+                <button onclick="prosesLogin()" id="btn-login-submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-md transition flex items-center justify-center gap-2 mt-2">
+                    <span>Login Aplikasi</span>
+                    <div id="login-spinner" class="loading-spinner hidden"></div>
+                </button>
+            </div>
+        </div>
     </div>
 
-    <!-- JAVASCRIPT -->
+    <!-- Script Logika -->
     <script>
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec";
-        let sessionUser = "";
-        let sessionPass = "";
+        
+        let isLoggedin = false;
+        let currentUser = { username: "", password: "", koin: 0 };
 
-        async function prosesLogin() {
-            const user = document.getElementById('login-user').value.trim();
-            const pass = document.getElementById('login-pass').value.trim();
-            const btn = document.getElementById('btn-login');
-            if (!user || !pass) return alert("Silakan masukkan Username dan Password!");
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memverifikasi...'; btn.disabled = true;
-
-            try {
-                const response = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'login', username: user, password: pass }) });
-                const data = await response.json();
-                if (data.success) {
-                    sessionUser = user; sessionPass = pass;
-                    document.getElementById('display-user').innerText = user;
-                    document.getElementById('display-koin').innerText = data.koin;
-                    document.getElementById('login-section').classList.add('hidden');
-                    const appSection = document.getElementById('app-section');
-                    appSection.classList.remove('hidden');
-                    setTimeout(() => { appSection.classList.remove('opacity-0'); }, 50);
-                } else { alert(data.message || "Username atau password salah!"); }
-            } catch (error) { alert("Gagal terhubung ke server."); } 
-            finally { btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk Sekarang'; btn.disabled = false; }
+        function showLoginModal() {
+            const modal = document.getElementById('login-modal');
+            const content = document.getElementById('login-modal-content');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 10);
         }
 
-        function prosesLogout() {
-            sessionUser = ""; sessionPass = "";
-            document.getElementById('login-user').value = ""; document.getElementById('login-pass').value = "";
-            document.getElementById('app-section').classList.add('opacity-0');
-            setTimeout(() => {
-                document.getElementById('app-section').classList.add('hidden');
-                document.getElementById('login-section').classList.remove('hidden');
-                document.getElementById('result-container').innerHTML = `<div class="h-full flex flex-col items-center justify-center text-slate-300 py-20"><i class="fas fa-book-open text-6xl mb-4 opacity-50 text-indigo-200"></i><p class="font-medium text-slate-400">Hasil artikel cerdas akan muncul di sini</p></div>`;
-            }, 500);
+        function hideLoginModal() {
+            const modal = document.getElementById('login-modal');
+            const content = document.getElementById('login-modal-content');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        async function prosesLogin() {
+            const userInp = document.getElementById('login-username').value.trim();
+            const passInp = document.getElementById('login-password').value.trim();
+            const btn = document.getElementById('btn-login-submit');
+            const spinner = document.getElementById('login-spinner');
+
+            if (!userInp || !passInp) return alert("Username dan Password wajib diisi!");
+            
+            btn.disabled = true; 
+            spinner.classList.remove('hidden');
+
+            try {
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'login', username: userInp, password: passInp })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    currentUser = { username: userInp, password: passInp, koin: data.koin };
+                    suksesLogin();
+                } else {
+                    alert(data.message || "Username atau password salah!");
+                }
+            } catch (error) {
+                alert("Gagal terhubung ke server.");
+            } finally {
+                btn.disabled = false;
+                spinner.classList.add('hidden');
+            }
+        }
+
+        function suksesLogin() {
+            isLoggedin = true;
+            hideLoginModal();
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('user-profile-section').classList.remove('hidden');
+            document.getElementById('user-profile-section').classList.add('flex');
+            document.getElementById('saldo-koin').innerText = currentUser.koin;
+            document.getElementById('user-avatar').innerText = currentUser.username.charAt(0).toUpperCase();
+            cekStatusKoin();
+            alert(`Selamat datang, ${currentUser.username}!`);
+        }
+
+        function cekStatusKoin() {
+            const btn = document.getElementById('btn-generate');
+            const btnText = document.getElementById('btn-generate-text');
+            const btnIcon = document.getElementById('btn-gen-icon');
+
+            btn.className = "w-full font-bold py-3.5 rounded-xl transition-all shadow-md mt-4 flex justify-center items-center gap-2";
+
+            if (!isLoggedin) {
+                btn.classList.add('bg-slate-200', 'text-slate-500', 'cursor-not-allowed');
+                btnIcon.className = "fas fa-lock";
+                btnText.innerText = "Terkunci - Silakan Login";
+            } else if (currentUser.koin <= 0) {
+                btn.classList.add('bg-slate-800', 'text-slate-300', 'cursor-not-allowed');
+                btnIcon.className = "fas fa-wallet";
+                btnText.innerText = "Koin Habis - Top Up";
+            } else {
+                btn.classList.add('bg-indigo-600', 'text-white', 'hover:bg-indigo-700');
+                btnIcon.className = "fas fa-magic";
+                btnText.innerText = "Generate Artikel Ilmiah (-1 Koin)";
+            }
+        }
+
+        function handleGenerateClick() {
+            if (!isLoggedin) {
+                showLoginModal();
+                alert("Silakan login terlebih dahulu.");
+                return;
+            }
+            if (currentUser.koin <= 0) {
+                alert("Saldo koin Anda habis.");
+                return;
+            }
+            generateArtikel();
         }
 
         async function generateArtikel() {
@@ -215,26 +300,40 @@
                 return alert("Mohon lengkapi semua kolom form Data Penelitian!");
             }
 
-            document.getElementById('loading-state').classList.remove('hidden');
-            const btn = document.getElementById('btn-generate'); btn.disabled = true;
+            const btn = document.getElementById('btn-generate');
+            const btnText = document.getElementById('btn-generate-text');
+            const spinner = document.getElementById('btn-generate-spinner');
+
+            btn.disabled = true;
+            btnText.innerText = 'Menyusun Artikel... (15-30 dtk)';
+            spinner.classList.remove('hidden');
 
             const payload = {
                 action: 'generateArtikel',
-                username: sessionUser, password: sessionPass,
+                username: currentUser.username, 
+                password: currentUser.password,
                 promptData: { judul, penulis, subjek, lokasi, metode, hasil }
             };
 
             try {
                 const response = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
                 const data = await response.json();
+                
                 if (data.success) {
                     document.getElementById('result-container').innerHTML = data.htmlData;
-                    document.getElementById('display-koin').innerText = data.sisaKoin;
+                    currentUser.koin = data.sisaKoin;
+                    document.getElementById('saldo-koin').innerText = currentUser.koin;
+                    alert("Artikel berhasil di-generate!");
                 } else {
-                    alert(data.message.includes("Koin") ? "Maaf, saldo koin Anda habis. Silakan top up." : "Gagal: " + data.message);
+                    alert("Gagal: " + data.message);
                 }
-            } catch (error) { alert("Terjadi kesalahan saat memproses AI."); } 
-            finally { document.getElementById('loading-state').classList.add('hidden'); btn.disabled = false; }
+            } catch (error) {
+                alert("Terjadi kesalahan saat memproses AI.");
+            } finally {
+                cekStatusKoin();
+                btn.disabled = false;
+                spinner.classList.add('hidden');
+            }
         }
 
         function copyHasil() {
@@ -242,16 +341,17 @@
             const htmlContent = container.innerHTML;
             if(!htmlContent || htmlContent.includes("akan muncul di sini")) return alert("Belum ada teks untuk disalin!");
             
-            // Trik khusus agar saat di-paste ke MS Word, format Heading dan Paragraph tetap terjaga
             const blob = new Blob([htmlContent], {type: 'text/html'});
             const data = [new ClipboardItem({'text/html': blob})];
             
             navigator.clipboard.write(data).then(() => { 
-                alert("Berhasil disalin beserta formatnya! Silakan Buka MS Word, klik kanan dan pilih 'Keep Source Formatting' (Pertahankan Format Sumber)."); 
-            }).catch(err => { 
-                alert("Gagal menyalin otomatis. Silakan blok semua teks (Ctrl+A), Salin (Ctrl+C), lalu tempel ke Word."); 
+                alert("Berhasil disalin! Silakan paste ke MS Word."); 
+            }).catch(() => { 
+                alert("Gagal menyalin otomatis. Salin secara manual."); 
             });
         }
+
+        cekStatusKoin();
     </script>
 </body>
 </html>
