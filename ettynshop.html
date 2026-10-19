@@ -370,6 +370,25 @@
         }
 
         function beliProduk(namaProduk) {
+            // 1. Tampilkan notifikasi instan di browser
+            alert("Terima kasih! Anda akan diarahkan ke WhatsApp untuk melanjutkan pembelian produk: " + namaProduk);
+
+            // 2. Kirim notifikasi ke backend (doPost) agar masuk ke Telegram Anda
+            try {
+                fetch(SHEET_API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({
+                        action: 'notifBeliProduk',
+                        nama: "Pengunjung Toko",
+                        pesan: `🛒 Calon pembeli mengklik tombol Beli untuk produk: *${namaProduk}*`
+                    })
+                });
+            } catch (err) {
+                console.error("Gagal mengirim notifikasi latar belakang:", err);
+            }
+
+            // 3. Arahkan ke WhatsApp
             const noWA = "6281237827324";
             const pesan = encodeURIComponent(`Halo Kak Etyyn, saya tertarik dan ingin membeli materi: *${namaProduk}* di ETTYN SHOP. Mohon info pembayaran selanjutnya.`);
             window.open(`https://wa.me/${noWA}?text=${pesan}`, '_blank');
