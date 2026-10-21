@@ -12,9 +12,20 @@
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Tambahan CSS Loader untuk Upload File Besar */
+        #global-loader { display: none; }
+        #global-loader.active { display: flex; }
     </style>
 </head>
 <body class="antialiased text-slate-800">
+
+    <!-- Global Uploading Overlay -->
+    <div id="global-loader" class="fixed inset-0 bg-slate-900/80 z-[100] items-center justify-center flex-col text-white">
+        <i class="fas fa-circle-notch fa-spin text-5xl mb-4 text-pink-500"></i>
+        <h2 class="text-xl font-bold">Sedang Memproses...</h2>
+        <p class="text-sm text-slate-300 mt-2">Mohon tunggu, menyiapkan file gambar.</p>
+    </div>
 
     <!-- Modal Login Admin -->
     <div id="login-modal" class="fixed inset-0 bg-slate-900/95 z-50 flex items-center justify-center p-4 transition-opacity">
@@ -87,11 +98,23 @@
                 </div>
 
                 <div class="p-3 bg-pink-50/50 rounded-lg border border-pink-100 mt-2">
-                    <label class="text-xs font-bold text-slate-700 mb-2 block">Link Gambar/Video (Dipisah Koma)</label>
-                    <div id="edit-container-link-gambar" class="space-y-2"></div>
-                    <button type="button" onclick="tambahInputLinkEdit()" class="mt-3 text-xs font-bold text-pink-600 hover:text-pink-800 flex items-center gap-1 w-full justify-center border border-dashed border-pink-300 py-1.5 rounded-lg bg-white transition">
-                        <i class="fas fa-plus-circle"></i> Tambah Slide Media Lainnya
-                    </button>
+                    <label class="text-xs font-bold text-slate-700 mb-2 block">Gambar Preview Saat Ini</label>
+                    <div id="edit-container-link-gambar" class="space-y-2 max-h-32 overflow-y-auto pr-1"></div>
+                    
+                    <div class="mt-4 pt-3 border-t border-pink-200">
+                        <label class="text-xs font-bold text-slate-700 mb-1 block">Tambahkan Gambar Baru</label>
+                        <div class="mb-2">
+                            <label class="text-[10px] font-bold text-slate-500 block uppercase">Pilih File</label>
+                            <input type="file" id="edit-shop-file-baru" accept="image/*" class="w-full text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-pink-100 file:text-pink-700 hover:file:bg-pink-200 cursor-pointer">
+                        </div>
+                        <div class="mb-2">
+                            <label class="text-[10px] font-bold text-slate-500 block uppercase">Atau URL Gambar</label>
+                            <input type="text" id="edit-shop-url-baru" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="https://...">
+                        </div>
+                        <button type="button" onclick="tambahkanMediaKeEditShop()" class="mt-2 w-full bg-slate-800 text-white py-2 rounded-lg text-sm font-bold hover:bg-slate-700 transition flex items-center justify-center gap-2">
+                            <i class="fas fa-plus-circle"></i> Tambah Media ke Daftar
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -232,13 +255,34 @@
                             </div>
 
                             <div class="p-3 bg-pink-50/50 rounded-lg border border-pink-100 mt-4">
-                                <label class="text-xs font-bold text-slate-700 mb-2 block">Link Gambar/Video Preview (Dipisah Koma)</label>
-                                <div id="container-link-gambar" class="space-y-2">
-                                    <input type="text" class="input-img-url w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="https://...">
+                                <label class="text-xs font-bold text-slate-700 mb-2 block">Upload Media Gambar</label>
+                                
+                                <div class="mb-3">
+                                    <label class="text-[10px] font-bold text-slate-500 mb-1 block uppercase">Opsi 1: Pilih File dari Perangkat</label>
+                                    <input type="file" id="shop-file-input" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-pink-100 file:text-pink-700 hover:file:bg-pink-200 cursor-pointer">
                                 </div>
-                                <button type="button" onclick="tambahInputLink('container-link-gambar', 'input-img-url')" class="mt-3 text-xs font-bold text-pink-600 flex items-center gap-1 w-full justify-center border border-dashed border-pink-300 py-1.5 rounded-lg bg-white hover:bg-pink-50 transition">
-                                    <i class="fas fa-plus-circle"></i> Tambah Link Lainnya
+                                
+                                <div class="relative flex py-2 items-center">
+                                    <div class="flex-grow border-t border-pink-200"></div>
+                                    <span class="flex-shrink-0 mx-4 text-pink-400 text-xs font-bold">ATAU</span>
+                                    <div class="flex-grow border-t border-pink-200"></div>
+                                </div>
+
+                                <div class="mb-2">
+                                    <label class="text-[10px] font-bold text-slate-500 mb-1 block uppercase">Opsi 2: Paste URL Gambar</label>
+                                    <input type="text" id="shop-url-input" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="https://...">
+                                </div>
+                                
+                                <button type="button" onclick="tambahkanMediaShop()" class="mt-2 text-xs font-bold text-white bg-slate-800 hover:bg-slate-700 w-full py-2.5 rounded-lg transition shadow-sm flex items-center justify-center gap-2">
+                                    <i class="fas fa-list-ol"></i> Simpan Media ke Daftar
                                 </button>
+
+                                <div class="mt-4 pt-3 border-t border-pink-200">
+                                    <label class="text-xs font-bold text-slate-700 mb-2 block">Daftar Media Terkumpul:</label>
+                                    <div id="container-shop-media-list" class="space-y-2 max-h-32 overflow-y-auto pr-1">
+                                        <p class="text-xs text-slate-400 italic" id="empty-shop-media-msg">Belum ada media ditambahkan.</p>
+                                    </div>
+                                </div>
                             </div>
                             
                             <button onclick="simpanProdukShop()" id="btn-simpan-shop" class="w-full bg-pink-600 text-white py-3 rounded-lg font-bold hover:bg-pink-700 transition mt-4 flex justify-center items-center gap-2">
@@ -253,9 +297,9 @@
                             <table class="w-full text-sm text-left whitespace-nowrap">
                                 <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-y border-slate-200">
                                     <tr>
+                                        <th class="px-4 py-3">Preview</th>
                                         <th class="px-4 py-3">Nama Produk</th>
                                         <th class="px-4 py-3">Spesifikasi</th>
-                                        <th class="px-4 py-3">Harga</th>
                                         <th class="px-4 py-3 text-right">Aksi</th>
                                     </tr>
                                 </thead>
@@ -268,7 +312,7 @@
                 </div>
             </div>
 
-            <!-- PANEL 3: KELOLA GALERI WEB (DIKEMBALIKAN) -->
+            <!-- PANEL 3: KELOLA GALERI WEB -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="p-5 sm:p-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
                     <h3 class="text-lg font-bold flex items-center">
@@ -278,10 +322,26 @@
                 <div class="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-fit">
                         <h4 class="font-bold text-slate-700 mb-4 border-b pb-2">Tambah Foto Galeri</h4>
-                        <div class="space-y-3 text-sm">
-                            <input type="text" id="galeri-url" placeholder="URL Gambar (https://...)" class="w-full px-3 py-2 border rounded-lg bg-slate-50">
-                            <button onclick="tambahGaleri()" class="w-full bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 transition flex justify-center items-center gap-2">
-                                <i class="fas fa-plus"></i> Tambah ke Galeri
+                        <div class="space-y-4 text-sm">
+                            
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-500 mb-1 block uppercase">Pilih File dari Perangkat</label>
+                                <input type="file" id="galeri-file-input" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-purple-100 file:text-purple-700 hover:file:bg-purple-200 cursor-pointer">
+                            </div>
+
+                            <div class="relative flex items-center">
+                                <div class="flex-grow border-t border-purple-100"></div>
+                                <span class="flex-shrink-0 mx-4 text-purple-400 text-xs font-bold">ATAU</span>
+                                <div class="flex-grow border-t border-purple-100"></div>
+                            </div>
+
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-500 mb-1 block uppercase">Paste URL Gambar</label>
+                                <input type="text" id="galeri-url-input" placeholder="https://..." class="w-full px-3 py-2 border rounded-lg bg-slate-50">
+                            </div>
+
+                            <button onclick="tambahGaleriProses()" class="w-full bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 transition flex justify-center items-center gap-2 mt-4">
+                                <i class="fas fa-cloud-upload-alt"></i> Tambah ke Galeri
                             </button>
                         </div>
                     </div>
@@ -294,7 +354,7 @@
                 </div>
             </div>
 
-            <!-- PANEL 4: MANAJEMEN TESTIMONI (DIKEMBALIKAN) -->
+            <!-- PANEL 4: MANAJEMEN TESTIMONI -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
                 <div class="p-5 sm:p-6 border-b border-slate-100 bg-slate-50">
                     <h3 class="text-lg font-bold flex items-center">
@@ -350,6 +410,25 @@
         let globalShopData = [];
         let globalUserData = [];
 
+        // ==========================================
+        // HELPER FUNCTIONS
+        // ==========================================
+        function toggleLoader(show) {
+            const loader = document.getElementById('global-loader');
+            if(show) loader.classList.add('active');
+            else loader.classList.remove('active');
+        }
+
+        // Konversi File ke teks Base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
         function loginAdmin() {
             if (document.getElementById('admin-pin').value === PIN_ADMIN) {
                 document.getElementById('login-modal').classList.add('hidden');
@@ -362,6 +441,9 @@
         
         function logoutAdmin() { location.reload(); }
 
+        // ==========================================
+        // FETCH DATA AWAL
+        // ==========================================
         async function loadAdminData() {
             try {
                 const response = await fetch(GAS_URL + "?action=getAdminData");
@@ -399,16 +481,29 @@
                         let nominal = hArr[0] || 0;
                         let satuan = hArr[1] ? `<span class="text-[10px] text-slate-500 font-normal ml-1">${hArr[1]}</span>` : '';
                         let hargaTampil = `Rp ${Number(nominal).toLocaleString('id-ID')} ${satuan}`;
+                        
+                        // Ekstrak URL Gambar pertama untuk Thumbnail (Dukung ||| atau koma lama)
+                        let separator = p.imgUrl.includes('|||') ? '|||' : ',';
+                        let imgArr = p.imgUrl ? p.imgUrl.split(separator) : [];
+                        let thumbnail = imgArr.length > 0 && imgArr[0] ? imgArr[0] : 'https://placehold.co/150x100?text=No+Image';
 
                         return `
                         <tr class="hover:bg-slate-50 transition">
-                            <td class="px-4 py-3 font-bold text-slate-700 whitespace-normal min-w-[180px]">${p.nama}</td>
+                            <td class="px-4 py-3">
+                                <div class="w-16 h-12 rounded bg-slate-200 overflow-hidden border border-slate-300">
+                                    <img src="${thumbnail}" class="w-full h-full object-cover">
+                                </div>
+                            </td>
+                            <td class="px-4 py-3 font-bold text-slate-700 whitespace-normal min-w-[150px]">
+                                ${p.nama}
+                                <div class="text-pink-600 font-bold mt-1 text-xs md:hidden block">${hargaTampil}</div>
+                            </td>
                             <td class="px-4 py-3">
                                 <span class="block text-xs font-medium text-slate-500 mb-1"><i class="fas fa-graduation-cap"></i> ${p.tingkat}</span>
                                 <span class="inline-block bg-slate-100 px-2 py-0.5 rounded text-[10px] text-slate-600 font-bold uppercase">${p.kategori} | ${p.format}</span>
                             </td>
-                            <td class="px-4 py-3 text-pink-600 font-bold">${hargaTampil}</td>
                             <td class="px-4 py-3 text-right">
+                                <span class="hidden md:inline-block text-pink-600 font-bold mr-3">${hargaTampil}</span>
                                 <button onclick="bukaEditShop(${p.row})" class="bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-1.5 rounded-lg transition mr-1" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -436,7 +531,7 @@
                         </div>
                     `).join('');
                 } else {
-                    galeriList.innerHTML = '<p class="text-slate-400 text-sm">Belum ada foto di galeri.</p>';
+                    galeriList.innerHTML = '<p class="text-slate-400 text-sm col-span-full">Belum ada foto di galeri.</p>';
                 }
 
                 // 4. Render Testimoni
@@ -486,37 +581,57 @@
             } catch (err) { console.error(err); }
         }
 
-        // Fungsi Manajemen Users
-        function pilihEditUser(username, password, koin) {
-            document.getElementById('user-username').value = username;
-            document.getElementById('user-password').value = password;
-            document.getElementById('user-koin').value = koin;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        // ==========================================
+        // MANAJEMEN PRODUK SHOP
+        // ==========================================
+        let shopMediaList = [];
+
+        async function tambahkanMediaShop() {
+            const fileInput = document.getElementById('shop-file-input');
+            const urlInput = document.getElementById('shop-url-input');
+            const containerList = document.getElementById('container-shop-media-list');
+            const emptyMsg = document.getElementById('empty-shop-media-msg');
+            
+            let finalMedia = "";
+
+            if (fileInput.files.length > 0) {
+                toggleLoader(true);
+                try {
+                    const file = fileInput.files[0];
+                    if(file.size > 2 * 1024 * 1024) {
+                        alert("Ukuran gambar terlalu besar! Maksimal 2MB per gambar.");
+                        toggleLoader(false); return;
+                    }
+                    finalMedia = await fileToBase64(file);
+                } catch(e) { alert("Gagal membaca file."); }
+                toggleLoader(false);
+            } else if (urlInput.value.trim() !== "") {
+                finalMedia = urlInput.value.trim();
+            } else {
+                return alert("Silakan Pilih File atau Paste URL Gambar terlebih dahulu!");
+            }
+
+            if(finalMedia) {
+                shopMediaList.push(finalMedia);
+                fileInput.value = ""; urlInput.value = "";
+                if(emptyMsg) emptyMsg.style.display = 'none';
+
+                let htmlList = `
+                    <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-200" id="media-item-${shopMediaList.length-1}">
+                        <div class="flex items-center gap-2 overflow-hidden">
+                            <img src="${finalMedia}" class="w-8 h-8 object-cover rounded bg-slate-100">
+                            <span class="text-xs text-slate-600 truncate max-w-[200px]">${finalMedia.startsWith('data:image') ? 'Gambar Upload (Base64)' : finalMedia}</span>
+                        </div>
+                        <button type="button" onclick="hapusMediaShopLokal(${shopMediaList.length-1})" class="text-red-500 hover:text-red-700 px-2 py-1"><i class="fas fa-times"></i></button>
+                    </div>
+                `;
+                containerList.insertAdjacentHTML('beforeend', htmlList);
+            }
         }
 
-        async function simpanUser() {
-            const username = document.getElementById('user-username').value.trim();
-            const password = document.getElementById('user-password').value.trim();
-            const koin = document.getElementById('user-koin').value;
-            if(!username || !password) return alert("Username dan Password wajib diisi!");
-            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'saveUser', username, password, koin }) });
-            document.getElementById('user-username').value = ''; document.getElementById('user-password').value = '';
-            loadAdminData();
-        }
-
-        async function hapusUser(username) {
-            if(!confirm(`Yakin hapus user "${username}"?`)) return;
-            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteUser', username }) });
-            loadAdminData();
-        }
-
-        // Fungsi Manajemen Shop
-        function tambahInputLink(containerId, inputClass) {
-            const container = document.getElementById(containerId);
-            const input = document.createElement('input');
-            input.type = "text"; input.className = `${inputClass} w-full px-3 py-2 border rounded-lg text-sm bg-white mt-2`;
-            input.placeholder = "https://...";
-            container.appendChild(input);
+        function hapusMediaShopLokal(index) {
+            shopMediaList[index] = null;
+            document.getElementById(`media-item-${index}`).remove();
         }
 
         async function simpanProdukShop() {
@@ -526,18 +641,90 @@
             const format = document.getElementById('shop-format').value;
             const hargaNominal = document.getElementById('shop-harga').value.trim();
             const hargaUnit = document.getElementById('shop-unit').value;
-            const inputsLink = document.querySelectorAll('.input-img-url');
-            const arrayLink = Array.from(inputsLink).map(input => input.value.trim()).filter(val => val !== "");
             
-            if(!nama || !hargaNominal || arrayLink.length === 0) return alert("Lengkapi Nama, Harga, dan Link Media!");
-            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'addShop', nama, tingkat, kategori, format, harga: hargaNominal + '|' + hargaUnit, imgUrl: arrayLink.join(',') }) });
-            loadAdminData();
+            const validMediaList = shopMediaList.filter(m => m !== null);
+            
+            if(!nama || !hargaNominal) return alert("Lengkapi Nama dan Harga Produk!");
+            if(validMediaList.length === 0) return alert("Minimal wajib melampirkan 1 Media Gambar (Upload/URL)!");
+            
+            toggleLoader(true);
+            try {
+                // Gunakan ||| sebagai pemisah karena Base64 sudah mengandung karakter koma
+                await fetch(GAS_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify({ 
+                        action: 'addShop', nama, tingkat, kategori, format, 
+                        harga: hargaNominal + '|' + hargaUnit, 
+                        imgUrl: validMediaList.join('|||') 
+                    }) 
+                });
+                
+                document.getElementById('shop-nama').value = ''; document.getElementById('shop-harga').value = '';
+                document.getElementById('container-shop-media-list').innerHTML = '<p class="text-xs text-slate-400 italic" id="empty-shop-media-msg">Belum ada media ditambahkan.</p>';
+                shopMediaList = [];
+                loadAdminData();
+            } catch(e) { alert("Gagal mengunggah produk."); }
+            toggleLoader(false);
         }
 
         async function hapusProdukShop(rowId) {
             if(!confirm("Yakin hapus produk ini?")) return;
+            toggleLoader(true);
             await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteShop', row: rowId }) });
+            toggleLoader(false);
             loadAdminData();
+        }
+
+        // ==========================================
+        // EDIT PRODUK SHOP
+        // ==========================================
+        let editShopMediaList = [];
+
+        function hapusMediaEditShopLokal(index) {
+            editShopMediaList[index] = null;
+            document.getElementById(`edit-media-item-${index}`).remove();
+        }
+
+        async function tambahkanMediaKeEditShop() {
+            const fileInput = document.getElementById('edit-shop-file-baru');
+            const urlInput = document.getElementById('edit-shop-url-baru');
+            const containerList = document.getElementById('edit-container-link-gambar');
+            
+            let finalMedia = "";
+
+            if (fileInput.files.length > 0) {
+                toggleLoader(true);
+                try {
+                    const file = fileInput.files[0];
+                    if(file.size > 2 * 1024 * 1024) {
+                        alert("Ukuran gambar terlalu besar! Maksimal 2MB.");
+                        toggleLoader(false); return;
+                    }
+                    finalMedia = await fileToBase64(file);
+                } catch(e) {}
+                toggleLoader(false);
+            } else if (urlInput.value.trim() !== "") {
+                finalMedia = urlInput.value.trim();
+            } else {
+                return alert("Pilih File atau paste URL terlebih dahulu!");
+            }
+
+            if(finalMedia) {
+                editShopMediaList.push(finalMedia);
+                fileInput.value = ""; urlInput.value = "";
+                
+                let idx = editShopMediaList.length - 1;
+                let htmlList = `
+                    <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-200 mb-2" id="edit-media-item-${idx}">
+                        <div class="flex items-center gap-2 overflow-hidden">
+                            <img src="${finalMedia}" class="w-8 h-8 object-cover rounded bg-slate-100">
+                            <input type="text" class="input-edit-media-val hidden" value="${finalMedia}">
+                            <span class="text-xs text-slate-600 truncate max-w-[200px]">${finalMedia.startsWith('data:image') ? 'Gambar Upload Baru' : finalMedia}</span>
+                        </div>
+                        <button type="button" onclick="hapusMediaEditShopLokal(${idx})" class="text-red-500 hover:text-red-700 px-2 py-1"><i class="fas fa-times"></i></button>
+                    </div>`;
+                containerList.insertAdjacentHTML('beforeend', htmlList);
+            }
         }
 
         function bukaEditShop(rowId) {
@@ -551,13 +738,28 @@
             let hArr = produk.harga.toString().split('|');
             document.getElementById('edit-shop-harga').value = hArr[0] || '';
             document.getElementById('edit-shop-unit').value = hArr[1] || '';
-            const imgArr = produk.imgUrl ? produk.imgUrl.split(',').map(u => u.trim()) : [];
+            
+            let separator = produk.imgUrl.includes('|||') ? '|||' : ',';
+            const imgArr = produk.imgUrl ? produk.imgUrl.split(separator).map(u => u.trim()) : [];
             const container = document.getElementById('edit-container-link-gambar');
             container.innerHTML = ''; 
-            if(imgArr.length === 0) imgArr.push('');
-            imgArr.forEach(url => {
-                container.innerHTML += `<input type="text" value="${url}" class="input-edit-img-url w-full px-3 py-2 border rounded-lg text-sm bg-white mt-2" placeholder="https://...">`;
+            editShopMediaList = [];
+
+            imgArr.forEach((url, idx) => {
+                if(url) {
+                    editShopMediaList.push(url);
+                    container.innerHTML += `
+                    <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-200 mb-2" id="edit-media-item-${idx}">
+                        <div class="flex items-center gap-2 overflow-hidden">
+                            <img src="${url}" class="w-8 h-8 object-cover rounded bg-slate-100">
+                            <input type="text" class="input-edit-media-val hidden" value="${url}">
+                            <span class="text-xs text-slate-600 truncate max-w-[200px]">${url.startsWith('data:image') ? 'Gambar Bawaan (Base64)' : url}</span>
+                        </div>
+                        <button type="button" onclick="hapusMediaEditShopLokal(${idx})" class="text-red-500 hover:text-red-700 px-2 py-1"><i class="fas fa-times"></i></button>
+                    </div>`;
+                }
             });
+
             document.getElementById('edit-shop-modal').classList.remove('hidden');
         }
 
@@ -571,36 +773,113 @@
             const format = document.getElementById('edit-shop-format').value;
             const hargaNominal = document.getElementById('edit-shop-harga').value.trim();
             const hargaUnit = document.getElementById('edit-shop-unit').value;
-            const inputsLink = document.querySelectorAll('.input-edit-img-url');
+            
+            const inputsLink = document.querySelectorAll('.input-edit-media-val');
             const arrayLink = Array.from(inputsLink).map(input => input.value.trim()).filter(val => val !== "");
-            if(!nama || !hargaNominal || arrayLink.length === 0) return alert("Data belum lengkap!");
-            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'editShop', row: rowId, nama, tingkat, kategori, format, harga: hargaNominal + '|' + hargaUnit, imgUrl: arrayLink.join(',') }) });
-            tutupEditShop(); loadAdminData();
+            
+            if(!nama || !hargaNominal || arrayLink.length === 0) return alert("Data belum lengkap (Minimal 1 Media)!");
+            
+            toggleLoader(true);
+            try {
+                await fetch(GAS_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify({ 
+                        action: 'editShop', row: rowId, nama, tingkat, kategori, format, 
+                        harga: hargaNominal + '|' + hargaUnit, 
+                        imgUrl: arrayLink.join('|||') 
+                    }) 
+                });
+                tutupEditShop(); loadAdminData();
+            } catch(e) { alert("Gagal update data!"); }
+            toggleLoader(false);
         }
 
-        // Fungsi Galeri & Testimoni
-        async function tambahGaleri() {
-            const url = document.getElementById('galeri-url').value.trim();
-            if(!url) return alert("Masukkan URL gambar!");
-            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'addGaleri', url }) });
-            document.getElementById('galeri-url').value = '';
-            loadAdminData();
+        // ==========================================
+        // KELOLA GALERI WEB
+        // ==========================================
+        async function tambahGaleriProses() {
+            const fileInput = document.getElementById('galeri-file-input');
+            const urlInput = document.getElementById('galeri-url-input');
+            let finalUrl = "";
+
+            if (fileInput.files.length > 0) {
+                toggleLoader(true);
+                try {
+                    const file = fileInput.files[0];
+                    if(file.size > 2 * 1024 * 1024) {
+                        alert("Ukuran gambar terlalu besar! Maksimal 2MB.");
+                        toggleLoader(false); return;
+                    }
+                    finalUrl = await fileToBase64(file);
+                } catch(e) {}
+                toggleLoader(false);
+            } else if (urlInput.value.trim() !== "") {
+                finalUrl = urlInput.value.trim();
+            } else {
+                return alert("Pilih File Gambar atau Masukkan URL terlebih dahulu!");
+            }
+
+            if(finalUrl) {
+                toggleLoader(true);
+                try {
+                    await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'addGaleri', url: finalUrl }) });
+                    fileInput.value = ''; urlInput.value = '';
+                    loadAdminData();
+                } catch (err) { alert("Gagal menambah ke galeri."); }
+                toggleLoader(false);
+            }
         }
 
         async function hapusGaleri(row) {
             if(!confirm("Hapus foto dari galeri?")) return;
+            toggleLoader(true);
             await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteGaleri', row }) });
+            toggleLoader(false);
+            loadAdminData();
+        }
+
+        // ==========================================
+        // MANAJEMEN USER & TESTIMONI
+        // ==========================================
+        function pilihEditUser(username, password, koin) {
+            document.getElementById('user-username').value = username;
+            document.getElementById('user-password').value = password;
+            document.getElementById('user-koin').value = koin;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function simpanUser() {
+            const username = document.getElementById('user-username').value.trim();
+            const password = document.getElementById('user-password').value.trim();
+            const koin = document.getElementById('user-koin').value;
+            if(!username || !password) return alert("Username dan Password wajib diisi!");
+            toggleLoader(true);
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'saveUser', username, password, koin }) });
+            document.getElementById('user-username').value = ''; document.getElementById('user-password').value = '';
+            toggleLoader(false);
+            loadAdminData();
+        }
+
+        async function hapusUser(username) {
+            if(!confirm(`Yakin hapus user "${username}"?`)) return;
+            toggleLoader(true);
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteUser', username }) });
+            toggleLoader(false);
             loadAdminData();
         }
 
         async function approveTestimoni(row) {
+            toggleLoader(true);
             await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'approveTestimoni', row }) });
+            toggleLoader(false);
             loadAdminData();
         }
 
         async function hapusTestimoni(row) {
             if(!confirm("Hapus testimoni ini?")) return;
+            toggleLoader(true);
             await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteTestimoni', row }) });
+            toggleLoader(false);
             loadAdminData();
         }
     </script>
