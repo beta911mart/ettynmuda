@@ -408,8 +408,67 @@
     </div>
 
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec"; 
-        const PIN_ADMIN = "1324"; 
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec"; 
+
+// Cek otomatis saat halaman dimuat
+window.addEventListener('DOMContentLoaded', () => {
+    const sessionToken = sessionStorage.getItem('adminSessionToken');
+    if (sessionToken) {
+        document.getElementById('login-modal').classList.add('hidden');
+        document.getElementById('admin-dashboard').classList.remove('hidden');
+        loadAdminData();
+    }
+});
+
+// Fungsi Login dengan Verifikasi ke Google Apps Script
+async function loginAdmin() {
+    const pinInput = document.getElementById('admin-pin').value.trim();
+    const errorEl = document.getElementById('login-error');
+    
+    if (!pinInput) {
+        errorEl.innerText = "Masukkan PIN terlebih dahulu!";
+        errorEl.classList.remove('hidden');
+        return;
+    }
+
+    toggleLoader(true);
+    try {
+        const response = await fetch(GAS_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'verifyAdminPin',
+                pin: pinInput
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Simpan token sesi di browser (otomatis terhapus jika tab ditutup)
+            sessionStorage.setItem('adminSessionToken', result.sessionToken);
+            
+            document.getElementById('login-modal').classList.add('hidden');
+            document.getElementById('admin-dashboard').classList.remove('hidden');
+            document.getElementById('admin-pin').value = '';
+            errorEl.classList.add('hidden');
+            
+            loadAdminData();
+        } else {
+            errorEl.innerText = result.message || "PIN tidak valid!";
+            errorEl.classList.remove('hidden');
+        }
+    } catch (err) {
+        errorEl.innerText = "Gagal terhubung ke server!";
+        errorEl.classList.remove('hidden');
+    }
+    toggleLoader(false);
+}
+
+// Fungsi Logout untuk Menghapus Sesi
+function logoutAdmin() {
+    sessionStorage.removeItem('adminSessionToken');
+    location.reload();
+}
         
         let globalShopData = [];
         let globalUserData = [];
