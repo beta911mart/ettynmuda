@@ -1,0 +1,78 @@
+name: Auto Update README via Gemini
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+      - '.github/**'
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Recent Commit Diff
+        id: commit_diff
+        run: |
+          # Mengambil perubahan kode dari commit terakhir
+          DIFF=$(git diff HEAD~1 HEAD)
+          
+          # Membatasi panjang diff agar tidak melebihi konteks prompt Gemini
+          TRUNCATED_DIFF=$(echo "$DIFF" | head -n 400)
+          
+          echo "diff<<EOF" >> $GITHUB_OUTPUT
+          echo "$TRUNCATED_DIFF" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Generate New README Content via Gemini
+        id: gemini
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          # Membaca isi README.md yang ada saat ini (jika ada)
+          CURRENT_README=""
+          if [ -f "README.md" ]; then
+            CURRENT_README=$(cat README.md | head -n 200)
+          fi
+
+          PROMPT="Anda adalah seorang Technical Writer ahli. Perbarui berkas README.md berdasarkan perubahan kode terbaru berikut:\n\nPERUBAHAN KODE (DIFF):\n${{ steps.commit_diff.outputs.diff }}\n\nISI README SAAT INI:\n$CURRENT_README\n\nInstruksi:\n- Tulis ulang atau perbarui dokumentasi README.md agar mencerminkan fitur atau perubahan terbaru.\n- Gunakan format Markdown yang rapi dan profesional.\n- HANYA kembalikan teks isi Markdown README.md tanpa pembuka atau penutup penjelasan."
+
+          # Encapsulate prompt ke JSON payload untuk REST API Gemini
+          JSON_PROMPT=$(jq -n --arg prompt "$PROMPT" '{contents: [{parts: [{text: $prompt}]}]}')
+
+          RESPONSE=$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$GEMINI_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$JSON_PROMPT")
+
+          NEW_README=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text // empty')
+
+          if [ -n "$NEW_README" ]; then
+            echo "$NEW_README" > README.md
+            echo "updated=true" >> $GITHUB_OUTPUT
+          else
+            echo "Gagal mendapatkan respon valid dari Gemini API."
+            echo "updated=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and Push Updated README
+        if: steps.gemini.outputs.updated == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add README.md
+          if git diff --staged --quiet; then
+            echo "Tidak ada perubahan signifikan pada README.md."
+          else
+            git commit -m "docs: auto-update README.md via Gemini API [skip ci]"
+            git push
+          fi
