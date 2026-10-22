@@ -13,7 +13,6 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        /* Tambahan CSS Loader untuk Upload File Besar */
         #global-loader { display: none; }
         #global-loader.active { display: flex; }
     </style>
@@ -24,7 +23,7 @@
     <div id="global-loader" class="fixed inset-0 bg-slate-900/80 z-[100] items-center justify-center flex-col text-white">
         <i class="fas fa-circle-notch fa-spin text-5xl mb-4 text-pink-500"></i>
         <h2 class="text-xl font-bold">Sedang Memproses...</h2>
-        <p class="text-sm text-slate-300 mt-2">Mohon tunggu, menyiapkan file gambar.</p>
+        <p class="text-sm text-slate-300 mt-2">Mohon tunggu, menyiapkan data.</p>
     </div>
 
     <!-- Modal Login Admin -->
@@ -127,7 +126,7 @@
         </div>
     </div>
 
-<!-- Dashboard Admin -->
+    <!-- Dashboard Admin -->
     <div id="admin-dashboard" class="hidden min-h-screen flex flex-col">
         <nav class="bg-slate-900 text-white p-4 sticky top-0 z-40 shadow-md">
             <div class="max-w-7xl mx-auto flex justify-between items-center">
@@ -408,73 +407,13 @@
     </div>
 
     <script>
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec"; 
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec"; 
 
-// Cek otomatis saat halaman dimuat
-window.addEventListener('DOMContentLoaded', () => {
-    const sessionToken = sessionStorage.getItem('adminSessionToken');
-    if (sessionToken) {
-        document.getElementById('login-modal').classList.add('hidden');
-        document.getElementById('admin-dashboard').classList.remove('hidden');
-        loadAdminData();
-    }
-});
-
-// Fungsi Login dengan Verifikasi ke Google Apps Script
-async function loginAdmin() {
-    const pinInput = document.getElementById('admin-pin').value.trim();
-    const errorEl = document.getElementById('login-error');
-    
-    if (!pinInput) {
-        errorEl.innerText = "Masukkan PIN terlebih dahulu!";
-        errorEl.classList.remove('hidden');
-        return;
-    }
-
-    toggleLoader(true);
-    try {
-        const response = await fetch(GAS_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                action: 'verifyAdminPin',
-                pin: pinInput
-            })
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            // Simpan token sesi di browser (otomatis terhapus jika tab ditutup)
-            sessionStorage.setItem('adminSessionToken', result.sessionToken);
-            
-            document.getElementById('login-modal').classList.add('hidden');
-            document.getElementById('admin-dashboard').classList.remove('hidden');
-            document.getElementById('admin-pin').value = '';
-            errorEl.classList.add('hidden');
-            
-            loadAdminData();
-        } else {
-            errorEl.innerText = result.message || "PIN tidak valid!";
-            errorEl.classList.remove('hidden');
-        }
-    } catch (err) {
-        errorEl.innerText = "Gagal terhubung ke server!";
-        errorEl.classList.remove('hidden');
-    }
-    toggleLoader(false);
-}
-
-// Fungsi Logout untuk Menghapus Sesi
-function logoutAdmin() {
-    sessionStorage.removeItem('adminSessionToken');
-    location.reload();
-}
-        
         let globalShopData = [];
         let globalUserData = [];
 
         // ==========================================
-        // HELPER FUNCTIONS
+        // HELPER FUNCTIONS & OVERLAY LOADER
         // ==========================================
         function toggleLoader(show) {
             const loader = document.getElementById('global-loader');
@@ -482,7 +421,6 @@ function logoutAdmin() {
             else loader.classList.remove('active');
         }
 
-        // Konversi File ke teks Base64
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -492,20 +430,65 @@ function logoutAdmin() {
             });
         }
 
-        function loginAdmin() {
-            if (document.getElementById('admin-pin').value === PIN_ADMIN) {
+        // ==========================================
+        // LOGIKA SESI & OTENTIKASI ADMIN (PERBAIKAN)
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            const sessionToken = sessionStorage.getItem('adminSessionToken');
+            if (sessionToken) {
                 document.getElementById('login-modal').classList.add('hidden');
                 document.getElementById('admin-dashboard').classList.remove('hidden');
                 loadAdminData();
-            } else {
-                document.getElementById('login-error').classList.remove('hidden');
             }
+        });
+
+        async function loginAdmin() {
+            const pinInput = document.getElementById('admin-pin').value.trim();
+            const errorEl = document.getElementById('login-error');
+            
+            if (!pinInput) {
+                errorEl.innerText = "Masukkan PIN terlebih dahulu!";
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            toggleLoader(true);
+            try {
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'verifyAdminPin',
+                        pin: pinInput
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    sessionStorage.setItem('adminSessionToken', result.sessionToken);
+                    document.getElementById('login-modal').classList.add('hidden');
+                    document.getElementById('admin-dashboard').classList.remove('hidden');
+                    document.getElementById('admin-pin').value = '';
+                    errorEl.classList.add('hidden');
+                    loadAdminData();
+                } else {
+                    errorEl.innerText = result.message || "PIN tidak valid!";
+                    errorEl.classList.remove('hidden');
+                }
+            } catch (err) {
+                errorEl.innerText = "Gagal terhubung ke server!";
+                errorEl.classList.remove('hidden');
+            }
+            toggleLoader(false);
         }
-        
-        function logoutAdmin() { location.reload(); }
+
+        function logoutAdmin() {
+            sessionStorage.removeItem('adminSessionToken');
+            location.reload();
+        }
 
         // ==========================================
-        // FETCH DATA AWAL
+        // FETCH DATA AWAL DARI BACKEND
         // ==========================================
         async function loadAdminData() {
             try {
@@ -545,7 +528,6 @@ function logoutAdmin() {
                         let satuan = hArr[1] ? `<span class="text-[10px] text-slate-500 font-normal ml-1">${hArr[1]}</span>` : '';
                         let hargaTampil = `Rp ${Number(nominal).toLocaleString('id-ID')} ${satuan}`;
                         
-                        // Ekstrak URL Gambar pertama untuk Thumbnail (Dukung ||| atau koma lama)
                         let separator = p.imgUrl.includes('|||') ? '|||' : ',';
                         let imgArr = p.imgUrl ? p.imgUrl.split(separator) : [];
                         let thumbnail = imgArr.length > 0 && imgArr[0] ? imgArr[0] : 'https://placehold.co/150x100?text=No+Image';
@@ -712,7 +694,6 @@ function logoutAdmin() {
             
             toggleLoader(true);
             try {
-                // Gunakan ||| sebagai pemisah karena Base64 sudah mengandung karakter koma
                 await fetch(GAS_URL, { 
                     method: 'POST', 
                     body: JSON.stringify({ 
