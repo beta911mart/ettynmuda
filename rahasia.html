@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <base target="_top">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GitHub Smart Deployer & Bug Inspector</title>
   
-  <!-- Tailwind CSS -->
+  <!-- Tailwind CSS & Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome & Google Fonts -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
@@ -33,9 +31,9 @@
       </div>
       <div>
         <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
-          GitHub Smart Deployer <span class="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-500/30">v3.0 AI Smart</span>
+          GitHub Smart Deployer <span class="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-500/30">v3.0 Fetch Edition</span>
         </h1>
-        <p class="text-xs text-slate-400">Pencegah Human Error, Live Audit & Preview System</p>
+        <p class="text-xs text-slate-400">Pencegah Human Error, Live Audit & Preview System (GitHub Pages Ready)</p>
       </div>
     </div>
 
@@ -169,11 +167,14 @@
   </div>
 
   <script>
+    // URL WEB APP GOOGLE APPS SCRIPT BACKEND ANDA
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec";
+
     let repoFilesData = [];
     let currentAutoFixedCode = "";
 
-    // 1. MEMUAT DAFTAR FILE REPOSITORI (SAFE LOAD)
-    function loadRepoFiles() {
+    // 1. MEMUAT DAFTAR FILE REPOSITORI VIA FETCH
+    async function loadRepoFiles() {
       const container = document.getElementById('fileListContainer');
       const syncIcon = document.getElementById('syncIcon');
       if (syncIcon) syncIcon.classList.add('loading-spin');
@@ -185,46 +186,35 @@
         </div>
       `;
 
-      if (typeof google === 'undefined' || !google.script || !google.script.run) {
-        if (syncIcon) syncIcon.classList.remove('loading-spin');
-        container.innerHTML = `
-          <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs text-center">
-            <i class="fas fa-info-circle text-lg mb-1 block"></i>
-            Lingkungan Google Apps Script tidak terdeteksi (Lokal/Mode Pratinjau Standalone).
-          </div>
-        `;
-        return;
-      }
+      try {
+        const response = await fetch(`${GAS_URL}?action=getRepositoryFiles`);
+        const res = await response.json();
 
-      google.script.run
-        .withSuccessHandler(res => {
-          if (syncIcon) syncIcon.classList.remove('loading-spin');
-          
-          if (res && res.success && Array.isArray(res.files)) {
-            repoFilesData = res.files;
-            document.getElementById('fileCount').innerText = `${res.files.length} berkas`;
-            renderFileList(res.files);
-          } else {
-            container.innerHTML = `
-              <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs text-center space-y-1">
-                <i class="fas fa-exclamation-triangle text-lg mb-1 block"></i>
-                <div class="font-bold">Gagal Memuat Repositori</div>
-                <div class="text-[11px] opacity-80">${res ? res.message : 'Respon kosong dari server.'}</div>
-              </div>
-            `;
-          }
-        })
-        .withFailureHandler(err => {
-          if (syncIcon) syncIcon.classList.remove('loading-spin');
+        if (syncIcon) syncIcon.classList.remove('loading-spin');
+
+        if (res && res.success && Array.isArray(res.files)) {
+          repoFilesData = res.files;
+          document.getElementById('fileCount').innerText = `${res.files.length} berkas`;
+          renderFileList(res.files);
+        } else {
           container.innerHTML = `
             <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs text-center space-y-1">
-              <i class="fas fa-times-circle text-lg mb-1 block"></i>
-              <div class="font-bold">Error Server Google Apps Script</div>
-              <div class="text-[11px] opacity-80">${err ? (err.message || err.toString()) : 'Terjadi kesalahan sistem.'}</div>
+              <i class="fas fa-exclamation-triangle text-lg mb-1 block"></i>
+              <div class="font-bold">Gagal Memuat Repositori</div>
+              <div class="text-[11px] opacity-80">${res ? res.message : 'Respon kosong.'}</div>
             </div>
           `;
-        })
-        .getRepositoryFiles();
+        }
+      } catch (err) {
+        if (syncIcon) syncIcon.classList.remove('loading-spin');
+        container.innerHTML = `
+          <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs text-center space-y-1">
+            <i class="fas fa-times-circle text-lg mb-1 block"></i>
+            <div class="font-bold">Error Koneksi Fetch</div>
+            <div class="text-[11px] opacity-80">${err.message || err.toString()}</div>
+          </div>
+        `;
+      }
     }
 
     function renderFileList(files) {
@@ -253,23 +243,25 @@
       return 'fas fa-file text-slate-400';
     }
 
-    // 2. MEMUAT DOKUMEN KE EDITOR
-    function loadFileToEditor(filePath) {
+    // 2. MEMUAT DOKUMEN KE EDITOR VIA FETCH
+    async function loadFileToEditor(filePath) {
       document.getElementById('targetFileName').value = filePath;
       document.getElementById('codeEditor').value = "Mengambil isi berkas...";
 
-      google.script.run
-        .withSuccessHandler(res => {
-          if (res && res.success) {
-            document.getElementById('codeEditor').value = res.content || "";
-            updateLivePreview();
-            fetchHistory();
-          } else {
-            alert(res ? res.message : "Gagal mengambil isi berkas.");
-          }
-        })
-        .withFailureHandler(err => alert("Error: " + (err.message || err.toString())))
-        .getFileContentFromRepo(filePath);
+      try {
+        const response = await fetch(`${GAS_URL}?action=getFileContentFromRepo&filePath=${encodeURIComponent(filePath)}`);
+        const res = await response.json();
+
+        if (res && res.success) {
+          document.getElementById('codeEditor').value = res.content || "";
+          updateLivePreview();
+          fetchHistory();
+        } else {
+          alert(res ? res.message : "Gagal mengambil isi berkas.");
+        }
+      } catch (err) {
+        alert("Error Fetch: " + err.toString());
+      }
     }
 
     // 3. LIVE PREVIEW SCRIPT
@@ -282,8 +274,8 @@
       doc.close();
     }
 
-    // 4. INSPEKSI BUG AI (GEMINI)
-    function inspectBugWithAI() {
+    // 4. INSPEKSI BUG AI (GEMINI) VIA FETCH POST
+    async function inspectBugWithAI() {
       const code = document.getElementById('codeEditor').value;
       const box = document.getElementById('aiStatusBox');
       
@@ -292,33 +284,36 @@
       box.className = "p-4 rounded-xl text-xs border border-blue-500/30 bg-blue-500/10 text-blue-300 block";
       box.innerHTML = `<i class="fas fa-spinner loading-spin mr-2"></i> Sedang memeriksa potensi bug dan kesalahan sintaks dengan AI...`;
 
-      google.script.run
-        .withSuccessHandler(res => {
-          if (res && res.success && res.audit) {
-            const audit = res.audit;
-            if (audit.hasBug) {
-              currentAutoFixedCode = audit.fixedCode;
-              box.className = "p-4 rounded-xl text-xs border border-amber-500/40 bg-amber-500/10 text-amber-300 block space-y-2";
-              box.innerHTML = `
-                <div><strong>⚠️ Terdeteksi Potential Bug / Kesalahan:</strong> ${audit.summary}</div>
-                <button onclick="applyAIFix()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-3 py-1.5 rounded-lg text-[11px] transition">
-                  <i class="fas fa-wand-magic-sparkles mr-1"></i> Terapkan Perbaikan Otomatis AI
-                </button>
-              `;
-            } else {
-              box.className = "p-4 rounded-xl text-xs border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 block";
-              box.innerHTML = `<i class="fas fa-check-circle mr-1"></i> Kode bersih! Tidak ditemukan bug atau kesalahan sintaks secara umum.`;
-            }
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'inspectAndFixCodeWithGemini', htmlContent: code })
+        });
+        const res = await response.json();
+
+        if (res && res.success && res.audit) {
+          const audit = res.audit;
+          if (audit.hasBug) {
+            currentAutoFixedCode = audit.fixedCode;
+            box.className = "p-4 rounded-xl text-xs border border-amber-500/40 bg-amber-500/10 text-amber-300 block space-y-2";
+            box.innerHTML = `
+              <div><strong>⚠️ Terdeteksi Potential Bug / Kesalahan:</strong> ${audit.summary}</div>
+              <button onclick="applyAIFix()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-3 py-1.5 rounded-lg text-[11px] transition">
+                <i class="fas fa-wand-magic-sparkles mr-1"></i> Terapkan Perbaikan Otomatis AI
+              </button>
+            `;
           } else {
-            box.className = "p-4 rounded-xl text-xs border border-red-500/40 bg-red-500/10 text-red-300 block";
-            box.innerHTML = `Gagal audit: ${res ? res.message : 'Respon gagal'}`;
+            box.className = "p-4 rounded-xl text-xs border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 block";
+            box.innerHTML = `<i class="fas fa-check-circle mr-1"></i> Kode bersih! Tidak ditemukan bug atau kesalahan sintaks secara umum.`;
           }
-        })
-        .withFailureHandler(err => {
+        } else {
           box.className = "p-4 rounded-xl text-xs border border-red-500/40 bg-red-500/10 text-red-300 block";
-          box.innerHTML = `Error Audit: ${err.message || err.toString()}`;
-        })
-        .inspectAndFixCodeWithGemini(code);
+          box.innerHTML = `Gagal audit: ${res ? res.message : 'Respon gagal'}`;
+        }
+      } catch (err) {
+        box.className = "p-4 rounded-xl text-xs border border-red-500/40 bg-red-500/10 text-red-300 block";
+        box.innerHTML = `Error Audit: ${err.toString()}`;
+      }
     }
 
     function applyAIFix() {
@@ -331,50 +326,56 @@
       }
     }
 
-    // 5. RIWAYAT COMMIT & ROLLBACK
-    function fetchHistory() {
+    // 5. RIWAYAT COMMIT & ROLLBACK VIA FETCH
+    async function fetchHistory() {
       const fileName = document.getElementById('targetFileName').value;
       if (!fileName) return;
 
-      google.script.run
-        .withSuccessHandler(commits => {
-          const select = document.getElementById('commitSelect');
-          select.innerHTML = '';
-          if (!commits || commits.length === 0) {
-            select.innerHTML = `<option value="">-- Tidak Ada History Commit --</option>`;
-            return;
-          }
-          commits.forEach(c => {
-            const opt = document.createElement('option');
-            opt.value = c.sha;
-            opt.textContent = `[${c.shortSha}] ${c.message} (${c.date})`;
-            select.appendChild(opt);
-          });
-        })
-        .withFailureHandler(err => alert("Gagal mengambil history: " + err.toString()))
-        .getCommitHistory(fileName);
+      try {
+        const response = await fetch(`${GAS_URL}?action=getCommitHistory&filePath=${encodeURIComponent(fileName)}`);
+        const commits = await response.json();
+
+        const select = document.getElementById('commitSelect');
+        select.innerHTML = '';
+        if (!commits || !Array.isArray(commits) || commits.length === 0) {
+          select.innerHTML = `<option value="">-- Tidak Ada History Commit --</option>`;
+          return;
+        }
+        commits.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.sha;
+          opt.textContent = `[${c.shortSha}] ${c.message} (${c.date})`;
+          select.appendChild(opt);
+        });
+      } catch (err) {
+        alert("Gagal mengambil history: " + err.toString());
+      }
     }
 
-    function confirmRollback() {
+    async function confirmRollback() {
       const fileName = document.getElementById('targetFileName').value;
       const sha = document.getElementById('commitSelect').value;
       if (!fileName || !sha) return alert("Pilih berkas dan commit target terlebih dahulu!");
 
       if (confirm(`Apakah Anda yakin ingin mengembalikan berkas '${fileName}' ke commit [${sha.substring(0,7)}]?`)) {
-        google.script.run
-          .withSuccessHandler(res => {
-            alert(res ? res.message : "Rollback selesai.");
-            if (res && res.success) {
-              loadFileToEditor(fileName);
-              loadRepoFiles();
-            }
-          })
-          .withFailureHandler(err => alert("Gagal Rollback: " + err.toString()))
-          .rollbackToCommit(fileName, sha);
+        try {
+          const response = await fetch(GAS_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'rollbackToCommit', fileName: fileName, targetSha: sha })
+          });
+          const res = await response.json();
+          alert(res ? res.message : "Rollback selesai.");
+          if (res && res.success) {
+            loadFileToEditor(fileName);
+            loadRepoFiles();
+          }
+        } catch (err) {
+          alert("Gagal Rollback: " + err.toString());
+        }
       }
     }
 
-    // 6. DEPLOYMENT CONFIRMATION
+    // 6. DEPLOYMENT CONFIRMATION VIA FETCH POST
     function confirmDeploy() {
       const fileName = document.getElementById('targetFileName').value;
       const code = document.getElementById('codeEditor').value;
@@ -385,7 +386,7 @@
       document.getElementById('deployModal').classList.remove('hidden');
     }
 
-    function executeDeploy() {
+    async function executeDeploy() {
       closeModal('deployModal');
       const fileName = document.getElementById('targetFileName').value;
       const code = document.getElementById('codeEditor').value;
@@ -395,22 +396,25 @@
       btn.disabled = true;
       btn.innerHTML = `<i class="fas fa-spinner loading-spin"></i> Mengunggah...`;
 
-      google.script.run
-        .withSuccessHandler(res => {
-          btn.disabled = false;
-          btn.innerHTML = `<i class="fas fa-cloud-arrow-up"></i> Deploy ke GitHub`;
-          alert(res ? res.message : "Selesai.");
-          if (res && res.success) {
-            loadRepoFiles();
-            fetchHistory();
-          }
-        })
-        .withFailureHandler(err => {
-          btn.disabled = false;
-          btn.innerHTML = `<i class="fas fa-cloud-arrow-up"></i> Deploy ke GitHub`;
-          alert("Gagal Deploy: " + err.toString());
-        })
-        .deployFile(fileName, code, msg);
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'deployFile', fileName: fileName, htmlContent: code, commitMessage: msg })
+        });
+        const res = await response.json();
+
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fas fa-cloud-arrow-up"></i> Deploy ke GitHub`;
+        alert(res ? res.message : "Selesai.");
+        if (res && res.success) {
+          loadRepoFiles();
+          fetchHistory();
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fas fa-cloud-arrow-up"></i> Deploy ke GitHub`;
+        alert("Gagal Deploy: " + err.toString());
+      }
     }
 
     function closeModal(id) {
