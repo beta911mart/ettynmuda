@@ -1,531 +1,374 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal LMS & Master Template</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub Smart Deployer & Bug Inspector</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-        /* Toast Notification */
-        #toast-notification {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: #1e293b;
-            color: white;
-            padding: 16px 24px;
-            border-radius: 12px;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-            transform: translateY(150%);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 500;
-        }
-        #toast-notification.show { transform: translateY(0); }
-        .toast-success i { color: #4ade80; }
-        .toast-error i { color: #f87171; }
-        .toast-info i { color: #60a5fa; }
-
-        /* Animation */
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Print Styles - DIPERBARUI AGAR TIDAK TERPOTONG 1 HALAMAN */
-        @media print {
-            html, body { 
-                background: white; 
-                height: auto !important; 
-                overflow: visible !important; 
-                display: block !important; 
-            }
-            #sidebar, #header, .no-print { 
-                display: none !important; 
-            }
-            #main-content, .flex-1.overflow-y-auto { 
-                margin: 0 !important; 
-                padding: 0 !important; 
-                width: 100% !important; 
-                height: auto !important; 
-                overflow: visible !important; 
-                display: block !important; 
-                position: static !important; 
-            }
-            #ai-result-container { 
-                box-shadow: none !important; 
-                padding: 0 !important; 
-                margin: 0 !important; 
-                border: none !important; 
-                display: block !important; 
-            }
-            .generated-content h1, .generated-content h2, .generated-content h3 { 
-                page-break-after: avoid; 
-            }
-            .generated-content table, .generated-content tr { 
-                page-break-inside: avoid; 
-            }
-            @page { margin: 1.5cm; }
-        }
-
-        /* Generated Content Styling */
-        .generated-content h1 { font-size: 1.8rem; font-weight: 700; color: #1e3a8a; margin-top: 1.5rem; margin-bottom: 1rem; border-bottom: 2px solid #bfdbfe; padding-bottom: 0.5rem; }
-        .generated-content h2 { font-size: 1.5rem; font-weight: 600; color: #374151; margin-top: 1.5rem; margin-bottom: 0.75rem; }
-        .generated-content h3 { font-size: 1.25rem; font-weight: 600; color: #4b5563; margin-top: 1.2rem; margin-bottom: 0.5rem; }
-        .generated-content p { color: #374151; line-height: 1.7; margin-bottom: 1rem; }
-        .generated-content ul, .generated-content ol { margin-left: 1.5rem; margin-bottom: 1rem; color: #374151; }
-        .generated-content ul { list-style-type: disc; }
-        .generated-content ol { list-style-type: decimal; }
-        .generated-content li { margin-bottom: 0.5rem; }
-        .generated-content table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.95rem; }
-        .generated-content th, .generated-content td { border: 1px solid #e5e7eb; padding: 12px; text-align: left; }
-        .generated-content th { background-color: #f3f4f6; font-weight: 600; color: #111827; }
-        
-        .loading-spinner {
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top: 3px solid white;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0f172a; color: #f8fafc; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #1e293b; }
+    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+    .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .loading-spin { animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
 </head>
-<body class="flex h-screen overflow-hidden text-gray-800">
+<body class="min-h-screen flex flex-col">
 
-    <!-- Sidebar -->
-    <aside id="sidebar" class="w-64 bg-slate-900 text-white flex flex-col shadow-xl z-20 flex-shrink-0 transition-all duration-300">
-        <div class="p-6 border-b border-slate-800 flex items-center gap-3">
-            <div class="bg-blue-500 rounded-lg p-2 flex items-center justify-center">
-                <i class="fas fa-graduation-cap text-xl"></i>
-            </div>
-            <div>
-                <h1 class="text-lg font-bold leading-tight">Universal LMS</h1>
-                <p class="text-xs text-slate-400">Master Template</p>
-            </div>
-        </div>
-        
-        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-            <button onclick="switchTab('tab-ai')" id="nav-ai" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-600 text-white font-medium transition-colors">
-                <i class="fas fa-magic text-yellow-300"></i> AI Generator
-            </button>
-            <button onclick="switchTab('tab-db')" id="nav-db" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
-                <i class="fas fa-database"></i> DB Kurikulum
-            </button>
-            <button onclick="switchTab('tab-bank')" id="nav-bank" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
-                <i class="fas fa-box-archive"></i> Bank Soal
-            </button>
-            <button onclick="switchTab('tab-progress')" id="nav-progress" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
-                <i class="fas fa-chart-line"></i> Progress Siswa
-            </button>
-        </nav>
-        
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500 text-center">
-            Kurikulum Merdeka Ready &copy; 2026
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main id="main-content" class="flex-1 flex flex-col h-screen overflow-hidden relative bg-slate-50">
-        
-        <!-- Header -->
-        <header id="header" class="bg-white shadow-sm px-8 py-4 flex items-center justify-between z-10 flex-shrink-0">
-            <h2 id="header-title" class="text-2xl font-bold text-slate-800">✨ AI Generator Bahan Ajar</h2>
-            <div class="flex items-center gap-4">
-                <button onclick="window.print()" class="no-print bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium transition flex items-center gap-2">
-                    <i class="fas fa-print"></i> Cetak / PDF
-                </button>
-            </div>
-        </header>
-
-        <!-- Content Area -->
-        <div class="flex-1 overflow-y-auto p-8">
-            
-            <!-- TAB 1: AI Generator -->
-            <div id="tab-ai" class="tab-content fade-in">
-                <!-- Tambahkan class 'no-print' agar kotak form ini hilang saat diprint -->
-                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 shadow-lg text-white mb-8 no-print">
-                    <h3 class="text-xl font-bold mb-2">Buat Bahan Ajar Otomatis (Kurikulum Merdeka)</h3>
-                    <p class="text-blue-100 mb-6 text-sm">Pilih jenjang, kelas, mata pelajaran, dan ketik tema. AI akan meracik seluruh struktur bahan ajar dari A sampai Q secara instan!</p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-blue-200 uppercase mb-1">Jenjang</label>
-                            <select id="ai-jenjang" onchange="updateAIOptions()" class="w-full bg-white/20 border border-white/30 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-white/50 [&>option]:text-gray-800">
-                                <option value="">Pilih Jenjang</option>
-                                <option value="TK">TK / PAUD</option>
-                                <option value="SD">SD (Fase A - C)</option>
-                                <option value="SMP">SMP (Fase D)</option>
-                                <option value="SMA">SMA (Fase E - F)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-blue-200 uppercase mb-1">Kelas / Fase</label>
-                            <select id="ai-kelas" onchange="updateAIMapel()" class="w-full bg-white/20 border border-white/30 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-white/50 [&>option]:text-gray-800 disabled:opacity-50" disabled>
-                                <option value="">Pilih Kelas</option>
-                            </select>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-semibold text-blue-200 uppercase mb-1">Mata Pelajaran</label>
-                            <select id="ai-mapel" class="w-full bg-white/20 border border-white/30 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-white/50 [&>option]:text-gray-800 disabled:opacity-50" disabled>
-                                <option value="">Pilih Mata Pelajaran</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="block text-xs font-semibold text-blue-200 uppercase mb-1">Topik / Tema Pembelajaran</label>
-                        <input type="text" id="ai-topic" placeholder="Ketik topik materi... (Contoh: Sistem Tata Surya, Turunan Fungsi Trigonometri, dll)" class="w-full bg-white/10 border border-white/30 text-white placeholder-blue-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/50 text-lg">
-                    </div>
-                    
-                    <div class="mb-6">
-                        <label class="block text-xs font-semibold text-blue-200 uppercase mb-1"><i class="fas fa-key"></i> Gemini API Key (Opsional)</label>
-                        <input type="password" id="custom-api-key" placeholder="Biarkan kosong jika preview di platform. Isi API Key Anda jika terjadi error 'Unregistered Caller' atau jika web didownload." class="w-full bg-white/10 border border-white/30 text-white placeholder-blue-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-white/50 text-sm">
-                    </div>
-                    
-                    <button id="btn-generate" onclick="generateWithAI()" class="w-full bg-white text-blue-600 hover:bg-blue-50 font-bold py-3 px-6 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
-                        <i class="fas fa-sparkles text-yellow-500"></i>
-                        <span id="btn-generate-text">Generate Bahan Ajar (A-Q)</span>
-                        <div id="btn-generate-spinner" class="loading-spinner hidden"></div>
-                    </button>
-                </div>
-
-                <!-- Preview Area for AI Generated Output -->
-                <div id="ai-result-container" class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 min-h-[500px] relative hidden" id="preview-container">
-                    <div id="ai-result-content" class="generated-content">
-                        <!-- AI content will be injected here -->
-                    </div>
-                </div>
-                
-                <!-- Empty State before generation -->
-                <div id="ai-empty-state" class="flex flex-col items-center justify-center text-slate-400 py-16">
-                    <i class="fas fa-file-invoice text-6xl mb-4 text-slate-200"></i>
-                    <p class="text-lg">Modul Bahan Ajar akan muncul di sini</p>
-                    <p class="text-sm">Silakan isi form di atas dan klik Generate.</p>
-                </div>
-            </div>
-
-            <!-- TAB 2: Database Kurikulum (Visual Placeholder) -->
-            <div id="tab-db" class="tab-content hidden fade-in">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 text-center">
-                    <i class="fas fa-database text-5xl text-blue-500 mb-4"></i>
-                    <h3 class="text-xl font-bold text-slate-800 mb-2">Arsitektur Database Kurikulum</h3>
-                    <p class="text-slate-600 max-w-2xl mx-auto mb-6">Database (Memory State) telah menyimpan struktur dari TK hingga SMA Kelas 12 (Fase F - UTBK Prep). Database ini menyuplai dropdown pada AI Generator secara dinamis secara real-time.</p>
-                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-left overflow-hidden">
-                        <pre class="text-xs text-slate-700 overflow-x-auto whitespace-pre-wrap font-mono">
-// Tersedia Kelas 1 hingga Kelas 12
-// Mendukung pemisahan IPA/IPS di Fase D (SMP)
-// Mendukung penjurusan Mata Pelajaran Wajib & Pilihan di Fase F (SMA)
-                        </pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 3: Bank Soal -->
-            <div id="tab-bank" class="tab-content hidden fade-in">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 text-center py-20">
-                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-box-archive text-3xl text-blue-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-slate-800 mb-2">Bank Soal Terpusat</h3>
-                    <p class="text-slate-500 max-w-md mx-auto">Sistem penyimpanan soal berbasis tingkat kognitif dan level kesulitan.</p>
-                </div>
-            </div>
-
-            <!-- TAB 4: Progress Siswa -->
-            <div id="tab-progress" class="tab-content hidden fade-in">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 text-center py-20">
-                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-chart-line text-3xl text-green-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-slate-800 mb-2">Dashboard Progress</h3>
-                    <p class="text-slate-500 max-w-md mx-auto">Sistem pelacakan ketuntasan belajar dan capaian kompetensi.</p>
-                </div>
-            </div>
-
-        </div>
-    </main>
-
-    <!-- Toast Notification -->
-    <div id="toast-notification">
-        <i id="toast-icon" class="fas fa-info-circle"></i>
-        <span id="toast-message">Notifikasi</span>
+  <!-- TOPNAV -->
+  <header class="glass-panel sticky top-0 z-40 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+        <i class="fas fa-rocket text-lg"></i>
+      </div>
+      <div>
+        <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
+          GitHub Smart Deployer <span class="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-500/30">v3.0 AI Smart</span>
+        </h1>
+        <p class="text-xs text-slate-400">Pencegah Human Error, Live Audit & Preview System</p>
+      </div>
     </div>
 
-    <script>
-        // --- 1. DATA KURIKULUM (TK - SMA KELAS 12) ---
-        const curriculumDB = {
-            "TK": {
-                "TK A": { fase: "Fondasi", mapel: ["Bermain & Belajar", "Agama & Moral", "Jati Diri", "Literasi & STEAM"] },
-                "TK B": { fase: "Fondasi", mapel: ["Bermain & Belajar", "Agama & Moral", "Jati Diri", "Literasi & STEAM"] }
-            },
-            "SD": {
-                "Kelas 1": { fase: "A", mapel: ["Pendidikan Agama", "Pendidikan Pancasila", "Bahasa Indonesia", "Matematika", "PJOK", "Seni Budaya", "Bahasa Inggris (Pilihan)"] },
-                "Kelas 2": { fase: "A", mapel: ["Pendidikan Agama", "Pendidikan Pancasila", "Bahasa Indonesia", "Matematika", "PJOK", "Seni Budaya", "Bahasa Inggris (Pilihan)"] },
-                "Kelas 3": { fase: "B", mapel: ["Ilmu Pengetahuan Alam dan Sosial (IPAS)", "Bahasa Indonesia", "Matematika", "Pendidikan Pancasila", "PJOK", "Seni Budaya", "Pendidikan Agama", "Bahasa Inggris (Pilihan)"] },
-                "Kelas 4": { fase: "B", mapel: ["Ilmu Pengetahuan Alam dan Sosial (IPAS)", "Bahasa Indonesia", "Matematika", "Pendidikan Pancasila", "PJOK", "Seni Budaya", "Pendidikan Agama", "Bahasa Inggris (Pilihan)"] },
-                "Kelas 5": { fase: "C", mapel: ["Ilmu Pengetahuan Alam dan Sosial (IPAS)", "Matematika", "Bahasa Indonesia", "Pendidikan Pancasila", "PJOK", "Seni Budaya", "Pendidikan Agama", "Bahasa Inggris (Pilihan)"] },
-                "Kelas 6": { fase: "C", mapel: ["Ilmu Pengetahuan Alam dan Sosial (IPAS)", "Matematika", "Bahasa Indonesia", "Pendidikan Pancasila", "PJOK", "Seni Budaya", "Pendidikan Agama", "Bahasa Inggris (Pilihan)"] }
-            },
-            "SMP": {
-                "Kelas 7": { fase: "D", mapel: ["Matematika", "Ilmu Pengetahuan Alam (IPA)", "Ilmu Pengetahuan Sosial (IPS)", "Informatika", "Bahasa Indonesia", "Bahasa Inggris", "Pendidikan Pancasila", "Pendidikan Agama", "PJOK", "Seni Budaya"] },
-                "Kelas 8": { fase: "D", mapel: ["Matematika", "Ilmu Pengetahuan Alam (IPA)", "Ilmu Pengetahuan Sosial (IPS)", "Informatika", "Bahasa Indonesia", "Bahasa Inggris", "Pendidikan Pancasila", "Pendidikan Agama", "PJOK", "Seni Budaya"] },
-                "Kelas 9": { fase: "D", mapel: ["Matematika", "Ilmu Pengetahuan Alam (IPA)", "Ilmu Pengetahuan Sosial (IPS)", "Informatika", "Bahasa Indonesia", "Bahasa Inggris", "Pendidikan Pancasila", "Pendidikan Agama", "PJOK", "Seni Budaya"] }
-            },
-            "SMA": {
-                "Kelas 10": { fase: "E", mapel: ["Matematika", "Fisika", "Kimia", "Biologi", "Sejarah", "Sosiologi", "Ekonomi", "Geografi", "Informatika", "Bahasa Indonesia", "Bahasa Inggris", "Pendidikan Pancasila", "Pendidikan Agama", "PJOK", "Seni Budaya"] },
-                "Kelas 11": { fase: "F", mapel: ["Wajib: Pend. Agama", "Wajib: Pend. Pancasila", "Wajib: B. Indonesia", "Wajib: Matematika Umum", "Wajib: B. Inggris", "Wajib: PJOK", "Wajib: Sejarah", "Wajib: Seni Budaya", "Pilihan: Biologi", "Pilihan: Kimia", "Pilihan: Fisika", "Pilihan: Matematika TL", "Pilihan: Sosiologi", "Pilihan: Ekonomi", "Pilihan: Geografi", "Pilihan: Antropologi", "Pilihan: Informatika", "Pilihan: Bahasa Inggris TL", "Pilihan: PKWU"] },
-                "Kelas 12": { fase: "F", mapel: ["Wajib: Pend. Agama", "Wajib: Pend. Pancasila", "Wajib: B. Indonesia", "Wajib: Matematika Umum", "Wajib: B. Inggris", "Wajib: PJOK", "Wajib: Sejarah", "Wajib: Seni Budaya", "Pilihan: Biologi (Metabolisme/Genetika)", "Pilihan: Kimia (Redoks/Organik)", "Pilihan: Fisika (Kuantum/Inti)", "Pilihan: Matematika TL (Kalkulus)", "Pilihan: Sosiologi (Perubahan Sosial)", "Pilihan: Ekonomi (Akuntansi)", "Pilihan: Geografi (Tata Ruang)", "Pilihan: Informatika (Proyek Akhir)", "Pilihan: Bahasa Inggris TL", "Pilihan: PKWU"] }
-            }
-        };
+    <div class="flex items-center gap-3">
+      <button onclick="loadRepoFiles()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3.5 py-2 rounded-xl font-semibold border border-slate-700 transition flex items-center gap-2">
+        <i class="fas fa-sync-alt text-blue-400" id="syncIcon"></i> Refresh Repo
+      </button>
+    </div>
+  </header>
 
-        // --- STREAMING_CHUNK:Defining UI interaction functions... ---
-        // --- 2. TAB NAVIGATION LOGIC ---
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-            document.getElementById(tabId).classList.remove('hidden');
-            
-            document.querySelectorAll('#sidebar button').forEach(btn => {
-                if(btn.id === 'nav-ai') {
-                    btn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors";
-                    btn.innerHTML = `<i class="fas fa-magic"></i> AI Generator`;
-                } else {
-                    btn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors";
-                }
-            });
-            
-            const activeBtnId = 'nav-' + tabId.split('-')[1];
-            const activeBtn = document.getElementById(activeBtnId);
-            
-            if(activeBtnId === 'nav-ai') {
-                activeBtn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-600 text-white font-medium transition-colors";
-                activeBtn.innerHTML = `<i class="fas fa-magic text-yellow-300"></i> AI Generator`;
-                document.getElementById('header-title').innerText = "✨ AI Generator Bahan Ajar";
-            } else {
-                activeBtn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-slate-800 text-white font-medium border-l-4 border-blue-500 transition-colors";
-                const titles = { 'nav-db': 'Database Kurikulum', 'nav-bank': 'Bank Soal Terpusat', 'nav-progress': 'Progress Siswa' };
-                document.getElementById('header-title').innerText = titles[activeBtnId] || "";
-            }
-        }
+  <!-- MAIN WORKSPACE -->
+  <main class="flex-1 p-4 lg:p-6 max-w-[1600px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        // --- 3. DYNAMIC DROPDOWN LOGIC ---
-        function updateAIOptions() {
-            const jenjang = document.getElementById('ai-jenjang').value;
-            const kelasSelect = document.getElementById('ai-kelas');
-            const mapelSelect = document.getElementById('ai-mapel');
-            
-            kelasSelect.innerHTML = '<option value="">Pilih Kelas</option>';
-            mapelSelect.innerHTML = '<option value="">Pilih Mata Pelajaran</option>';
-            
-            if (jenjang && curriculumDB[jenjang]) {
-                Object.keys(curriculumDB[jenjang]).forEach(kelas => {
-                    let opt = document.createElement('option');
-                    opt.value = kelas;
-                    opt.textContent = `${kelas} (Fase ${curriculumDB[jenjang][kelas].fase})`;
-                    kelasSelect.appendChild(opt);
-                });
-                kelasSelect.disabled = false;
-            } else {
-                kelasSelect.disabled = true;
-                mapelSelect.disabled = true;
-            }
-        }
+    <!-- PANEL KIRI: REPOSITORY EXPLORER (4 COLS) -->
+    <div class="lg:col-span-4 space-y-6">
+      
+      <!-- List Files -->
+      <div class="glass-panel rounded-2xl p-5 border border-slate-800 shadow-xl">
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+          <h2 class="font-bold text-sm text-slate-200 flex items-center gap-2">
+            <i class="fas fa-folder-open text-amber-400"></i> Berkas Repositori
+          </h2>
+          <span id="fileCount" class="text-[11px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">0 berkas</span>
+        </div>
 
-        function updateAIMapel() {
-            const jenjang = document.getElementById('ai-jenjang').value;
-            const kelas = document.getElementById('ai-kelas').value;
-            const mapelSelect = document.getElementById('ai-mapel');
-            
-            mapelSelect.innerHTML = '<option value="">Pilih Mata Pelajaran</option>';
-            
-            if (jenjang && kelas && curriculumDB[jenjang][kelas]) {
-                const mapels = curriculumDB[jenjang][kelas].mapel;
-                mapels.forEach(mapel => {
-                    let opt = document.createElement('option');
-                    opt.value = mapel;
-                    opt.textContent = mapel;
-                    mapelSelect.appendChild(opt);
-                });
-                mapelSelect.disabled = false;
-            } else {
-                mapelSelect.disabled = true;
-            }
-        }
+        <div id="fileListContainer" class="space-y-2 max-h-[350px] overflow-y-auto pr-1">
+          <div class="text-center py-8 text-slate-500 text-xs">
+            <i class="fas fa-spinner loading-spin text-xl mb-2 text-blue-500"></i><br>Memuat daftar berkas...
+          </div>
+        </div>
+      </div>
 
-        // --- STREAMING_CHUNK:Implementing the Toast Notification System... ---
-        // --- 4. TOAST NOTIFICATION UTILITY ---
-        let toastTimeout;
-        function showToast(message, type = 'info') {
-            const toast = document.getElementById('toast-notification');
-            const icon = document.getElementById('toast-icon');
-            document.getElementById('toast-message').innerText = message;
-            
-            toast.className = '';
-            
-            if (type === 'success') {
-                toast.classList.add('toast-success');
-                icon.className = 'fas fa-check-circle';
-            } else if (type === 'error') {
-                toast.classList.add('toast-error');
-                icon.className = 'fas fa-exclamation-circle';
-            } else {
-                toast.classList.add('toast-info');
-                icon.className = 'fas fa-info-circle';
-            }
-            
-            toast.classList.add('show');
-            
-            clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
+      <!-- History Commit & Rollback Section -->
+      <div class="glass-panel rounded-2xl p-5 border border-slate-800 shadow-xl">
+        <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-800">
+          <h2 class="font-bold text-sm text-slate-200 flex items-center gap-2">
+            <i class="fas fa-history text-orange-400"></i> Riwayat Commit & Rollback
+          </h2>
+          <button onclick="fetchHistory()" class="text-xs text-blue-400 hover:underline"><i class="fas fa-redo"></i> Cek History</button>
+        </div>
 
-        // --- STREAMING_CHUNK:Implementing the AI generation API calls... ---
-        // --- 5. AI GENERATION LOGIC ---
+        <div class="space-y-3">
+          <select id="commitSelect" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-blue-500">
+            <option value="">-- Pilih Berkas untuk Melihat History --</option>
+          </select>
+
+          <button onclick="confirmRollback()" class="w-full bg-orange-600/20 hover:bg-orange-600 text-orange-400 hover:text-white border border-orange-500/30 font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2">
+            <i class="fas fa-undo"></i> Eksekusi Rollback Aman
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PANEL KANAN: EDITOR, LIVE PREVIEW & AI AUDIT (8 COLS) -->
+    <div class="lg:col-span-8 space-y-6">
+
+      <!-- Editor Panel -->
+      <div class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
         
-        // Fungsi Fetch dengan Exponential Backoff untuk mengatasi limit API / Throttling
-        async function fetchWithRetry(url, options, maxRetries = 3) {
-            let delay = 1000;
-            for (let i = 0; i < maxRetries; i++) {
-                try {
-                    const response = await fetch(url, options);
-                    
-                    if (response.ok) {
-                        return response;
-                    }
-                    
-                    if (response.status === 429 && i < maxRetries - 1) {
-                        // Jika terkena limit (429), tunggu sejenak lalu coba lagi
-                        await new Promise(res => setTimeout(res, delay));
-                        delay *= 2;
-                        continue;
-                    }
-                    
-                    // Jika error lain atau batas percobaan habis, ambil detail errornya
-                    const errorData = await response.json().catch(() => ({}));
-                    throw new Error(errorData.error?.message || `HTTP Error: ${response.status}`);
-                } catch (err) {
-                    if (i === maxRetries - 1) throw err;
-                    await new Promise(res => setTimeout(res, delay));
-                    delay *= 2;
-                }
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Path / Nama Berkas</label>
+            <input type="text" id="targetFileName" placeholder="Contoh: index.html atau pages/about.html" class="w-full bg-slate-900 border border-slate-700 text-white text-xs font-mono rounded-xl p-3 focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Pesan Commit</label>
+            <input type="text" id="commitMessage" placeholder="Cth: Update perbaikan layout dan warna" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded-xl p-3 focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+
+        <!-- Code Area -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-xs font-semibold text-slate-400">Kode Editor (HTML/JS/CSS)</label>
+            <div class="flex items-center gap-2">
+              <button onclick="inspectBugWithAI()" class="bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/40 px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
+                <i class="fas fa-bug-slash text-yellow-400"></i> Inspeksi Bug (AI)
+              </button>
+              <button onclick="updateLivePreview()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded-lg text-xs font-medium transition flex items-center gap-1">
+                <i class="fas fa-eye text-blue-400"></i> Update Preview
+              </button>
+            </div>
+          </div>
+          <textarea id="codeEditor" rows="12" placeholder="<!-- Masukkan atau edit kode HTML/JS Anda di sini -->" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs font-mono p-4 rounded-xl focus:outline-none focus:border-blue-500 leading-relaxed"></textarea>
+        </div>
+
+        <!-- Status Result Alert -->
+        <div id="aiStatusBox" class="hidden p-4 rounded-xl text-xs border"></div>
+
+        <!-- Submit Button -->
+        <div class="flex justify-end pt-2 border-t border-slate-800">
+          <button onclick="confirmDeploy()" id="btnDeploy" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl text-xs transition shadow-lg shadow-emerald-600/20 flex items-center gap-2">
+            <i class="fas fa-cloud-arrow-up"></i> Deploy ke GitHub
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Live Preview Panel -->
+      <div class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl">
+        <h2 class="font-bold text-sm text-slate-200 mb-3 flex items-center justify-between">
+          <span><i class="fas fa-desktop text-emerald-400 mr-2"></i> Live Visual Preview (Sandbox)</span>
+          <span class="text-[10px] text-slate-500">Memastikan tampilan sempurna sebelum rilis</span>
+        </h2>
+        <div class="w-full h-[400px] bg-white rounded-xl overflow-hidden border border-slate-700">
+          <iframe id="previewIframe" class="w-full h-full border-0"></iframe>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- MODAL KONFIRMASI DEPLOY -->
+  <div id="deployModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
+    <div class="glass-panel rounded-3xl p-6 sm:p-8 max-w-md w-full border border-slate-800 text-center shadow-2xl">
+      <div class="w-16 h-16 bg-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-500/30">
+        <i class="fas fa-shield-halved text-3xl"></i>
+      </div>
+      <h3 class="text-lg font-bold text-white mb-2">Konfirmasi Rilis Deployment</h3>
+      <p class="text-xs text-slate-400 mb-6" id="deployModalDesc">Apakah Anda yakin ingin memublikasikan perubahan berkas ini ke repositori utama?</p>
+      
+      <div class="flex gap-3">
+        <button onclick="closeModal('deployModal')" class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition">Batal</button>
+        <button onclick="executeDeploy()" class="flex-1 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-lg">
+          <i class="fas fa-check-circle"></i> Ya, Publish Sekarang
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let repoFilesData = [];
+    let currentAutoFixedCode = "";
+
+    // 1. MEMUAT DAFTAR FILE REPOSITORI
+    function loadRepoFiles() {
+      const container = document.getElementById('fileListContainer');
+      const syncIcon = document.getElementById('syncIcon');
+      syncIcon.classList.add('loading-spin');
+
+      google.script.run
+        .withSuccessHandler(res => {
+          syncIcon.classList.remove('loading-spin');
+          if (res.success) {
+            repoFilesData = res.files;
+            document.getElementById('fileCount').innerText = `${res.files.length} berkas`;
+            renderFileList(res.files);
+          } else {
+            container.innerHTML = `<div class="text-red-400 text-xs p-3">${res.message}</div>`;
+          }
+        })
+        .getRepositoryFiles();
+    }
+
+    function renderFileList(files) {
+      const container = document.getElementById('fileListContainer');
+      if(files.length === 0) {
+        container.innerHTML = `<div class="text-slate-500 text-xs py-4 text-center">Tidak ada berkas ditemukan.</div>`;
+        return;
+      }
+
+      container.innerHTML = files.map(f => `
+        <div onclick="loadFileToEditor('${f.path}')" class="p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-slate-800/80 flex items-center justify-between cursor-pointer transition group">
+          <div class="flex items-center gap-2.5 truncate">
+            <i class="${getFileIcon(f.path)} text-slate-400 group-hover:text-blue-400 transition"></i>
+            <span class="text-xs text-slate-300 font-mono truncate">${f.path}</span>
+          </div>
+          <span class="text-[10px] text-slate-500">${(f.size / 1024).toFixed(1)} KB</span>
+        </div>
+      `).join('');
+    }
+
+    function getFileIcon(path) {
+      if (path.endsWith('.html')) return 'fas fa-code text-orange-400';
+      if (path.endsWith('.js')) return 'fab fa-js text-yellow-400';
+      if (path.endsWith('.css')) return 'fab fa-css3-alt text-blue-400';
+      return 'fas fa-file text-slate-400';
+    }
+
+    // 2. MEMUAT DOKUMEN KE EDITOR
+    function loadFileToEditor(filePath) {
+      document.getElementById('targetFileName').value = filePath;
+      document.getElementById('codeEditor').value = "Mengambil isi berkas...";
+
+      google.script.run
+        .withSuccessHandler(res => {
+          if (res.success) {
+            document.getElementById('codeEditor').value = res.content;
+            updateLivePreview();
+            fetchHistory();
+          } else {
+            alert(res.message);
+          }
+        })
+        .getFileContentFromRepo(filePath);
+    }
+
+    // 3. LIVE PREVIEW SCRIPT
+    function updateLivePreview() {
+      const code = document.getElementById('codeEditor').value;
+      const iframe = document.getElementById('previewIframe');
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+      doc.open();
+      doc.write(code);
+      doc.close();
+    }
+
+    // 4. INSPEKSI BUG AI (GEMINI)
+    function inspectBugWithAI() {
+      const code = document.getElementById('codeEditor').value;
+      const box = document.getElementById('aiStatusBox');
+      
+      if (!code.trim()) return alert("Isi kode di editor terlebih dahulu!");
+
+      box.className = "p-4 rounded-xl text-xs border border-blue-500/30 bg-blue-500/10 text-blue-300 block";
+      box.innerHTML = `<i class="fas fa-spinner loading-spin mr-2"></i> Sedang memeriksa potensi bug dan kesalahan sintaks dengan AI...`;
+
+      google.script.run
+        .withSuccessHandler(res => {
+          if (res.success && res.audit) {
+            const audit = res.audit;
+            if (audit.hasBug) {
+              currentAutoFixedCode = audit.fixedCode;
+              box.className = "p-4 rounded-xl text-xs border border-amber-500/40 bg-amber-500/10 text-amber-300 block space-y-2";
+              box.innerHTML = `
+                <div><strong>⚠️ Terdeteksi Potential Bug / Kesalahan:</strong> ${audit.summary}</div>
+                <button onclick="applyAIFix()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-3 py-1.5 rounded-lg text-[11px] transition">
+                  <i class="fas fa-wand-magic-sparkles mr-1"></i> Terapkan Perbaikan Otomatis AI
+                </button>
+              `;
+            } else {
+              box.className = "p-4 rounded-xl text-xs border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 block";
+              box.innerHTML = `<i class="fas fa-check-circle mr-1"></i> Kode bersih! Tidak ditemukan bug atau kesalahan sintaks secara umum.`;
             }
-        }
+          } else {
+            box.className = "p-4 rounded-xl text-xs border border-red-500/40 bg-red-500/10 text-red-300 block";
+            box.innerHTML = `Gagal audit: ${res.message}`;
+          }
+        })
+        .inspectAndFixCodeWithGemini(code);
+    }
 
-        async function generateWithAI() {
-            const jenjang = document.getElementById('ai-jenjang').value;
-            const kelas = document.getElementById('ai-kelas').value;
-            const mapel = document.getElementById('ai-mapel').value;
-            const topic = document.getElementById('ai-topic').value;
-            const customKey = document.getElementById('custom-api-key') ? document.getElementById('custom-api-key').value.trim() : "";
+    function applyAIFix() {
+      if (currentAutoFixedCode) {
+        document.getElementById('codeEditor').value = currentAutoFixedCode;
+        updateLivePreview();
+        const box = document.getElementById('aiStatusBox');
+        box.className = "p-4 rounded-xl text-xs border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 block";
+        box.innerHTML = `<i class="fas fa-check-circle mr-1"></i> Perbaikan AI berhasil diterapkan ke editor!`;
+      }
+    }
 
-            if (!jenjang || !kelas || !mapel || !topic) {
-                showToast('Mohon lengkapi seluruh field sebelum generate!', 'error');
-                return;
+    // 5. RIWAYAT COMMIT & ROLLBACK
+    function fetchHistory() {
+      const fileName = document.getElementById('targetFileName').value;
+      if (!fileName) return;
+
+      google.script.run
+        .withSuccessHandler(commits => {
+          const select = document.getElementById('commitSelect');
+          select.innerHTML = '';
+          if (commits.length === 0) {
+            select.innerHTML = `<option value="">-- Tidak Ada History Commit --</option>`;
+            return;
+          }
+          commits.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.sha;
+            opt.textContent = `[${c.shortSha}] ${c.message} (${c.date})`;
+            select.appendChild(opt);
+          });
+        })
+        .getCommitHistory(fileName);
+    }
+
+    function confirmRollback() {
+      const fileName = document.getElementById('targetFileName').value;
+      const sha = document.getElementById('commitSelect').value;
+      if (!fileName || !sha) return alert("Pilih berkas dan commit target terlebih dahulu!");
+
+      if (confirm(`Apakah Anda yakin ingin mengembalikan berkas '${fileName}' ke commit [${sha.substring(0,7)}]?`)) {
+        google.script.run
+          .withSuccessHandler(res => {
+            alert(res.message);
+            if (res.success) {
+              loadFileToEditor(fileName);
+              loadRepoFiles();
             }
+          })
+          .rollbackToCommit(fileName, sha);
+      }
+    }
 
-            const btn = document.getElementById('btn-generate');
-            const btnText = document.getElementById('btn-generate-text');
-            const btnSpinner = document.getElementById('btn-generate-spinner');
-            const emptyState = document.getElementById('ai-empty-state');
-            const resultContainer = document.getElementById('ai-result-container');
-            const resultContent = document.getElementById('ai-result-content');
+    // 6. DEPLOYMENT CONFIRMATION
+    function confirmDeploy() {
+      const fileName = document.getElementById('targetFileName').value;
+      const code = document.getElementById('codeEditor').value;
 
-            btn.disabled = true;
-            btnText.innerText = 'AI Sedang Menyusun...';
-            btnSpinner.classList.remove('hidden');
-            
-            showToast('Memanggil AI, mohon tunggu beberapa saat...', 'info');
+      if (!fileName || !code) return alert("Nama berkas dan isi kode tidak boleh kosong!");
 
-            const systemPrompt = "Anda adalah seorang ahli pembuat kurikulum dan guru profesional. Tugas Anda adalah membuat Modul Bahan Ajar Lengkap (Struktur A sampai Q) berdasarkan parameter yang diberikan. Selalu gunakan format HTML murni (tanpa tag <html>, <body>, atau markdown backticks, cukup elemen-elemen HTML pembungkus teks seperti <h1>, <h2>, <p>, <ul>, <ol>, <table>, dll). Gunakan bahasa Indonesia yang baku dan sesuai dengan jenjang kognitif siswa.";
-            
-            const userPrompt = `Buatkan Modul Bahan Ajar Lengkap untuk Kurikulum Merdeka:
-- Jenjang: ${jenjang}
-- Kelas: ${kelas}
-- Mata Pelajaran: ${mapel}
-- Topik: ${topic}
+      document.getElementById('deployModalDesc').innerText = `Berkas: '${fileName}' akan diunggah ke repositori utama.`;
+      document.getElementById('deployModal').classList.remove('hidden');
+    }
 
-Harus memuat lengkap dan rinci struktur A sampai Q berikut:
-A. IDENTITAS PEMBELAJARAN
-B. CAPAIAN PEMBELAJARAN
-C. TUJUAN PEMBELAJARAN
-D. MATERI PEMBELAJARAN (Pengantar, Konsep Dasar, Inti, Contoh, Penerapan)
-E. PEMBELAJARAN MULTIMEDIA (Saran Visual, Audio, Video, Interaktif)
-F. AKTIVITAS PEMBELAJARAN (Mengenal, Mencoba, Berlatih, Berdiskusi, Berkarya)
-G. PRE-TEST (5 Soal Pilihan Ganda beserta Kunci Jawaban)
-H. LATIHAN BERTAHAP (Level 1 Mudah, Level 2 Menengah, Level 3 Tantangan)
-I. EVALUASI AKHIR / Post-Test
-J. REMEDIAL
-K. PENGAYAAN
-L. PROYEK (Langkah, Hasil, Presentasi)
-M. PENILAIAN (Rubrik)
-N. RANGKUMAN
-O. REFLEKSI SISWA
-P. GLOSARIUM
-Q. REFERENSI`;
+    function executeDeploy() {
+      closeModal('deployModal');
+      const fileName = document.getElementById('targetFileName').value;
+      const code = document.getElementById('codeEditor').value;
+      const msg = document.getElementById('commitMessage').value || `Update ${fileName}`;
 
-            const apiKey = customKey !== "" ? customKey : ""; // Gunakan custom key jika diisi pengguna. Jika tidak, platform akan injeksi otomatis.
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+      const btn = document.getElementById('btnDeploy');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-spinner loading-spin"></i> Mengunggah...`;
 
-            const payload = {
-                contents: [{ parts: [{ text: userPrompt }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] }
-            };
+      google.script.run
+        .withSuccessHandler(res => {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fas fa-cloud-arrow-up"></i> Deploy ke GitHub`;
+          alert(res.message);
+          if (res.success) {
+            loadRepoFiles();
+            fetchHistory();
+          }
+        })
+        .deployFile(fileName, code, msg);
+    }
 
-            try {
-                const response = await fetchWithRetry(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
 
-                const data = await response.json();
-                
-                if (data.candidates && data.candidates.length > 0) {
-                    let htmlText = data.candidates[0].content.parts[0].text;
-                    
-                    // Membersihkan sisa backticks jika AI masih mengirimkannya
-                    htmlText = htmlText.replace(/```html/gi, '');
-                    htmlText = htmlText.replace(/```/gi, '');
-                    htmlText = htmlText.trim();
-
-                    emptyState.classList.add('hidden');
-                    resultContainer.classList.remove('hidden');
-                    resultContent.innerHTML = htmlText;
-                    
-                    showToast('Berhasil generate bahan ajar!', 'success');
-                } else {
-                    throw new Error("Respons AI kosong atau format tidak valid.");
-                }
-
-            } catch (error) {
-                console.error("AI Generation Error:", error);
-                // Menampilkan pesan error yang lebih spesifik agar mudah dilacak
-                showToast(`Gagal: ${error.message}`, 'error');
-            } finally {
-                btn.disabled = false;
-                btnText.innerText = 'Generate Bahan Ajar (A-Q)';
-                btnSpinner.classList.add('hidden');
-            }
-        }
-    </script>
+    // INIT
+    loadRepoFiles();
+  </script>
 </body>
 </html>
