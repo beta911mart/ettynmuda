@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ETTYN SHOP - Etalase Materi</title>
+    <title>ETTYN SHOP - Etalase Materi Modern</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -46,6 +46,23 @@
             text-transform: uppercase; transform: rotate(-30deg); white-space: nowrap;
             letter-spacing: 2px; text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
         }
+
+        /* Animasi Glow Modern pada Kartu */
+        .card-glow {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-glow:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 25px -5px rgba(215, 122, 122, 0.25), 0 8px 10px -6px rgba(215, 122, 122, 0.1);
+        }
+
+        /* Skeleton Loader Animation */
+        @keyframes skeleton-loading {
+            0% { background-color: #E2D9C8; }
+            50% { background-color: #F5EFE0; }
+            100% { background-color: #E2D9C8; }
+        }
+        .skeleton { animation: skeleton-loading 1.2s infinite ease-in-out; }
     </style>
 </head>
 <body class="font-sans min-h-screen flex flex-col">
@@ -59,9 +76,15 @@
                 </h1>
                 <p class="text-sm mt-1 text-brown font-medium">Etalase Materi & Dokumen Akademis</p>
             </div>
-            <a href="/" class="bg-pastelPink-dark hover:bg-brown-dark text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-md flex items-center gap-2">
-                <i class="fas fa-home"></i> Kembali ke Beranda
-            </a>
+            
+            <div class="flex items-center gap-3">
+                <button onclick="toggleFilterFavorit()" id="btnFavoritToggle" class="bg-white hover:bg-pinkmuda/40 text-brown border border-pinkmuda px-4 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center gap-2">
+                    <i class="fas fa-heart text-red-500"></i> Favorit Saya (<span id="favCount">0</span>)
+                </button>
+                <a href="/" class="bg-pastelPink-dark hover:bg-brown-dark text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-md flex items-center gap-2">
+                    <i class="fas fa-home"></i> Beranda
+                </a>
+            </div>
         </div>
     </header>
 
@@ -75,46 +98,67 @@
             <p class="text-brown opacity-90 text-sm font-medium">Temukan berbagai dokumen dan materi pendukung belajar Anda.</p>
         </div>
 
-        <!-- PANEL KONTROL FILTER -->
-        <div class="bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-pinkmuda shadow-sm flex flex-col lg:flex-row gap-3 mb-8">
-            <div class="flex-1 relative">
-                <i class="fas fa-search absolute left-4 top-3.5 text-brown opacity-50"></i>
-                <input type="text" id="searchInput" oninput="terapkanFilter()" placeholder="Cari nama materi..." class="w-full pl-11 pr-4 py-3 rounded-xl border border-pinkmuda/70 bg-white focus:outline-none focus:border-pastelPink-dark text-sm shadow-sm">
+        <!-- PANEL KONTROL FILTER & PENCARIAN DEBOUNCE -->
+        <div class="bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-pinkmuda shadow-sm flex flex-col gap-3 mb-6">
+            <div class="flex flex-col lg:flex-row gap-3">
+                <div class="flex-1 relative">
+                    <i class="fas fa-search absolute left-4 top-3.5 text-brown opacity-50"></i>
+                    <input type="text" id="searchInput" oninput="debounceFilter()" placeholder="Cari nama materi atau topik..." class="w-full pl-11 pr-4 py-3 rounded-xl border border-pinkmuda/70 bg-white focus:outline-none focus:border-pastelPink-dark text-sm shadow-sm">
+                </div>
+                
+                <div class="flex flex-wrap gap-2 lg:gap-3">
+                    <select id="filterTingkat" onchange="terapkanFilter()" class="flex-1 lg:flex-none px-3 py-3 rounded-xl border border-pinkmuda/70 bg-white focus:outline-none text-sm text-textgelap shadow-sm cursor-pointer">
+                        <option value="all">Semua Tingkat</option>
+                        <option value="TK / Sederajat">TK / Sederajat</option>
+                        <option value="SD / Sederajat">SD / Sederajat</option>
+                        <option value="SMP / Sederajat">SMP / Sederajat</option>
+                        <option value="SLTA / Sederajat">SLTA / Sederajat</option>
+                    </select>
+                    <select id="filterFormat" onchange="terapkanFilter()" class="flex-1 lg:flex-none px-3 py-3 rounded-xl border border-pinkmuda/70 bg-white focus:outline-none text-sm text-textgelap shadow-sm cursor-pointer">
+                        <option value="all">Semua Format</option>
+                        <option value="PDF">PDF</option><option value="PPT">PPT</option>
+                        <option value="Word">Word</option><option value="Image">Image</option>
+                        <option value="Video">Video</option>
+                    </select>
+                    <select id="sortUrutan" onchange="terapkanFilter()" class="flex-1 lg:flex-none px-3 py-3 rounded-xl border border-pinkmuda/70 bg-white focus:outline-none text-sm text-textgelap shadow-sm cursor-pointer">
+                        <option value="default">Urutkan</option>
+                        <option value="harga_asc">Harga: Termurah</option><option value="harga_desc">Harga: Termahal</option>
+                        <option value="nama_asc">Nama: A - Z</option><option value="nama_desc">Nama: Z - A</option>
+                    </select>
+                </div>
             </div>
-            <div class="flex flex-wrap gap-2 lg:gap-3">
-                <select id="filterTingkat" onchange="terapkanFilter()" class="flex-1 lg:flex-none px-3 py-3 rounded-xl border border-pinkmuda/70 bg-white focus:outline-none text-sm text-textgelap shadow-sm cursor-pointer">
-                    <option value="all">Semua Tingkat</option>
-                    <option value="TK / Sederajat">TK / Sederajat</option>
-                    <option value="SD / Sederajat">SD / Sederajat</option>
-                    <option value="SMP / Sederajat">SMP / Sederajat</option>
-                    <option value="SLTA / Sederajat">SLTA / Sederajat</option>
-                </select>
-                <select id="filterKategori" onchange="terapkanFilter()" class="flex-1 lg:flex-none px-3 py-3 rounded-xl border border-pinkmuda/70 bg-white focus:outline-none text-sm text-textgelap shadow-sm cursor-pointer">
-                    <option value="all">Semua Kategori</option>
-                    <option value="Proposal">Proposal</option><option value="Modul">Modul</option>
-                    <option value="LKPD">LKPD</option><option value="Presentasi">Presentasi</option>
-                    <option value="Laporan">Laporan</option><option value="Surat">Surat</option>
-                    <option value="Bahan ajar">Bahan Ajar</option>
-                </select>
-                <select id="filterFormat" onchange="terapkanFilter()" class="flex-1 lg:flex-none px-3 py-3 rounded-xl border border-pinkmuda/70 bg-white focus:outline-none text-sm text-textgelap shadow-sm cursor-pointer">
-                    <option value="all">Semua Format</option>
-                    <option value="PDF">PDF</option><option value="PPT">PPT</option>
-                    <option value="Word">Word</option><option value="Image">Image</option>
-                    <option value="Video">Video</option>
-                </select>
-                <select id="sortUrutan" onchange="terapkanFilter()" class="flex-1 lg:flex-none px-3 py-3 rounded-xl border border-pinkmuda/70 bg-white focus:outline-none text-sm text-textgelap shadow-sm cursor-pointer">
-                    <option value="default">Urutkan</option>
-                    <option value="harga_asc">Harga: Termurah</option><option value="harga_desc">Harga: Termahal</option>
-                    <option value="nama_asc">Nama: A - Z</option><option value="nama_desc">Nama: Z - A</option>
-                </select>
+
+            <!-- QUICK CHIPS FILTER KATEGORI -->
+            <div class="flex items-center gap-2 overflow-x-auto pt-2 pb-1 no-scrollbar text-xs">
+                <span class="font-bold text-brown whitespace-nowrap mr-1"><i class="fas fa-tags text-pastelPink-dark"></i> Kategori Cepat:</span>
+                <button onclick="setQuickChip('all')" class="chip-btn active bg-pastelPink-dark text-white px-3 py-1.5 rounded-full font-bold shadow-sm whitespace-nowrap transition" data-kat="all">Semua</button>
+                <button onclick="setQuickChip('Modul')" class="chip-btn bg-white hover:bg-pinkmuda/40 text-brown px-3 py-1.5 rounded-full font-medium border border-pinkmuda whitespace-nowrap transition" data-kat="Modul">Modul</button>
+                <button onclick="setQuickChip('Proposal')" class="chip-btn bg-white hover:bg-pinkmuda/40 text-brown px-3 py-1.5 rounded-full font-medium border border-pinkmuda whitespace-nowrap transition" data-kat="Proposal">Proposal</button>
+                <button onclick="setQuickChip('LKPD')" class="chip-btn bg-white hover:bg-pinkmuda/40 text-brown px-3 py-1.5 rounded-full font-medium border border-pinkmuda whitespace-nowrap transition" data-kat="LKPD">LKPD</button>
+                <button onclick="setQuickChip('Presentasi')" class="chip-btn bg-white hover:bg-pinkmuda/40 text-brown px-3 py-1.5 rounded-full font-medium border border-pinkmuda whitespace-nowrap transition" data-kat="Presentasi">Presentasi</button>
+                <button onclick="setQuickChip('Bahan Ajar')" class="chip-btn bg-white hover:bg-pinkmuda/40 text-brown px-3 py-1.5 rounded-full font-medium border border-pinkmuda whitespace-nowrap transition" data-kat="Bahan Ajar">Bahan Ajar</button>
             </div>
         </div>
 
         <!-- Grid Produk -->
         <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-12">
-            <div class="col-span-full text-center py-12 text-brown font-medium" id="loadingIndicator">
-                <i class="fas fa-spinner fa-spin text-3xl mb-3 text-pastelPink-dark"></i><br>Memuat katalog produk...
-            </div>
+            <!-- Skeleton Loader Placeholder saat pertama kali dimuat -->
+            <script>
+                document.write(Array(8).fill(`
+                    <div class="bg-white/95 rounded-2xl p-4 border border-pinkmuda/30 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="skeleton h-44 rounded-xl mb-3"></div>
+                            <div class="skeleton h-4 w-1/3 rounded mb-2"></div>
+                            <div class="skeleton h-6 w-3/4 rounded mb-2"></div>
+                            <div class="skeleton h-3 w-1/2 rounded"></div>
+                        </div>
+                        <div class="flex justify-between items-center mt-4 pt-3 border-t border-pinkmuda/20">
+                            <div class="skeleton h-6 w-1/3 rounded"></div>
+                            <div class="skeleton h-9 w-20 rounded-xl"></div>
+                        </div>
+                    </div>
+                `).join(''));
+            </script>
         </div>
     </main>
 
@@ -127,17 +171,12 @@
                 <button onclick="tutupModal()" class="text-white hover:text-pink-100 font-bold text-2xl px-2 leading-none focus:outline-none">&times;</button>
             </div>
             
-            <!-- Kontainer Media (Gambar/Video) -->
-            <div id="mediaContainer" class="p-0 overflow-hidden flex justify-center items-center bg-gray-900 relative min-h-[40vh] md:min-h-[65vh] group w-full">
-                <!-- Elemen akan diinjeksi via JavaScript -->
-            </div>
+            <div id="mediaContainer" class="p-0 overflow-hidden flex justify-center items-center bg-gray-900 relative min-h-[40vh] md:min-h-[65vh] group w-full"></div>
             
-            <!-- Watermark Overlay khusus Modal -->
             <div class="absolute inset-x-0 top-[60px] bottom-[60px] flex items-center justify-center pointer-events-none z-10">
                 <span class="text-white text-2xl md:text-5xl font-bold uppercase opacity-20 transform -rotate-12 tracking-widest drop-shadow-lg">Dokumen Etyyn Muda</span>
             </div>
 
-            <!-- Tombol Navigasi -->
             <button id="prevBtn" onclick="gantiSlide(-1, event)" class="absolute left-2 md:left-6 top-1/2 transform -translate-y-1/2 bg-black/40 hover:bg-pastelPink-dark text-white w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition backdrop-blur-sm z-20 hidden shadow-md">
                 <i class="fas fa-chevron-left text-lg"></i>
             </button>
@@ -155,56 +194,136 @@
         </div>
     </div>
 
+    <!-- MODAL KONFIRMASI PEMBELIAN -->
+    <div id="buyConfirmModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative text-center border border-pinkmuda">
+            <div class="w-16 h-16 bg-pinkmuda/50 text-pastelPink-dark rounded-full flex items-center justify-center mx-auto mb-4 border border-pinkmuda">
+                <i class="fab fa-whatsapp text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-textgelap mb-1">Konfirmasi Pembelian</h3>
+            <p class="text-xs text-brown mb-6" id="buyModalProductName">Lengkapi data singkat di bawah untuk terhubung langsung ke WhatsApp Kak Etyyn.</p>
+            
+            <div class="space-y-4 text-left text-sm mb-6">
+                <div>
+                    <label class="block font-semibold text-textgelap mb-1 text-xs">Nama Anda</label>
+                    <input type="text" id="buyNamaUser" placeholder="Ketik nama Anda..." class="w-full px-4 py-3 rounded-xl border border-pinkmuda/80 focus:outline-none focus:border-pastelPink-dark bg-krem/30">
+                </div>
+                <div>
+                    <label class="block font-semibold text-textgelap mb-1 text-xs">Catatan / Pesan Tambahan (Opsional)</label>
+                    <textarea id="buyCatatan" rows="2" placeholder="Cth: Ingin format Word / tanya promo..." class="w-full px-4 py-3 rounded-xl border border-pinkmuda/80 focus:outline-none focus:border-pastelPink-dark bg-krem/30"></textarea>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="tutupBuyModal()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition">Batal</button>
+                <button onclick="eksekusiLanjutWA()" class="flex-1 py-3 bg-pastelPink-dark hover:bg-brown-dark text-white font-bold rounded-xl text-sm transition flex items-center justify-center gap-2 shadow-md">
+                    <i class="fab fa-whatsapp text-lg"></i> Kirim ke WA
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <footer class="text-center p-8 text-brown text-sm mt-auto border-t border-pinkmuda/30 bg-krem/80 backdrop-blur-sm">
         <p class="font-medium opacity-80">&copy; 2026 ETTYN SHOP. Semua Hak Dilindungi.</p>
     </footer>
 
     <script>
-        // PASTIKAN URL WEB APP GAS ANDA TEPAT
         const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec";
         let semuaProduk = []; 
+        let favoriteIds = JSON.parse(localStorage.getItem('etyn_favorites') || '[]');
+        let currentKatChip = 'all';
+        let filterOnlyFavorites = false;
+        let selectedProductForBuy = "";
 
         async function muatProduk() {
             const container = document.getElementById('product-grid');
             try {
                 let response = await fetch(SHEET_API_URL);
                 semuaProduk = await response.json();
+                updateFavCountUI();
                 if (semuaProduk.length === 0) {
                     container.innerHTML = '<div class="col-span-full text-center py-12 text-brown font-medium bg-white/70 backdrop-blur-sm rounded-2xl border border-pinkmuda/30 shadow-sm">Belum ada produk di etalase.</div>';
                     return;
                 }
                 terapkanFilter();
             } catch (error) {
-                container.innerHTML = '<div class="col-span-full text-center py-12 text-red-500 font-medium bg-white/70 border border-red-200 shadow-sm">Gagal memuat data produk. Periksa kembali koneksi atau URL API Anda.</div>';
+                container.innerHTML = '<div class="col-span-full text-center py-12 text-red-500 font-medium bg-white/70 border border-red-200 shadow-sm">Gagal memuat data produk. Periksa kembali koneksi API Anda.</div>';
             }
         }
 
-        // FUNGSI BANTUAN UNTUK MENDETEKSI ID YOUTUBE & SHORTS
         function extractYouTubeId(url) {
             let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
             let match = url.match(regExp);
             return (match && match[2].length === 11) ? match[2] : null;
         }
 
+        // DEBOUNCE FILTER UNTUK PENCARIAN EFISIEN
+        let debounceTimer;
+        function debounceFilter() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => { terapkanFilter(); }, 300);
+        }
+
+        function setQuickChip(kat) {
+            currentKatChip = kat;
+            document.querySelectorAll('.chip-btn').forEach(btn => {
+                if (btn.getAttribute('data-kat') === kat) {
+                    btn.className = "chip-btn active bg-pastelPink-dark text-white px-3 py-1.5 rounded-full font-bold shadow-sm whitespace-nowrap transition";
+                } else {
+                    btn.className = "chip-btn bg-white hover:bg-pinkmuda/40 text-brown px-3 py-1.5 rounded-full font-medium border border-pinkmuda whitespace-nowrap transition";
+                }
+            });
+            terapkanFilter();
+        }
+
+        function toggleFilterFavorit() {
+            filterOnlyFavorites = !filterOnlyFavorites;
+            const btn = document.getElementById('btnFavoritToggle');
+            if (filterOnlyFavorites) {
+                btn.classList.replace('bg-white', 'bg-red-500');
+                btn.classList.replace('text-brown', 'text-white');
+            } else {
+                btn.classList.replace('bg-red-500', 'bg-white');
+                btn.classList.replace('text-white', 'text-brown');
+            }
+            terapkanFilter();
+        }
+
+        function toggleFavorite(namaProduk, event) {
+            event.stopPropagation();
+            if (favoriteIds.includes(namaProduk)) {
+                favoriteIds = favoriteIds.filter(id => id !== namaProduk);
+            } else {
+                favoriteIds.push(namaProduk);
+            }
+            localStorage.setItem('etyn_favorites', JSON.stringify(favoriteIds));
+            updateFavCountUI();
+            terapkanFilter();
+        }
+
+        function updateFavCountUI() {
+            document.getElementById('favCount').innerText = favoriteIds.length;
+        }
+
         function terapkanFilter() {
             const container = document.getElementById('product-grid');
             let kataKunci = document.getElementById('searchInput').value.toLowerCase();
             let tingkatDipilih = document.getElementById('filterTingkat').value;
-            let katDipilih = document.getElementById('filterKategori').value;
             let formatDipilih = document.getElementById('filterFormat').value;
             let urutanDipilih = document.getElementById('sortUrutan').value;
 
             let produkTersaring = semuaProduk.filter(p => {
                 let cocokKataKunci = (p.nama || "").toLowerCase().includes(kataKunci);
                 let cocokTingkat = (tingkatDipilih === 'all') || ((p.tingkat || "").toLowerCase() === tingkatDipilih.toLowerCase());
-                let cocokKategori = (katDipilih === 'all') || ((p.kategori || "").toLowerCase() === katDipilih.toLowerCase());
+                let cocokKategori = (currentKatChip === 'all') || ((p.kategori || "").toLowerCase() === currentKatChip.toLowerCase());
                 let cocokFormat = (formatDipilih === 'all') || ((p.format || "").toLowerCase() === formatDipilih.toLowerCase());
-                return cocokKataKunci && cocokTingkat && cocokKategori && cocokFormat;
+                let cocokFavorit = !filterOnlyFavorites || favoriteIds.includes(p.nama);
+                return cocokKataKunci && cocokTingkat && cocokKategori && cocokFormat && cocokFavorit;
             });
 
-            if (urutanDipilih === 'harga_asc') produkTersaring.sort((a, b) => Number(a.harga) - Number(b.harga));
-            else if (urutanDipilih === 'harga_desc') produkTersaring.sort((a, b) => Number(b.harga) - Number(a.harga));
+            if (urutanDipilih === 'harga_asc') produkTersaring.sort((a, b) => Number(a.harga.split('|')[0]) - Number(b.harga.split('|')[0]));
+            else if (urutanDipilih === 'harga_desc') produkTersaring.sort((a, b) => Number(b.harga.split('|')[0]) - Number(a.harga.split('|')[0]));
             else if (urutanDipilih === 'nama_asc') produkTersaring.sort((a, b) => (a.nama || "").localeCompare(b.nama || ""));
             else if (urutanDipilih === 'nama_desc') produkTersaring.sort((a, b) => (b.nama || "").localeCompare(a.nama || ""));
 
@@ -222,11 +341,9 @@
                 
                 let daftarGambarArray = p.imgUrl ? p.imgUrl.split(',') : [''];
                 let thumbnailUtama = daftarGambarArray[0].trim();
-                
                 let coverUrl = thumbnailUtama;
                 let isVideoIcon = '';
                 
-                // Deteksi jika Thumbnail pertama adalah YouTube / Shorts
                 if (thumbnailUtama.includes('youtube.com') || thumbnailUtama.includes('youtu.be')) {
                     let ytId = extractYouTubeId(thumbnailUtama);
                     if(ytId) coverUrl = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
@@ -235,9 +352,15 @@
                 
                 let imgStringSafe = (p.imgUrl || "").replace(/'/g, "\\'");
                 let namaSafe = (p.nama || "").replace(/'/g, "\\'");
+                let isFav = favoriteIds.includes(p.nama);
                 
                 let card = `
-                <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-sm border border-pinkmuda/50 overflow-hidden flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div class="card-glow bg-white/95 backdrop-blur-sm rounded-2xl border border-pinkmuda/50 overflow-hidden flex flex-col justify-between relative">
+                    <!-- Tombol Bookmark Favorit -->
+                    <button onclick="toggleFavorite('${namaSafe}', event)" class="absolute top-3 left-3 z-30 w-8 h-8 rounded-full bg-white/80 hover:bg-white text-red-500 shadow-md flex items-center justify-center transition">
+                        <i class="${isFav ? 'fas' : 'far'} fa-heart text-sm"></i>
+                    </button>
+
                     <div>
                         <div class="preview-container h-48 bg-gray-200 relative group cursor-pointer border-b border-pinkmuda/30" onclick="bukaModal('${imgStringSafe}', '${namaSafe}')">
                             <img src="${coverUrl}" alt="Preview" class="w-full h-full object-cover">
@@ -263,7 +386,7 @@
                     
                     <div class="p-5 pt-3 flex justify-between items-center border-t border-pinkmuda/20 bg-krem/30">
                         <span class="font-bold text-pastelPink-dark text-lg">Rp ${hargaFormatted}</span>
-                        <button onclick="beliProduk('${namaSafe}')" class="bg-pastelPink-dark text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-brown-dark transition-colors flex items-center gap-1.5">
+                        <button onclick="bukaBuyModal('${namaSafe}')" class="bg-pastelPink-dark text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-brown-dark transition-colors flex items-center gap-1.5 shadow-sm">
                             <i class="fab fa-whatsapp text-base"></i> Beli
                         </button>
                     </div>
@@ -274,7 +397,40 @@
 
         muatProduk();
 
-        // === KEAMANAN & ANTI MALING ===
+        // LOGIKA MODAL BUKTI PEMBELIAN WA
+        function bukaBuyModal(namaProduk) {
+            selectedProductForBuy = namaProduk;
+            document.getElementById('buyModalProductName').innerText = "Produk: " + namaProduk;
+            document.getElementById('buyConfirmModal').classList.remove('hidden');
+        }
+
+        function tutupBuyModal() {
+            document.getElementById('buyConfirmModal').classList.add('hidden');
+        }
+
+        function eksekusiLanjutWA() {
+            const namaUser = document.getElementById('buyNamaUser').value.trim() || "Pembeli";
+            const catatan = document.getElementById('buyCatatan').value.trim();
+
+            try {
+                fetch(SHEET_API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({
+                        action: 'notifBeliProduk',
+                        nama: namaUser,
+                        pesan: `🛒 *${namaUser}* ingin membeli produk: *${selectedProductForBuy}*\nCatatan: ${catatan || '-'}`
+                    })
+                });
+            } catch (err) {}
+
+            const noWA = "6281237827324";
+            const pesanWA = encodeURIComponent(`Halo Kak Etyyn, saya *${namaUser}* ingin membeli materi: *${selectedProductForBuy}*.\n\nCatatan: ${catatan || 'Mohon info instruksi pembayarannya Kak.'}`);
+            tutupBuyModal();
+            window.open(`https://wa.me/${noWA}?text=${pesanWA}`, '_blank');
+        }
+
+        // KEAMANAN & ANTI SALIN
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.addEventListener('keydown', function(event) {
             if (event.ctrlKey || event.metaKey) {
@@ -284,8 +440,7 @@
             if (event.key === "F12") event.preventDefault();
         });
 
-
-        // === LOGIKA SLIDER MULTIMEDIA (GAMBAR & VIDEO) ===
+        // SLIDER MULTIMEDIA
         let slideMediaArray = [];
         let currentSlideIndex = 0;
         let autoSlideTimer;
@@ -315,32 +470,27 @@
             const container = document.getElementById('mediaContainer');
             const currentMedia = slideMediaArray[currentSlideIndex];
             
-            container.innerHTML = ''; // Bersihkan elemen sebelumnya
+            container.innerHTML = '';
             container.style.opacity = 0;
 
             let isVideo = false;
 
             if (currentMedia.includes('youtube.com') || currentMedia.includes('youtu.be')) {
-                // RENDER YOUTUBE (Termasuk Shorts)
                 isVideo = true;
                 let ytId = extractYouTubeId(currentMedia);
                 container.innerHTML = `<iframe class="w-full h-full aspect-video md:aspect-auto md:h-[65vh] object-cover" src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
             } 
             else if (currentMedia.match(/\.(mp4|webm|ogg)$/i)) {
-                // RENDER VIDEO MP4 LANGSUNG
                 isVideo = true;
                 container.innerHTML = `<video class="max-h-[65vh] md:max-h-[75vh] object-contain w-full" controls autoplay controlsList="nodownload"><source src="${currentMedia}" type="video/mp4">Browser Anda tidak mendukung tag video.</video>`;
             } 
             else {
-                // RENDER GAMBAR
                 container.innerHTML = `<img src="${currentMedia}" class="max-h-[65vh] md:max-h-[75vh] object-contain shadow-lg">`;
             }
 
-            // Transisi Halus
             setTimeout(() => { container.style.opacity = 1; }, 50);
             document.getElementById('slideIndicator').innerText = (currentSlideIndex + 1) + " / " + slideMediaArray.length;
 
-            // Atur Ulang Auto-Slide (Video tidak akan di-skip otomatis)
             hentikanAutoSlide();
             if (!isVideo && slideMediaArray.length > 1) {
                 mulaiAutoSlide();
@@ -365,33 +515,8 @@
 
         function tutupModal() {
             document.getElementById('mediaModal').classList.add('hidden');
-            document.getElementById('mediaContainer').innerHTML = ""; // Hentikan audio video
+            document.getElementById('mediaContainer').innerHTML = "";
             hentikanAutoSlide();
-        }
-
-        function beliProduk(namaProduk) {
-            // 1. Tampilkan notifikasi instan di browser
-            alert("Terima kasih! Anda akan diarahkan ke WhatsApp untuk melanjutkan pembelian produk: " + namaProduk);
-
-            // 2. Kirim notifikasi ke backend (doPost) agar masuk ke Telegram Anda
-            try {
-                fetch(SHEET_API_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify({
-                        action: 'notifBeliProduk',
-                        nama: "Pengunjung Toko",
-                        pesan: `🛒 Calon pembeli mengklik tombol Beli untuk produk: *${namaProduk}*`
-                    })
-                });
-            } catch (err) {
-                console.error("Gagal mengirim notifikasi latar belakang:", err);
-            }
-
-            // 3. Arahkan ke WhatsApp
-            const noWA = "6281237827324";
-            const pesan = encodeURIComponent(`Halo Kak Etyyn, saya tertarik dan ingin membeli materi: *${namaProduk}* di ETTYN SHOP. Mohon info pembayaran selanjutnya.`);
-            window.open(`https://wa.me/${noWA}?text=${pesan}`, '_blank');
         }
     </script>
 </body>
