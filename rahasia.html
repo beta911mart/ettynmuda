@@ -21,132 +21,163 @@
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col relative">
 
-  <!-- TOPNAV -->
-  <header class="glass-panel sticky top-0 z-40 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
-        <i class="fas fa-rocket text-lg"></i>
+  <!-- OVERLAY AUTENTIKASI PIN ADMIN -->
+  <div id="pinAuthOverlay" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4">
+    <div class="glass-panel rounded-3xl p-8 max-w-sm w-full text-center border border-slate-800 shadow-2xl space-y-5">
+      <div class="w-16 h-16 bg-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center mx-auto border border-blue-500/30">
+        <i class="fas fa-lock text-2xl"></i>
       </div>
       <div>
-        <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
-          GitHub Smart Deployer <span class="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-500/30">v3.0 Fetch Edition</span>
-        </h1>
-        <p class="text-xs text-slate-400">Pencegah Human Error, Live Audit & Preview System (GitHub Pages Ready)</p>
-      </div>
-    </div>
-
-    <div class="flex items-center gap-3">
-      <button onclick="loadRepoFiles()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3.5 py-2 rounded-xl font-semibold border border-slate-700 transition flex items-center gap-2">
-        <i class="fas fa-sync-alt text-blue-400" id="syncIcon"></i> Refresh Repo
-      </button>
-    </div>
-  </header>
-
-  <!-- MAIN WORKSPACE -->
-  <main class="flex-1 p-4 lg:p-6 max-w-[1600px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-    <!-- PANEL KIRI: REPOSITORY EXPLORER -->
-    <div class="lg:col-span-4 space-y-6">
-      
-      <!-- List Files -->
-      <div class="glass-panel rounded-2xl p-5 border border-slate-800 shadow-xl">
-        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
-          <h2 class="font-bold text-sm text-slate-200 flex items-center gap-2">
-            <i class="fas fa-folder-open text-amber-400"></i> Berkas Repositori
-          </h2>
-          <span id="fileCount" class="text-[11px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">0 berkas</span>
-        </div>
-
-        <div id="fileListContainer" class="space-y-2 max-h-[350px] overflow-y-auto pr-1">
-          <div class="text-center py-8 text-slate-500 text-xs">
-            <i class="fas fa-spinner loading-spin text-xl mb-2 text-blue-500"></i><br>Memuat daftar berkas...
-          </div>
-        </div>
+        <h2 class="text-lg font-bold text-white mb-1">Akses Halaman Rahasia</h2>
+        <p class="text-xs text-slate-400">Masukkan PIN Admin untuk mengelola deployment GitHub & inspeksi kode.</p>
       </div>
 
-      <!-- History Commit & Rollback Section -->
-      <div class="glass-panel rounded-2xl p-5 border border-slate-800 shadow-xl">
-        <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-800">
-          <h2 class="font-bold text-sm text-slate-200 flex items-center gap-2">
-            <i class="fas fa-history text-orange-400"></i> Riwayat Commit & Rollback
-          </h2>
-          <button onclick="fetchHistory()" class="text-xs text-blue-400 hover:underline"><i class="fas fa-redo"></i> Cek History</button>
-        </div>
-
-        <div class="space-y-3">
-          <select id="commitSelect" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-blue-500">
-            <option value="">-- Pilih Berkas untuk Melihat History --</option>
-          </select>
-
-          <button onclick="confirmRollback()" class="w-full bg-orange-600/20 hover:bg-orange-600 text-orange-400 hover:text-white border border-orange-500/30 font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2">
-            <i class="fas fa-undo"></i> Eksekusi Rollback Aman
-          </button>
-        </div>
+      <div class="space-y-3">
+        <input type="password" id="adminPinInput" maxlength="10" placeholder="••••" 
+               class="w-full text-center text-xl tracking-[0.5em] bg-slate-900 border border-slate-700 text-white font-mono rounded-xl p-3 focus:outline-none focus:border-blue-500">
+        <p id="pinErrorMsg" class="text-[11px] text-red-400 font-semibold hidden"></p>
+        <button onclick="submitAdminPin()" id="btnAuthPin" 
+                class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl text-xs transition shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2">
+          <i class="fas fa-key"></i> Verifikasi PIN
+        </button>
       </div>
-
     </div>
+  </div>
 
-    <!-- PANEL KANAN: EDITOR, LIVE PREVIEW & AI AUDIT -->
-    <div class="lg:col-span-8 space-y-6">
+  <!-- ISI UTAMA DASHBOARD (TERSEMBUNYI SEBELUM OTENTIKASI SUKSES) -->
+  <div id="mainContentArea" class="hidden flex-col min-h-screen">
 
-      <!-- Editor Panel -->
-      <div class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Path / Nama Berkas</label>
-            <input type="text" id="targetFileName" placeholder="Contoh: index.html atau pages/about.html" class="w-full bg-slate-900 border border-slate-700 text-white text-xs font-mono rounded-xl p-3 focus:outline-none focus:border-blue-500">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Pesan Commit</label>
-            <input type="text" id="commitMessage" placeholder="Cth: Update perbaikan layout dan warna" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded-xl p-3 focus:outline-none focus:border-blue-500">
-          </div>
+    <!-- TOPNAV -->
+    <header class="glass-panel sticky top-0 z-40 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+          <i class="fas fa-rocket text-lg"></i>
         </div>
-
-        <!-- Code Area -->
         <div>
-          <div class="flex items-center justify-between mb-2">
-            <label class="block text-xs font-semibold text-slate-400">Kode Editor (HTML/JS/CSS)</label>
-            <div class="flex items-center gap-2">
-              <button onclick="inspectBugWithAI()" class="bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/40 px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
-                <i class="fas fa-bug-slash text-yellow-400"></i> Inspeksi Bug (AI)
-              </button>
-              <button onclick="updateLivePreview()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded-lg text-xs font-medium transition flex items-center gap-1">
-                <i class="fas fa-eye text-blue-400"></i> Update Preview
-              </button>
+          <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
+            GitHub Smart Deployer <span class="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-500/30">v3.0 Secure Admin</span>
+          </h1>
+          <p class="text-xs text-slate-400">Pencegah Human Error, Live Audit & Preview System (GitHub Pages Ready)</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="loadRepoFiles()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3.5 py-2 rounded-xl font-semibold border border-slate-700 transition flex items-center gap-2">
+          <i class="fas fa-sync-alt text-blue-400" id="syncIcon"></i> Refresh Repo
+        </button>
+        <button onclick="logoutAdmin()" class="bg-red-500/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 text-xs px-3.5 py-2 rounded-xl font-semibold transition flex items-center gap-1.5">
+          <i class="fas fa-sign-out-alt"></i> Keluar
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN WORKSPACE -->
+    <main class="flex-1 p-4 lg:p-6 max-w-[1600px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- PANEL KIRI: REPOSITORY EXPLORER -->
+      <div class="lg:col-span-4 space-y-6">
+        
+        <!-- List Files -->
+        <div class="glass-panel rounded-2xl p-5 border border-slate-800 shadow-xl">
+          <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+            <h2 class="font-bold text-sm text-slate-200 flex items-center gap-2">
+              <i class="fas fa-folder-open text-amber-400"></i> Berkas Repositori
+            </h2>
+            <span id="fileCount" class="text-[11px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">0 berkas</span>
+          </div>
+
+          <div id="fileListContainer" class="space-y-2 max-h-[350px] overflow-y-auto pr-1">
+            <div class="text-center py-8 text-slate-500 text-xs">
+              <i class="fas fa-spinner loading-spin text-xl mb-2 text-blue-500"></i><br>Memuat daftar berkas...
             </div>
           </div>
-          <textarea id="codeEditor" rows="12" placeholder="<!-- Masukkan atau edit kode HTML/JS Anda di sini -->" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs font-mono p-4 rounded-xl focus:outline-none focus:border-blue-500 leading-relaxed"></textarea>
         </div>
 
-        <!-- Status Result Alert -->
-        <div id="aiStatusBox" class="hidden p-4 rounded-xl text-xs border"></div>
+        <!-- History Commit & Rollback Section -->
+        <div class="glass-panel rounded-2xl p-5 border border-slate-800 shadow-xl">
+          <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-800">
+            <h2 class="font-bold text-sm text-slate-200 flex items-center gap-2">
+              <i class="fas fa-history text-orange-400"></i> Riwayat Commit & Rollback
+            </h2>
+            <button onclick="fetchHistory()" class="text-xs text-blue-400 hover:underline"><i class="fas fa-redo"></i> Cek History</button>
+          </div>
 
-        <!-- Submit Button -->
-        <div class="flex justify-end pt-2 border-t border-slate-800">
-          <button onclick="confirmDeploy()" id="btnDeploy" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl text-xs transition shadow-lg shadow-emerald-600/20 flex items-center gap-2">
-            <i class="fas fa-cloud-arrow-up"></i> Deploy ke GitHub
-          </button>
+          <div class="space-y-3">
+            <select id="commitSelect" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-blue-500">
+              <option value="">-- Pilih Berkas untuk Melihat History --</option>
+            </select>
+
+            <button onclick="confirmRollback()" class="w-full bg-orange-600/20 hover:bg-orange-600 text-orange-400 hover:text-white border border-orange-500/30 font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2">
+              <i class="fas fa-undo"></i> Eksekusi Rollback Aman
+            </button>
+          </div>
         </div>
 
       </div>
 
-      <!-- Live Preview Panel -->
-      <div class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl">
-        <h2 class="font-bold text-sm text-slate-200 mb-3 flex items-center justify-between">
-          <span><i class="fas fa-desktop text-emerald-400 mr-2"></i> Live Visual Preview (Sandbox)</span>
-          <span class="text-[10px] text-slate-500">Memastikan tampilan sempurna sebelum rilis</span>
-        </h2>
-        <div class="w-full h-[400px] bg-white rounded-xl overflow-hidden border border-slate-700">
-          <iframe id="previewIframe" class="w-full h-full border-0"></iframe>
+      <!-- PANEL KANAN: EDITOR, LIVE PREVIEW & AI AUDIT -->
+      <div class="lg:col-span-8 space-y-6">
+
+        <!-- Editor Panel -->
+        <div class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1.5">Path / Nama Berkas</label>
+              <input type="text" id="targetFileName" placeholder="Contoh: index.html atau pages/about.html" class="w-full bg-slate-900 border border-slate-700 text-white text-xs font-mono rounded-xl p-3 focus:outline-none focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1.5">Pesan Commit</label>
+              <input type="text" id="commitMessage" placeholder="Cth: Update perbaikan layout dan warna" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded-xl p-3 focus:outline-none focus:border-blue-500">
+            </div>
+          </div>
+
+          <!-- Code Area -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-xs font-semibold text-slate-400">Kode Editor (HTML/JS/CSS)</label>
+              <div class="flex items-center gap-2">
+                <button onclick="inspectBugWithAI()" class="bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/40 px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
+                  <i class="fas fa-bug-slash text-yellow-400"></i> Inspeksi Bug (AI)
+                </button>
+                <button onclick="updateLivePreview()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded-lg text-xs font-medium transition flex items-center gap-1">
+                  <i class="fas fa-eye text-blue-400"></i> Update Preview
+                </button>
+              </div>
+            </div>
+            <textarea id="codeEditor" rows="12" placeholder="<!-- Masukkan atau edit kode HTML/JS Anda di sini -->" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs font-mono p-4 rounded-xl focus:outline-none focus:border-blue-500 leading-relaxed"></textarea>
+          </div>
+
+          <!-- Status Result Alert -->
+          <div id="aiStatusBox" class="hidden p-4 rounded-xl text-xs border"></div>
+
+          <!-- Submit Button -->
+          <div class="flex justify-end pt-2 border-t border-slate-800">
+            <button onclick="confirmDeploy()" id="btnDeploy" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl text-xs transition shadow-lg shadow-emerald-600/20 flex items-center gap-2">
+              <i class="fas fa-cloud-arrow-up"></i> Deploy ke GitHub
+            </button>
+          </div>
+
         </div>
+
+        <!-- Live Preview Panel -->
+        <div class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl">
+          <h2 class="font-bold text-sm text-slate-200 mb-3 flex items-center justify-between">
+            <span><i class="fas fa-desktop text-emerald-400 mr-2"></i> Live Visual Preview (Sandbox)</span>
+            <span class="text-[10px] text-slate-500">Memastikan tampilan sempurna sebelum rilis</span>
+          </h2>
+          <div class="w-full h-[400px] bg-white rounded-xl overflow-hidden border border-slate-700">
+            <iframe id="previewIframe" class="w-full h-full border-0"></iframe>
+          </div>
+        </div>
+
       </div>
 
-    </div>
+    </main>
 
-  </main>
+  </div>
 
   <!-- MODAL KONFIRMASI DEPLOY -->
   <div id="deployModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
@@ -172,6 +203,72 @@
 
     let repoFilesData = [];
     let currentAutoFixedCode = "";
+
+    // 0. LOGIKA VERIFIKASI PIN ADMIN
+    window.addEventListener('DOMContentLoaded', () => {
+      const token = sessionStorage.getItem('ADMIN_SESSION_TOKEN');
+      if (token) {
+        showDashboard();
+      }
+      
+      // Mengaktifkan submit via tombol 'Enter' pada input PIN
+      document.getElementById('adminPinInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') submitAdminPin();
+      });
+    });
+
+    async function submitAdminPin() {
+      const pin = document.getElementById('adminPinInput').value.trim();
+      const errBox = document.getElementById('pinErrorMsg');
+      const btn = document.getElementById('btnAuthPin');
+
+      if (!pin) {
+        errBox.innerText = "Masukkan PIN Admin terlebih dahulu!";
+        errBox.classList.remove('hidden');
+        return;
+      }
+
+      errBox.classList.add('hidden');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-spinner loading-spin"></i> Memeriksa PIN...`;
+
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'verifyAdminPin', pin: pin })
+        });
+        const res = await response.json();
+
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fas fa-key"></i> Verifikasi PIN`;
+
+        if (res && res.success) {
+          sessionStorage.setItem('ADMIN_SESSION_TOKEN', res.sessionToken);
+          showDashboard();
+        } else {
+          errBox.innerText = res ? res.message : "PIN Admin tidak valid!";
+          errBox.classList.remove('hidden');
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fas fa-key"></i> Verifikasi PIN`;
+        errBox.innerText = "Error koneksi: " + err.toString();
+        errBox.classList.remove('hidden');
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById('pinAuthOverlay').classList.add('hidden');
+      const mainContent = document.getElementById('mainContentArea');
+      mainContent.classList.remove('hidden');
+      mainContent.classList.add('flex');
+      loadRepoFiles();
+    }
+
+    function logoutAdmin() {
+      sessionStorage.removeItem('ADMIN_SESSION_TOKEN');
+      location.reload();
+    }
 
     // 1. MEMUAT DAFTAR FILE REPOSITORI VIA FETCH
     async function loadRepoFiles() {
@@ -420,9 +517,6 @@
     function closeModal(id) {
       document.getElementById(id).classList.add('hidden');
     }
-
-    // INIT
-    loadRepoFiles();
   </script>
 </body>
 </html>
