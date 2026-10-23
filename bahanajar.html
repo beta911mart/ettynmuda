@@ -8,6 +8,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
+    <!-- Pustaka Export PDF & Word -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
+    <!-- Pustaka PDF.js untuk AI PDF Summarizer -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -33,9 +40,6 @@
             transform: translateY(150%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         #toast-notification.show { transform: translateY(0); }
-        .toast-success i { color: #4ade80; }
-        .toast-error i { color: #f87171; }
-        .toast-info i { color: #60a5fa; }
 
         .generated-content { width: 100%; max-width: 100%; word-wrap: break-word; overflow-wrap: anywhere; }
         .generated-content h1 { font-size: 1.5rem; font-weight: 700; color: #1e3a8a; margin-top: 1.5rem; margin-bottom: 1rem; border-bottom: 2px solid #bfdbfe; padding-bottom: 0.5rem; }
@@ -120,7 +124,6 @@
                 </div>
                 
                 <div class="flex items-center gap-2 sm:gap-4">
-                    <!-- Dropdown Navigasi Pindah Tool -->
                     <div class="relative">
                         <select onchange="if(this.value) window.location.href=this.value;" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold py-2 px-3 rounded-lg border border-slate-200 focus:outline-none cursor-pointer">
                             <option value="" disabled selected>📂 Pindah Tool...</option>
@@ -172,7 +175,7 @@
                                 </div>
                             </div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6 relative z-10">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-4 relative z-10">
                                 <div>
                                     <label class="block text-xs font-bold text-blue-200 uppercase tracking-wider mb-2"><i class="fas fa-graduation-cap mr-1"></i> Jenjang</label>
                                     <select id="ai-jenjang" onchange="updateAIOptions()" class="w-full bg-white/10 border border-white/20 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-300 [&>option]:text-gray-800 cursor-pointer text-sm sm:text-base appearance-none backdrop-blur-md">
@@ -196,6 +199,15 @@
                                     </select>
                                 </div>
                             </div>
+
+                            <!-- Fitur: AI PDF Summarizer (Rangkum PDF) -->
+                            <div class="mb-4 relative z-10 p-3.5 bg-black/20 rounded-xl border border-white/10 backdrop-blur-md">
+                                <label class="block text-xs font-bold text-blue-200 uppercase tracking-wider mb-1.5">
+                                    <i class="fas fa-file-pdf mr-1 text-red-400"></i> Unggah Referensi Materi (PDF)
+                                </label>
+                                <input type="file" id="pdf-file-input" accept="application/pdf" onchange="ekstrakTeksPDF(this)" class="w-full text-xs text-blue-100 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600 cursor-pointer">
+                                <p class="text-[10px] text-blue-200/80 mt-1">Gunakan berkas PDF milik Anda sendiri untuk mengekstrak dan merangkum isinya secara otomatis ke modul.</p>
+                            </div>
                             
                             <div class="mb-6 relative z-10">
                                 <label class="block text-xs font-bold text-blue-200 uppercase tracking-wider mb-2"><i class="fas fa-pen-nib mr-1"></i> Topik / Tema Pembelajaran</label>
@@ -209,7 +221,17 @@
                             </button>
                         </div>
 
-                        <div id="ai-result-container" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-10 min-h-[400px] hidden transition-all duration-500 w-full mb-10 overflow-hidden">
+                        <div id="ai-result-container" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-10 min-h-[400px] hidden transition-all duration-500 w-full mb-10 overflow-hidden relative">
+                            <!-- Fitur: Tombol Ekspor PDF & Word -->
+                            <div class="flex flex-wrap gap-2 mb-6 no-print justify-end border-b pb-4">
+                                <button onclick="exportToPDF()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                                    <i class="fas fa-file-pdf"></i> Export ke PDF
+                                </button>
+                                <button onclick="exportToWord()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                                    <i class="fas fa-file-word"></i> Export ke Word (.doc)
+                                </button>
+                            </div>
+
                             <div id="ai-result-content" class="generated-content w-full"></div>
                         </div>
                         
@@ -294,6 +316,7 @@
 
         let isLoggedin = false;
         let currentUser = { username: "", password: "", koin: 0 };
+        let extractedPdfText = "";
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -402,6 +425,78 @@
             }
         }
 
+        // ==========================================
+        // FITUR AI PDF SUMMARIZER (BACA TEKS PDF)
+        // ==========================================
+        async function ekstrakTeksPDF(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+            showToast("Membaca isi PDF...", "info");
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                
+                let fullText = "";
+                const maxPages = Math.min(pdf.numPages, 10);
+                
+                for (let i = 1; i <= maxPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    fullText += textContent.items.map(item => item.str).join(" ") + "\n";
+                }
+
+                extractedPdfText = fullText;
+                showToast(`Berhasil membaca ${maxPages} halaman PDF!`, "success");
+                
+                const topicInput = document.getElementById('ai-topic');
+                if(!topicInput.value) {
+                    topicInput.value = "Modul Rangkuman PDF: " + extractedPdfText.substring(0, 200) + "...";
+                }
+            } catch(e) {
+                showToast("Gagal membaca file PDF.", "error");
+            }
+        }
+
+        // ==========================================
+        // FITUR EXPORT PDF & WORD
+        // ==========================================
+        function exportToPDF() {
+            const element = document.getElementById('ai-result-content');
+            if (!element || !element.innerText.trim()) return showToast("Belum ada dokumen untuk diekspor!", "error");
+
+            showToast("Menyiapkan PDF...", "info");
+            const opt = {
+                margin:       [15, 15, 15, 15],
+                filename:     'Bahan_Ajar_Teman_Akademik.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                showToast("Berhasil mengunduh PDF!", "success");
+            });
+        }
+
+        function exportToWord() {
+            const element = document.getElementById('ai-result-content');
+            if (!element || !element.innerText.trim()) return showToast("Belum ada dokumen untuk diekspor!", "error");
+
+            const content = element.innerHTML;
+            const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Bahan Ajar</title><style>body{font-family:'Arial',sans-serif;font-size:11pt;line-height:1.5;}</style></head><body>";
+            const footer = "</body></html>";
+            
+            const blob = new Blob(['\ufeff' + header + content + footer], { type: 'application/msword' });
+            saveAs(blob, 'Bahan_Ajar_Teman_Akademik.doc');
+            showToast("Berhasil mengunduh berkas Word!", "success");
+        }
+
+        // ==========================================
+        // GENERATE UTAMA DENGAN KOIN
+        // ==========================================
         function handleGenerateClick() {
             if (!isLoggedin) {
                 showLoginModal();
@@ -439,7 +534,7 @@
                         action: 'generateBahanAjar', 
                         username: currentUser.username, 
                         password: currentUser.password, 
-                        promptData: { jenjang, kelas, mapel, topic } 
+                        promptData: { jenjang, kelas, mapel, topic, extractedPdfText } 
                     })
                 });
                 const data = await response.json();
