@@ -171,24 +171,46 @@
     let currentAutoFixedCode = "";
 
     // 1. MEMUAT DAFTAR FILE REPOSITORI
-    function loadRepoFiles() {
-      const container = document.getElementById('fileListContainer');
-      const syncIcon = document.getElementById('syncIcon');
-      syncIcon.classList.add('loading-spin');
+function loadRepoFiles() {
+  const container = document.getElementById('fileListContainer');
+  const syncIcon = document.getElementById('syncIcon');
+  if (syncIcon) syncIcon.classList.add('loading-spin');
 
-      google.script.run
-        .withSuccessHandler(res => {
-          syncIcon.classList.remove('loading-spin');
-          if (res.success) {
-            repoFilesData = res.files;
-            document.getElementById('fileCount').innerText = `${res.files.length} berkas`;
-            renderFileList(res.files);
-          } else {
-            container.innerHTML = `<div class="text-red-400 text-xs p-3">${res.message}</div>`;
-          }
-        })
-        .getRepositoryFiles();
-    }
+  container.innerHTML = `
+    <div class="text-center py-8 text-slate-500 text-xs">
+      <i class="fas fa-spinner loading-spin text-xl mb-2 text-blue-500"></i><br>
+      Memuat daftar berkas dari GitHub...
+    </div>
+  `;
+
+  google.script.run
+    .withSuccessHandler(res => {
+      if (syncIcon) syncIcon.classList.remove('loading-spin');
+      
+      if (res && res.success) {
+        repoFilesData = res.files;
+        document.getElementById('fileCount').innerText = `${res.files.length} berkas`;
+        renderFileList(res.files);
+      } else {
+        container.innerHTML = `
+          <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs text-center">
+            <i class="fas fa-exclamation-triangle text-lg mb-1 block"></i>
+            ${res ? res.message : 'Gagal terhubung ke Google Apps Script.'}
+          </div>
+        `;
+      }
+    })
+    .withFailureHandler(err => {
+      if (syncIcon) syncIcon.classList.remove('loading-spin');
+      container.innerHTML = `
+        <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs text-center">
+          <i class="fas fa-times-circle text-lg mb-1 block"></i>
+          Error Eksekusi: ${err.message}
+        </div>
+      `;
+    })
+    .getRepositoryFiles();
+}
 
     function renderFileList(files) {
       const container = document.getElementById('fileListContainer');
