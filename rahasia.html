@@ -424,30 +424,45 @@
     }
 
     // 5. RIWAYAT COMMIT & ROLLBACK VIA FETCH
-    async function fetchHistory() {
-      const fileName = document.getElementById('targetFileName').value;
-      if (!fileName) return;
+async function fetchHistory() {
+  const fileName = document.getElementById('targetFileName').value.trim();
+  const select = document.getElementById('commitSelect');
 
-      try {
-        const response = await fetch(`${GAS_URL}?action=getCommitHistory&filePath=${encodeURIComponent(fileName)}`);
-        const commits = await response.json();
+  if (!fileName) {
+    alert("Pilih atau isi nama berkas terlebih dahulu untuk melihat riwayat commit!");
+    return;
+  }
 
-        const select = document.getElementById('commitSelect');
-        select.innerHTML = '';
-        if (!commits || !Array.isArray(commits) || commits.length === 0) {
-          select.innerHTML = `<option value="">-- Tidak Ada History Commit --</option>`;
-          return;
-        }
-        commits.forEach(c => {
-          const opt = document.createElement('option');
-          opt.value = c.sha;
-          opt.textContent = `[${c.shortSha}] ${c.message} (${c.date})`;
-          select.appendChild(opt);
-        });
-      } catch (err) {
-        alert("Gagal mengambil history: " + err.toString());
-      }
+  select.innerHTML = `<option value="">-- Memuat Riwayat Commit... --</option>`;
+
+  try {
+    const response = await fetch(`${GAS_URL}?action=getCommitHistory&filePath=${encodeURIComponent(fileName)}`);
+    const commits = await response.json();
+
+    select.innerHTML = '';
+
+    if (!commits || !Array.isArray(commits) || commits.length === 0) {
+      select.innerHTML = `<option value="">-- Tidak Ada Riwayat Commit --</option>`;
+      return;
     }
+
+    const defaultOpt = document.createElement('option');
+    defaultOpt.value = "";
+    defaultOpt.textContent = `-- Pilih Commit untuk Rollback (${commits.length} Ditemukan) --`;
+    select.appendChild(defaultOpt);
+
+    commits.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.sha;
+      opt.textContent = `[${c.shortSha}] ${c.message} (${c.date})`;
+      select.appendChild(opt);
+    });
+
+  } catch (err) {
+    select.innerHTML = `<option value="">-- Gagal Memuat Riwayat --</option>`;
+    alert("Gagal mengambil riwayat commit: " + err.toString());
+  }
+}
 
     async function confirmRollback() {
       const fileName = document.getElementById('targetFileName').value;
