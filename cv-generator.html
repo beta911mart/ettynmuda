@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tool Generator CV A4 Profesional (Format Gambar)</title>
+  
+  <!-- Tailwind CSS & Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- html2canvas untuk Konversi HTML ke Gambar PNG -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0f172a; color: #f8fafc; }
+    .glass-panel { background: rgba(30, 41, 59, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #1e293b; }
+    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+    
+    /* AREA KANVAS CV (UKURAN A4 PRESISI: 794px x 1123px) */
+    #cvCanvasArea {
+      width: 794px;
+      height: 1123px;
+      max-height: 1123px;
+      background: #ffffff;
+      color: #1e293b;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    /* TYPOGRAPHY LAYOUT STYLES */
+    .layout-modern { font-family: 'Inter', sans-serif; }
+    .layout-classic { font-family: 'Merriweather', serif; }
+    .layout-minimal { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .layout-creative { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- HEADER NAVBAR -->
+  <header class="glass-panel sticky top-0 z-40 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+        <i class="fas fa-file-invoice text-lg"></i>
+      </div>
+      <div>
+        <h1 class="text-base font-bold text-white tracking-tight">CV Generator Teman Akademik Pro</h1>
+        <p class="text-xs text-slate-400">Presisi Kertas A4 & Style Disesuaikan Posisi Pekerjaan Target</p>
+      </div>
+    </div>
+
+    <button onclick="downloadCVAsImage()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-lg shadow-emerald-600/20 flex items-center gap-2">
+      <i class="fas fa-download"></i> Unduh Gambar PNG (Ukuran A4)
+    </button>
+  </header>
+
+  <!-- WORKSPACE UTAMA -->
+  <main class="flex-1 p-4 lg:p-6 max-w-[1750px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- PANEL KIRI: FORMULIR INPUT DATA DIRI & TARGET POSISI (6 COLS) -->
+    <div class="lg:col-span-6 space-y-6">
+
+      <!-- OPSI 1: POSISI PEKERJAAN TARGET (TAILORED JOB STYLE) -->
+      <div class="glass-panel rounded-2xl p-5 border border-slate-800 space-y-3">
+        <h2 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+          <i class="fas fa-user-tag"></i> 1. Target Posisi / Jenis Pekerjaan (Otomatis Adjust Layout & Warna)
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+          <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 cursor-pointer hover:border-blue-500 transition">
+            <input type="radio" name="jobRole" value="kasir" onchange="renderCV()" class="accent-blue-500">
+            <span><i class="fas fa-cash-register text-emerald-400 mr-1"></i> Kasir / Retail</span>
+          </label>
+          <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 cursor-pointer hover:border-blue-500 transition">
+            <input type="radio" name="jobRole" value="sales" onchange="renderCV()" class="accent-blue-500">
+            <span><i class="fas fa-chart-line text-orange-400 mr-1"></i> Sales / Marketing</span>
+          </label>
+          <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 cursor-pointer hover:border-blue-500 transition">
+            <input type="radio" name="jobRole" value="manager" onchange="renderCV()" selected checked class="accent-blue-500">
+            <span><i class="fas fa-user-tie text-blue-400 mr-1"></i> Manager / Supervisor</span>
+          </label>
+          <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 cursor-pointer hover:border-blue-500 transition">
+            <input type="radio" name="jobRole" value="pns" onchange="renderCV()" class="accent-blue-500">
+            <span><i class="fas fa-building-columns text-yellow-500 mr-1"></i> PNS / Instansi Formal</span>
+          </label>
+          <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 cursor-pointer hover:border-blue-500 transition">
+            <input type="radio" name="jobRole" value="cs" onchange="renderCV()" class="accent-blue-500">
+            <span><i class="fas fa-headset text-cyan-400 mr-1"></i> Customer Service / Frontliner</span>
+          </label>
+          <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 cursor-pointer hover:border-blue-500 transition">
+            <input type="radio" name="jobRole" value="security" onchange="renderCV()" class="accent-blue-500">
+            <span><i class="fas fa-shield-alt text-red-400 mr-1"></i> Security / Keamanan</span>
+          </label>
+          <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 cursor-pointer hover:border-blue-500 transition">
+            <input type="radio" name="jobRole" value="admin" onchange="renderCV()" class="accent-blue-500">
+            <span><i class="fas fa-folder text-indigo-400 mr-1"></i> Staff Admin / Kantor</span>
+          </label>
+          <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 cursor-pointer hover:border-blue-500 transition">
+            <input type="radio" name="jobRole" value="driver" onchange="renderCV()" class="accent-blue-500">
+            <span><i class="fas fa-truck-ramp-box text-stone-400 mr-1"></i> Driver / Logistik</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- OPSI 2: PILIHAN BENTUK STRUCTURAL LAYOUT -->
+      <div class="glass-panel rounded-2xl p-5 border border-slate-800">
+        <h2 class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+          <i class="fas fa-palette"></i> 2. Bentuk Layout Visual
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <button onclick="changeLayout('modern')" id="btn-modern" class="p-3 rounded-xl border border-blue-500 bg-blue-500/10 text-white font-semibold text-xs flex flex-col items-center gap-1.5 transition">
+            <i class="fas fa-columns text-lg text-blue-400"></i> Modern Two-Column
+          </button>
+          <button onclick="changeLayout('classic')" id="btn-classic" class="p-3 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 hover:text-white font-semibold text-xs flex flex-col items-center gap-1.5 transition">
+            <i class="fas fa-align-left text-lg text-amber-400"></i> Classic Formal
+          </button>
+          <button onclick="changeLayout('minimal')" id="btn-minimal" class="p-3 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 hover:text-white font-semibold text-xs flex flex-col items-center gap-1.5 transition">
+            <i class="fas fa-grip-lines text-lg text-emerald-400"></i> Minimal Clean
+          </button>
+          <button onclick="changeLayout('creative')" id="btn-creative" class="p-3 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 hover:text-white font-semibold text-xs flex flex-col items-center gap-1.5 transition">
+            <i class="fas fa-paint-brush text-lg text-purple-400"></i> Creative Header
+          </button>
+        </div>
+      </div>
+
+      <!-- FORMULIR ISIAN DATA DIRI -->
+      <div class="glass-panel rounded-2xl p-6 border border-slate-800 space-y-5">
+        
+        <!-- Informasi Pribadi & Foto -->
+        <div>
+          <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3 flex items-center gap-2">
+            <i class="fas fa-user text-blue-400"></i> Data Pribadi & Pas Foto
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+            <div class="md:col-span-2 space-y-3">
+              <input type="text" id="inNama" oninput="renderCV()" placeholder="Nama Lengkap" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded-xl p-3 focus:outline-none focus:border-blue-500">
+              <input type="text" id="inProfesi" oninput="renderCV()" placeholder="Posisi yang Dilamar (Cth: Manager Operasional)" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded-xl p-3 focus:outline-none focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Unggah Pas Foto</label>
+              <input type="file" id="inFoto" accept="image/*" onchange="handleFotoUpload(event)" class="w-full text-xs text-slate-400 file:mr-2 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer">
+            </div>
+          </div>
+        </div>
+
+        <!-- Kontak -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <input type="text" id="inEmail" oninput="renderCV()" placeholder="Email" class="bg-slate-900 border border-slate-700 text-white text-xs rounded-xl p-3 focus:outline-none focus:border-blue-500">
+          <input type="text" id="inTelepon" oninput="renderCV()" placeholder="No. HP / WhatsApp" class="bg-slate-900 border border-slate-700 text-white text-xs rounded-xl p-3 focus:outline-none focus:border-blue-500">
+          <input type="text" id="inLokasi" oninput="renderCV()" placeholder="Kota, Provinsi" class="bg-slate-900 border border-slate-700 text-white text-xs rounded-xl p-3 focus:outline-none focus:border-blue-500">
+        </div>
+
+        <!-- Ringkasan Diri -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Ringkasan Kualifikasi / Profil Diri</label>
+          <textarea id="inRingkasan" rows="3" oninput="renderCV()" placeholder="Jelaskan secara singkat pengalaman dan keunggulan utama Anda..." class="w-full bg-slate-900 border border-slate-700 text-white text-xs p-3 rounded-xl focus:outline-none focus:border-blue-500 leading-relaxed"></textarea>
+        </div>
+
+        <!-- Pengalaman Kerja -->
+        <div>
+          <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-2">
+            <i class="fas fa-briefcase text-orange-400"></i> Pengalaman Kerja (Enter untuk baris baru)
+          </h3>
+          <textarea id="inPengalaman" rows="4" oninput="renderCV()" placeholder="PT. Sejahtera Bersama | Supervisor Retail | 2021 - Sekarang&#10;- Mengawasi operasional harian toko dan mengelola 12 staf kasir.&#10;&#10;Toko Gemilang | Kasir Utama | 2019 - 2021&#10;- Memproses transaksi pembayaran harian dengan ketelitian tinggi." class="w-full bg-slate-900 border border-slate-700 text-white text-xs font-mono p-3 rounded-xl focus:outline-none focus:border-blue-500 leading-relaxed"></textarea>
+        </div>
+
+        <!-- Pendidikan -->
+        <div>
+          <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-2">
+            <i class="fas fa-graduation-cap text-emerald-400"></i> Riwayat Pendidikan
+          </h3>
+          <textarea id="inPendidikan" rows="3" oninput="renderCV()" placeholder="Universitas Nusa Cendana | S1 Manajemen | 2017 - 2021&#10;IPK: 3.75 / 4.00" class="w-full bg-slate-900 border border-slate-700 text-white text-xs font-mono p-3 rounded-xl focus:outline-none focus:border-blue-500 leading-relaxed"></textarea>
+        </div>
+
+        <!-- Keahlian & Kualifikasi Tambahan -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Keahlian (Pisahkan dengan koma)</label>
+            <input type="text" id="inSkill" oninput="renderCV()" placeholder="Manajemen Tim, POS Kasir, Pelayanan Pelanggan, Microsoft Excel" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded-xl p-3 focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Sertifikasi / SIM / Bahasa</label>
+            <input type="text" id="inSertifikasi" oninput="renderCV()" placeholder="SIM A & C, Sertifikat K3, Bahasa Indonesia (Native)" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded-xl p-3 focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- PANEL KANAN: LIVE PRATINJAU KANVAS CV A4 (6 COLS) -->
+    <div class="lg:col-span-6 flex flex-col items-center overflow-x-auto pb-12">
+      <div class="mb-3 text-xs text-slate-400 flex items-center gap-2">
+        <i class="fas fa-print text-emerald-400"></i> Pratinjau Kanvas Cetak A4 (794px × 1123px)
+      </div>
+
+      <!-- KANVAS A4 EXPORT GAMBAR -->
+      <div id="cvCanvasArea" class="layout-modern p-10 bg-white">
+        <!-- KONTEN CV AKAN DI-RENDER DISINI -->
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    let currentLayout = 'modern';
+    let profileFotoData = 'https://via.placeholder.com/150';
+
+    // SKEMA STYLE TEMA BERDASARKAN POSISI PEKERJAAN TARGET
+    const JOB_STYLES = {
+      kasir: { primary: '#059669', bgLight: '#ecfdf5', badgeBg: '#d1fae5', badgeText: '#065f46', accentText: 'text-emerald-700', borderAccent: 'border-emerald-600', label: 'Kasir / Retail' },
+      sales: { primary: '#ea580c', bgLight: '#fff7ed', badgeBg: '#ffedd5', badgeText: '#9a3412', accentText: 'text-orange-700', borderAccent: 'border-orange-600', label: 'Sales & Marketing' },
+      manager: { primary: '#1e40af', bgLight: '#eff6ff', badgeBg: '#dbeafe', badgeText: '#1e40af', accentText: 'text-blue-800', borderAccent: 'border-blue-700', label: 'Managerial / Eksekutif' },
+      pns: { primary: '#854d0e', bgLight: '#fefce8', badgeBg: '#fef9c3', badgeText: '#713f12', accentText: 'text-yellow-800', borderAccent: 'border-yellow-700', label: 'PNS / Formal Government' },
+      cs: { primary: '#0891b2', bgLight: '#ecfeff', badgeBg: '#cffafe', badgeText: '#155e75', accentText: 'text-cyan-800', borderAccent: 'border-cyan-600', label: 'Customer Service' },
+      security: { primary: '#dc2626', bgLight: '#fef2f2', badgeBg: '#fee2e2', badgeText: '#991b1b', accentText: 'text-red-800', borderAccent: 'border-red-700', label: 'Security & Keamanan' },
+      admin: { primary: '#4f46e5', bgLight: '#eef2ff', badgeBg: '#e0e7ff', badgeText: '#3730a3', accentText: 'text-indigo-800', borderAccent: 'border-indigo-600', label: 'Administrasi' },
+      driver: { primary: '#475569', bgLight: '#f8fafc', badgeBg: '#e2e8f0', badgeText: '#1e293b', accentText: 'text-slate-800', borderAccent: 'border-slate-600', label: 'Driver & Logistik' }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('inNama').value = "Dicky William Henuk";
+      document.getElementById('inProfesi').value = "Manager Operasional";
+      document.getElementById('inEmail').value = "dicky.henuk@gmail.com";
+      document.getElementById('inTelepon').value = "0812-3456-7890";
+      document.getElementById('inLokasi').value = "Kupang, NTT";
+      document.getElementById('inRingkasan').value = "Profesional berdedikasi dengan pengalaman lebih dari 5 tahun dalam mengelola operasional harian, kepemimpinan tim, serta peningkatan standar pelayanan dan efisiensi kerja.";
+      document.getElementById('inPengalaman').value = "PT. Nusantara Utama | Manager Operasional | 2021 - Sekarang\n- Memimpin 25 personel staf dan meningkatkan efisiensi kerja tim sebesar 30%.\n- Mengelola anggaran operasional bulanan dan standar pelayanan pelanggan.\n\nToko Retail Sejahtera | Supervisor Toko | 2018 - 2021\n- Mengawasi arus transaksi kasir, persediaan stok barang, dan laporan penjualan harian.";
+      document.getElementById('inPendidikan').value = "Universitas Nusa Cendana | S1 Manajemen | 2014 - 2018\nLulus dengan IPK 3.70.";
+      document.getElementById('inSkill').value = "Kepemimpinan Tim, Manajemen Operasional, Microsoft Office, Layanan Pelanggan, Pembukuan Kas";
+      document.getElementById('inSertifikasi').value = "Sertifikat Manajemen Risiko, SIM A & C, Bahasa Indonesia (Native)";
+
+      renderCV();
+    });
+
+    function handleFotoUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          profileFotoData = e.target.result;
+          renderCV();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function changeLayout(layoutName) {
+      currentLayout = layoutName;
+      ['modern', 'classic', 'minimal', 'creative'].forEach(l => {
+        const btn = document.getElementById(`btn-${l}`);
+        if (l === layoutName) {
+          btn.className = "p-3 rounded-xl border border-blue-500 bg-blue-500/10 text-white font-semibold text-xs flex flex-col items-center gap-1.5 transition";
+        } else {
+          btn.className = "p-3 rounded-xl border border-slate-700 bg-slate-900 text-slate-400 hover:text-white font-semibold text-xs flex flex-col items-center gap-1.5 transition";
+        }
+      });
+      renderCV();
+    }
+
+    // RENDER MAIN CV KANVAS A4
+    function renderCV() {
+      const canvas = document.getElementById('cvCanvasArea');
+      const selectedRole = document.querySelector('input[name="jobRole"]:checked')?.value || 'manager';
+      const theme = JOB_STYLES[selectedRole] || JOB_STYLES.manager;
+
+      const nama = document.getElementById('inNama').value || 'Nama Lengkap';
+      const profesi = document.getElementById('inProfesi').value || 'Posisi Melamar';
+      const email = document.getElementById('inEmail').value || 'email@domain.com';
+      const telp = document.getElementById('inTelepon').value || '08123456789';
+      const lokasi = document.getElementById('inLokasi').value || 'Lokasi';
+      const ringkasan = document.getElementById('inRingkasan').value || '';
+      const pengalaman = document.getElementById('inPengalaman').value || '';
+      const pendidikan = document.getElementById('inPendidikan').value || '';
+      const skills = document.getElementById('inSkill').value.split(',').map(s => s.trim()).filter(s => s);
+      const sertifikasi = document.getElementById('inSertifikasi').value || '';
+
+      canvas.className = `layout-${currentLayout} p-10 bg-white`;
+
+      // 1. MODERN TWO-COLUMN (A4 OPTIMIZED)
+      if (currentLayout === 'modern') {
+        canvas.innerHTML = `
+          <div class="grid grid-cols-12 gap-8 h-full">
+            <!-- Sidebar Left (35%) -->
+            <div class="-m-10 p-8 col-span-4 flex flex-col space-y-6" style="background-color: ${theme.bgLight}; border-right: 2px solid ${theme.primary}20;">
+              <div class="text-center pt-2">
+                <img src="${profileFotoData}" class="w-36 h-36 rounded-full mx-auto object-cover border-4 border-white shadow-md mb-4">
+                <h2 class="text-lg font-bold text-slate-900 leading-tight">${nama}</h2>
+                <p class="text-xs font-semibold mt-1" style="color: ${theme.primary}">${profesi}</p>
+                <span class="inline-block mt-2 text-[9px] font-bold px-2 py-0.5 rounded-full" style="background-color: ${theme.badgeBg}; color: ${theme.badgeText}">${theme.label}</span>
+              </div>
+
+              <div class="space-y-2.5 text-xs text-slate-700 border-t border-slate-200/80 pt-4">
+                <p class="flex items-center gap-2 truncate"><i class="fas fa-envelope w-4" style="color: ${theme.primary}"></i> ${email}</p>
+                <p class="flex items-center gap-2"><i class="fas fa-phone w-4" style="color: ${theme.primary}"></i> ${telp}</p>
+                <p class="flex items-center gap-2"><i class="fas fa-map-marker-alt w-4" style="color: ${theme.primary}"></i> ${lokasi}</p>
+              </div>
+
+              <div class="border-t border-slate-200/80 pt-4">
+                <h3 class="text-xs font-bold uppercase mb-2 text-slate-900">Keahlian</h3>
+                <div class="flex flex-wrap gap-1.5">
+                  ${skills.map(s => `<span class="text-[10px] font-semibold px-2 py-1 rounded" style="background-color: ${theme.badgeBg}; color: ${theme.badgeText}">${s}</span>`).join('')}
+                </div>
+              </div>
+
+              <div class="border-t border-slate-200/80 pt-4">
+                <h3 class="text-xs font-bold uppercase mb-2 text-slate-900">Sertifikasi & Kualifikasi</h3>
+                <p class="text-xs text-slate-700 leading-relaxed">${sertifikasi}</p>
+              </div>
+            </div>
+
+            <!-- Main Content Right (65%) -->
+            <div class="col-span-8 space-y-6 pl-2 pt-2">
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider border-b-2 pb-1 mb-2" style="color: ${theme.primary}; border-color: ${theme.primary}">Profil Ringkas</h3>
+                <p class="text-xs text-slate-700 leading-relaxed">${ringkasan}</p>
+              </div>
+
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider border-b-2 pb-1 mb-3" style="color: ${theme.primary}; border-color: ${theme.primary}">Pengalaman Kerja</h3>
+                <div class="text-xs text-slate-800 whitespace-pre-line leading-relaxed">${pengalaman}</div>
+              </div>
+
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider border-b-2 pb-1 mb-3" style="color: ${theme.primary}; border-color: ${theme.primary}">Riwayat Pendidikan</h3>
+                <div class="text-xs text-slate-800 whitespace-pre-line leading-relaxed">${pendidikan}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 2. CLASSIC FORMAL (A4 OPTIMIZED)
+      else if (currentLayout === 'classic') {
+        canvas.innerHTML = `
+          <div class="space-y-6">
+            <div class="flex items-center justify-between border-b-2 pb-4" style="border-color: ${theme.primary}">
+              <div>
+                <h1 class="text-2xl font-bold text-slate-900 uppercase tracking-wide">${nama}</h1>
+                <p class="text-sm font-semibold" style="color: ${theme.primary}">${profesi} — <span class="text-xs opacity-75">${theme.label}</span></p>
+                <div class="flex gap-4 text-xs text-slate-600 mt-2">
+                  <span>${email}</span> | <span>${telp}</span> | <span>${lokasi}</span>
+                </div>
+              </div>
+              <img src="${profileFotoData}" class="w-24 h-28 object-cover border-2" style="border-color: ${theme.primary}">
+            </div>
+
+            <div>
+              <h2 class="text-xs font-bold uppercase tracking-wider border-b pb-1 mb-2 text-slate-900" style="border-color: ${theme.primary}50">Ringkasan Kualifikasi</h2>
+              <p class="text-xs text-slate-800 leading-relaxed">${ringkasan}</p>
+            </div>
+
+            <div>
+              <h2 class="text-xs font-bold uppercase tracking-wider border-b pb-1 mb-2 text-slate-900" style="border-color: ${theme.primary}50">Pengalaman Kerja</h2>
+              <div class="text-xs text-slate-800 whitespace-pre-line leading-relaxed">${pengalaman}</div>
+            </div>
+
+            <div>
+              <h2 class="text-xs font-bold uppercase tracking-wider border-b pb-1 mb-2 text-slate-900" style="border-color: ${theme.primary}50">Pendidikan</h2>
+              <div class="text-xs text-slate-800 whitespace-pre-line leading-relaxed">${pendidikan}</div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 border-t pt-4" style="border-color: ${theme.primary}30">
+              <div>
+                <h2 class="text-xs font-bold uppercase mb-1 text-slate-900">Keahlian Utamanya</h2>
+                <p class="text-xs text-slate-700">${skills.join(', ')}</p>
+              </div>
+              <div>
+                <h2 class="text-xs font-bold uppercase mb-1 text-slate-900">Sertifikasi & Kualifikasi</h2>
+                <p class="text-xs text-slate-700">${sertifikasi}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 3. MINIMAL CLEAN (A4 OPTIMIZED)
+      else if (currentLayout === 'minimal') {
+        canvas.innerHTML = `
+          <div class="space-y-6">
+            <div class="flex items-center gap-6 border-b pb-6" style="border-color: ${theme.primary}30">
+              <img src="${profileFotoData}" class="w-24 h-24 rounded-full object-cover shadow-sm">
+              <div>
+                <h1 class="text-xl font-bold text-slate-900">${nama}</h1>
+                <p class="text-xs font-bold mt-0.5" style="color: ${theme.primary}">${profesi}</p>
+                <p class="text-[11px] text-slate-500 mt-1">${email} • ${telp} • ${lokasi}</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-12 gap-6">
+              <div class="col-span-8 space-y-5">
+                <div>
+                  <h3 class="text-xs font-bold uppercase tracking-wider mb-2 text-slate-400">Ringkasan Profil</h3>
+                  <p class="text-xs text-slate-700 leading-relaxed">${ringkasan}</p>
+                </div>
+                <div>
+                  <h3 class="text-xs font-bold uppercase tracking-wider mb-2 text-slate-400">Pengalaman Kerja</h3>
+                  <div class="text-xs text-slate-800 whitespace-pre-line leading-relaxed">${pengalaman}</div>
+                </div>
+              </div>
+
+              <div class="col-span-4 space-y-5 border-l pl-4" style="border-color: ${theme.primary}20">
+                <div>
+                  <h3 class="text-xs font-bold uppercase tracking-wider mb-2 text-slate-400">Pendidikan</h3>
+                  <div class="text-xs text-slate-800 whitespace-pre-line">${pendidikan}</div>
+                </div>
+                <div>
+                  <h3 class="text-xs font-bold uppercase tracking-wider mb-2 text-slate-400">Keahlian</h3>
+                  <div class="flex flex-wrap gap-1">
+                    ${skills.map(s => `<span class="text-[10px] font-semibold px-2 py-0.5 rounded" style="background-color: ${theme.badgeBg}; color: ${theme.badgeText}">${s}</span>`).join('')}
+                  </div>
+                </div>
+                <div>
+                  <h3 class="text-xs font-bold uppercase tracking-wider mb-2 text-slate-400">Sertifikasi</h3>
+                  <p class="text-xs text-slate-700">${sertifikasi}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 4. CREATIVE HEADER (A4 OPTIMIZED)
+      else if (currentLayout === 'creative') {
+        canvas.innerHTML = `
+          <div class="-m-10 mb-6 p-8 text-white flex items-center justify-between" style="background: linear-gradient(135deg, ${theme.primary}, #0f172a)">
+            <div>
+              <h1 class="text-2xl font-black">${nama}</h1>
+              <p class="text-xs font-medium text-slate-200 mt-1">${profesi}</p>
+              <div class="flex gap-3 text-[11px] text-slate-300 mt-3">
+                <span><i class="fas fa-envelope"></i> ${email}</span>
+                <span><i class="fas fa-phone"></i> ${telp}</span>
+                <span><i class="fas fa-map-marker-alt"></i> ${lokasi}</span>
+              </div>
+            </div>
+            <img src="${profileFotoData}" class="w-28 h-28 rounded-2xl object-cover border-2 border-white/30 shadow-lg">
+          </div>
+
+          <div class="space-y-5">
+            <div class="p-4 rounded-xl border" style="background-color: ${theme.bgLight}; border-color: ${theme.primary}30">
+              <p class="text-xs leading-relaxed font-medium text-slate-800">${ringkasan}</p>
+            </div>
+
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2" style="color: ${theme.primary}">
+                <i class="fas fa-briefcase"></i> Pengalaman Kerja
+              </h3>
+              <div class="text-xs text-slate-800 whitespace-pre-line leading-relaxed pl-4 border-l-2" style="border-color: ${theme.primary}">${pengalaman}</div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2" style="color: ${theme.primary}">
+                  <i class="fas fa-graduation-cap"></i> Pendidikan
+                </h3>
+                <div class="text-xs text-slate-800 whitespace-pre-line leading-relaxed">${pendidikan}</div>
+              </div>
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2" style="color: ${theme.primary}">
+                  <i class="fas fa-star"></i> Keahlian & Sertifikasi
+                </h3>
+                <div class="flex flex-wrap gap-1.5 mb-2">
+                  ${skills.map(s => `<span class="text-[10px] font-bold px-2.5 py-1 rounded-full" style="background-color: ${theme.badgeBg}; color: ${theme.badgeText}">${s}</span>`).join('')}
+                </div>
+                <p class="text-xs text-slate-700">${sertifikasi}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // EKSPOR KANVAS A4 KE GAMBAR PNG HIGH-RESOLUTION
+    function downloadCVAsImage() {
+      const cvArea = document.getElementById('cvCanvasArea');
+      
+      html2canvas(cvArea, {
+        scale: 2, // 2x Scale untuk kejernihan cetak tinggi
+        width: 794,
+        height: 1123,
+        useCORS: true,
+        logging: false
+      }).then(canvas => {
+        const imageURI = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        const namaFile = (document.getElementById('inNama').value || 'CV').replace(/\s+/g, '_');
+        const role = document.querySelector('input[name="jobRole"]:checked')?.value || 'posisi';
+        
+        link.download = `CV_${role.toUpperCase()}_${namaFile}.png`;
+        link.href = imageURI;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+    }
+  </script>
+</body>
+</html>
