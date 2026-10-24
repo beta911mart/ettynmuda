@@ -1,537 +1,715 @@
-<!DOCTYPE html>
-<html lang="id">
+Mengambil isi berkas...<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GitHub Smart Deployer & Bug Inspector</title>
-  
-  <!-- Tailwind CSS & Icons -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teman Akademik Ettyn - Solusi Tugas & Karya Ilmiahmu</title>
+	<link rel="icon" type="image/ico" href="TA.ico">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Open Graph / Meta Tags untuk Share Link (WhatsApp, Facebook, dll) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.ettynmuda.my.id/">
+    <meta property="og:title" content="Teman Akademik - Solusi Tugas & Karya Ilmiahmu">
+    <meta property="og:description" content="Siap Membantu Segala Tugas & Pekerjaan Akademik Anda.">
+    <meta property="og:image" content="https://www.ettynmuda.my.id/tumbnail.png">
 
-  <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0f172a; color: #f8fafc; }
-    .font-mono { font-family: 'JetBrains Mono', monospace; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #1e293b; }
-    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-    .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .loading-spin { animation: spin 1s linear infinite; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  </style>
-</head>
-<body class="min-h-screen flex flex-col relative">
-
-  <!-- OVERLAY AUTENTIKASI PIN ADMIN -->
-  <div id="pinAuthOverlay" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4">
-    <div class="glass-panel rounded-3xl p-8 max-w-sm w-full text-center border border-slate-800 shadow-2xl space-y-5">
-      <div class="w-16 h-16 bg-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center mx-auto border border-blue-500/30">
-        <i class="fas fa-lock text-2xl"></i>
-      </div>
-      <div>
-        <h2 class="text-lg font-bold text-white mb-1">Akses Halaman Rahasia</h2>
-        <p class="text-xs text-slate-400">Masukkan PIN Admin untuk mengelola deployment GitHub & inspeksi kode.</p>
-      </div>
-
-      <div class="space-y-3">
-        <input type="password" id="adminPinInput" maxlength="10" placeholder="••••" 
-               class="w-full text-center text-xl tracking-[0.5em] bg-slate-900 border border-slate-700 text-white font-mono rounded-xl p-3 focus:outline-none focus:border-blue-500">
-        <p id="pinErrorMsg" class="text-[11px] text-red-400 font-semibold hidden"></p>
-        <button onclick="submitAdminPin()" id="btnAuthPin" 
-                class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl text-xs transition shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2">
-          <i class="fas fa-key"></i> Verifikasi PIN
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ISI UTAMA DASHBOARD (TERSEMBUNYI SEBELUM OTENTIKASI SUKSES) -->
-  <div id="mainContentArea" class="hidden flex-col min-h-screen">
-
-    <!-- TOPNAV -->
-    <header class="glass-panel sticky top-0 z-40 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
-          <i class="fas fa-rocket text-lg"></i>
-        </div>
-        <div>
-          <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
-            GitHub Smart Deployer <span class="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-500/30">v3.0 Secure Admin</span>
-          </h1>
-          <p class="text-xs text-slate-400">Pencegah Human Error, Live Audit & Preview System (GitHub Pages Ready)</p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <button onclick="loadRepoFiles()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3.5 py-2 rounded-xl font-semibold border border-slate-700 transition flex items-center gap-2">
-          <i class="fas fa-sync-alt text-blue-400" id="syncIcon"></i> Refresh Repo
-        </button>
-        <button onclick="logoutAdmin()" class="bg-red-500/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 text-xs px-3.5 py-2 rounded-xl font-semibold transition flex items-center gap-1.5">
-          <i class="fas fa-sign-out-alt"></i> Keluar
-        </button>
-      </div>
-    </header>
-
-    <!-- MAIN WORKSPACE -->
-    <main class="flex-1 p-4 lg:p-6 max-w-[1600px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-      <!-- PANEL KIRI: REPOSITORY EXPLORER -->
-      <div class="lg:col-span-4 space-y-6">
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://www.ettynmuda.my.id/">
+    <meta name="twitter:title" content="Teman Akademik - Solusi Tugas & Karya Ilmiahmu">
+    <meta name="twitter:description" content="Siap Membantu Segala Tugas & Pekerjaan Akademik Anda.">
+    <meta name="twitter:image" content="https://www.ettynmuda.my.id/profile2.jpg">
+	<meta name="google-site-verification" content="0Dys8IXBBUGzNGk7eCYIM7G0kiQGrJg2nU_KArjcO-M" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        krem: '#FAF3E0',
+                        pinkmuda: '#F4C2C2',
+                        textgelap: '#4A3B32',
+                        pastelPink: {
+                            light: '#FADADD',
+                            DEFAULT: '#F4C2C2',
+                            dark: '#D77A7A'
+                        },
+                        brown: {
+                            DEFAULT: '#6B5B53',
+                            dark: '#4A3B32'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Latar Belakang Edukasi: Buku, Pena, Rumus Math, Bentuk Ruang */
+        body { 
+            background-color: #FAF3E0; 
+            color: #4A3B32; 
+            background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='%234A3B32' stroke-width='2' opacity='0.05'%3E%3C!-- Buku --%3E%3Cpath d='M50 60 h50 v60 h-50 z' /%3E%3Cpath d='M50 60 l-15 -15 h50 l15 15' /%3E%3Cpath d='M100 60 l-15 -15 v60 l15 15' /%3E%3Cpath d='M55 75 h35 M55 90 h35 M55 105 h35' /%3E%3C!-- Pena/Pensil --%3E%3Cpath d='M300 70 l25 -25 l15 15 l-25 25 z' /%3E%3Cpath d='M300 70 l-35 35 l15 15 l35 -35' /%3E%3Cpath d='M265 105 l-12 18 l18 -12' /%3E%3C!-- Rumus --%3E%3Ctext x='160' y='80' font-family='Georgia, serif' font-size='28' font-style='italic' fill='%234A3B32' stroke='none'%3EE=mc²%3C/text%3E%3Ctext x='60' y='240' font-family='Georgia, serif' font-size='36' fill='%234A3B32' stroke='none'%3Eπ%3C/text%3E%3Ctext x='290' y='280' font-family='Georgia, serif' font-size='28' fill='%234A3B32' stroke='none'%3E∫ x dx%3C/text%3E%3Ctext x='160' y='330' font-family='Georgia, serif' font-size='26' fill='%234A3B32' stroke='none'%3E√a²+b²%3C/text%3E%3C!-- Bentuk Ruang Kubus --%3E%3Crect x='170' y='210' width='60' height='60' /%3E%3Cpath d='M170 210 l20 -20 h60 l-20 20' /%3E%3Cpath d='M230 210 l20 -20 v60 l-20 20' /%3E%3C!-- Segitiga Penggaris --%3E%3Cpath d='M80 300 v60 h60 z' /%3E%3Ccircle cx='95' cy='340' r='4' fill='%234A3B32' /%3E%3Ccircle cx='115' cy='340' r='4' fill='%234A3B32' /%3E%3C!-- Bola / Atom --%3E%3Ccircle cx='330' cy='160' r='35' /%3E%3Cellipse cx='330' cy='160' rx='35' ry='12' transform='rotate(45 330 160)' /%3E%3Cellipse cx='330' cy='160' rx='35' ry='12' transform='rotate(-45 330 160)' /%3E%3Ccircle cx='330' cy='160' r='5' fill='%234A3B32' /%3E%3C/g%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-attachment: fixed; /* Latar belakang tetap diam saat di-scroll */
+        }
+        .bg-pink-custom { background-color: #F4C2C2; }
+        .text-pink-custom { color: #D77A7A; }
         
-        <!-- List Files -->
-        <div class="glass-panel rounded-2xl p-5 border border-slate-800 shadow-xl">
-          <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
-            <h2 class="font-bold text-sm text-slate-200 flex items-center gap-2">
-              <i class="fas fa-folder-open text-amber-400"></i> Berkas Repositori
-            </h2>
-            <span id="fileCount" class="text-[11px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">0 berkas</span>
-          </div>
+        /* Custom Class untuk Efek Bingkai Glowing */
+        .profile-glow {
+            box-shadow: 0 0 35px 5px rgba(255, 140, 0, 0.7);
+            border: 3px solid rgba(255, 200, 100, 0.9);
+        }
 
-          <div id="fileListContainer" class="space-y-2 max-h-[350px] overflow-y-auto pr-1">
-            <div class="text-center py-8 text-slate-500 text-xs">
-              <i class="fas fa-spinner loading-spin text-xl mb-2 text-blue-500"></i><br>Memuat daftar berkas...
+        /* Menyembunyikan Scrollbar pada Galeri Slider namun tetap bisa di-scroll */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="antialiased" onload="loadPublicData()">
+
+	<!-- Navbar -->
+    <nav class="fixed top-0 left-0 w-full bg-krem/90 backdrop-blur-md z-50 border-b border-pinkmuda shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                
+                <!-- Logo / Judul (Sudah dirampingkan) -->
+                <a href="/" class="font-bold text-xl text-textgelap hover:opacity-80 transition cursor-pointer flex items-center">
+                    🎓 Teman Akademik
+                </a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-5 items-center">
+                    <a href="ettynshop.html" class="hover:text-pink-custom font-bold text-pastelPink-dark transition text-sm flex items-center gap-1.5"><i class="fas fa-store"></i> Shop</a>
+                    <a href="#" class="hover:text-pink-custom font-medium transition text-sm">Beranda</a>
+                    <a href="#layanan" class="hover:text-pink-custom font-medium transition text-sm">Layanan</a>
+                    <a href="#tarif" class="hover:text-pink-custom font-medium transition text-sm">Tarif</a>
+                    <a href="#spesial" class="hover:text-pink-custom font-medium transition text-sm">Spesial</a>
+                    <a href="#syarat" class="hover:text-pink-custom font-medium transition text-sm">S&K</a>
+                    <a href="#galeri" class="hover:text-pink-custom font-medium transition text-sm">Galeri</a>
+                    <a href="#testimoni" class="hover:text-pink-custom font-medium transition text-sm">Testimoni</a>
+                    <a href="admin.html" class="ml-2 text-xs bg-brown-dark text-white px-3 py-1.5 rounded-lg hover:bg-brown transition"><i class="fas fa-lock"></i> Admin</a>
+                </div>
+
+                <!-- Tombol Hamburger Mobile -->
+                <div class="flex md:hidden items-center">
+                    <button onclick="toggleMobileMenu()" class="text-textgelap text-2xl focus:outline-none p-2" aria-label="Toggle Navigation">
+                        <i class="fas fa-bars" id="hamburger-icon"></i>
+                    </button>
+                </div>
             </div>
-          </div>
         </div>
 
-        <!-- History Commit & Rollback Section -->
-        <div class="glass-panel rounded-2xl p-5 border border-slate-800 shadow-xl">
-          <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-800">
-            <h2 class="font-bold text-sm text-slate-200 flex items-center gap-2">
-              <i class="fas fa-history text-orange-400"></i> Riwayat Commit & Rollback
-            </h2>
-            <button onclick="fetchHistory()" class="text-xs text-blue-400 hover:underline"><i class="fas fa-redo"></i> Cek History</button>
-          </div>
+        <!-- Menu Mobile Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-krem/95 border-b border-pinkmuda px-6 pt-2 pb-5 space-y-3 shadow-lg">
+            <a href="ettynshop.html" onclick="toggleMobileMenu()" class="block text-pastelPink-dark font-bold hover:text-pink-custom transition py-1.5 text-sm border-b border-pinkmuda/30 flex items-center gap-2"><i class="fas fa-store"></i> Shop</a>
+            <a href="#" onclick="toggleMobileMenu()" class="block text-textgelap hover:text-pink-custom font-medium transition py-1.5 text-sm border-b border-pinkmuda/30">Beranda</a>
+            <a href="#layanan" onclick="toggleMobileMenu()" class="block text-textgelap hover:text-pink-custom font-medium transition py-1.5 text-sm border-b border-pinkmuda/30">Layanan</a>
+            <a href="#tarif" onclick="toggleMobileMenu()" class="block text-textgelap hover:text-pink-custom font-medium transition py-1.5 text-sm border-b border-pinkmuda/30">Tarif</a>
+            <a href="#spesial" onclick="toggleMobileMenu()" class="block text-textgelap hover:text-pink-custom font-medium transition py-1.5 text-sm border-b border-pinkmuda/30">Spesial</a>
+            <a href="#syarat" onclick="toggleMobileMenu()" class="block text-textgelap hover:text-pink-custom font-medium transition py-1.5 text-sm border-b border-pinkmuda/30">S&K</a>
+            <a href="#galeri" onclick="toggleMobileMenu()" class="block text-textgelap hover:text-pink-custom font-medium transition py-1.5 text-sm border-b border-pinkmuda/30">Galeri</a>
+            <a href="#testimoni" onclick="toggleMobileMenu()" class="block text-textgelap hover:text-pink-custom font-medium transition py-1.5 text-sm border-b border-pinkmuda/30">Testimoni</a>
+            <a href="admin.html" onclick="toggleMobileMenu()" class="inline-block mt-2 text-xs bg-brown-dark text-white px-4 py-2 rounded-lg hover:bg-brown transition font-medium shadow-sm"><i class="fas fa-lock mr-1.5"></i> Admin Panel</a>
+        </div>
+    </nav>
 
-          <div class="space-y-3">
-            <select id="commitSelect" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-blue-500">
-              <option value="">-- Pilih Berkas untuk Melihat History --</option>
-            </select>
+    <!-- Hero Section -->
+    <section class="pt-32 pb-12 px-4 text-center max-w-4xl mx-auto relative z-10">
+        <div class="relative w-full mx-auto mb-10 mt-4">
+            <img src="profile.jpg" alt="Banner Teman Akademik Etyn" class="profile-glow w-full h-auto rounded-3xl mx-auto transition-transform duration-500 hover:scale-[1.02]">
+            
+            <div class="absolute -bottom-4 right-4 md:right-10 bg-white px-5 py-2 rounded-full shadow-lg border border-orange-300 animate-bounce z-10">
+                <span class="font-bold text-sm text-orange-600">👋 Hai, Saya Etyn!</span>
+            </div>
+        </div>
+        <h1 class="text-3xl md:text-5xl font-bold mb-4 mt-2 drop-shadow-sm">Solusi Tugas & Karya Ilmiahmu</h1>
+        <p class="text-lg mb-8 opacity-90 font-medium">Membantu mempercepat dan merapikan pekerjaan akademik Anda dengan hasil yang memuaskan.</p>
+        
+        <!-- Social Media Pills -->
+        <div class="flex justify-center gap-4">
+            <a href="https://www.facebook.com/etynd.muda/" class="bg-white px-5 py-2 rounded-full shadow hover:shadow-md transition flex items-center gap-2 text-blue-600">
+                <i class="fab fa-facebook text-xl"></i> <span class="font-medium hidden sm:inline">Ettyn Muda</span>
+            </a>
+            <a href="https://www.instagram.com/ettynmuda/" class="bg-white px-5 py-2 rounded-full shadow hover:shadow-md transition flex items-center gap-2 text-pink-600">
+                <i class="fab fa-instagram text-xl"></i> <span class="font-medium hidden sm:inline">ettyn muda</span>
+            </a>
+            <a href="https://wa.me/6281237827324" class="bg-green-500 text-white px-5 py-2 rounded-full shadow hover:bg-green-600 transition flex items-center gap-2">
+                <i class="fab fa-whatsapp text-xl"></i> <span class="font-medium">Hubungi Saya</span>
+            </a>
+        </div>
+    </section>
 
-            <button onclick="confirmRollback()" class="w-full bg-orange-600/20 hover:bg-orange-600 text-orange-400 hover:text-white border border-orange-500/30 font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2">
-              <i class="fas fa-undo"></i> Eksekusi Rollback Aman
+    <!-- ETTYN SHOP Section (Kontainer Spesial) -->
+    <section class="pb-16 px-4 relative z-10">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white/90 backdrop-blur-md border-2 border-pinkmuda rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 transform hover:scale-[1.01] transition-transform">
+                <div class="flex flex-col sm:flex-row items-center text-center sm:text-left gap-5">
+                    <div class="w-20 h-20 bg-pinkmuda/30 rounded-2xl flex items-center justify-center text-pastelPink-dark shrink-0">
+                        <i class="fas fa-store text-4xl"></i>
+                    </div>
+                    <div>
+                        <div class="inline-block bg-pinkmuda/50 text-pastelPink-dark text-xs font-bold px-3 py-1 rounded-full mb-2 uppercase tracking-wider">
+                            Baru!
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-textgelap mb-1">ETTYN SHOP</h2>
+                        <p class="text-sm sm:text-base text-brown opacity-90">Kunjungi toko kami untuk mendapatkan berbagai produk digital, template tugas, dan *tools* penunjang akademik Anda.</p>
+                    </div>
+                </div>
+                <div class="w-full md:w-auto shrink-0">
+                    <a href="ettynshop.html" class="w-full md:w-auto inline-flex items-center justify-center bg-pastelPink-dark text-white font-bold text-base sm:text-lg px-8 py-4 rounded-xl hover:bg-brown-dark transition-all shadow-md group">
+                        Kunjungi Toko <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Layanan Section -->
+    <section id="layanan" class="py-16 bg-white/70 backdrop-blur-sm px-4">
+        <div class="max-w-5xl mx-auto">
+            <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-8 shadow-sm">
+                <h2 class="text-2xl font-bold text-textgelap">Layanan Utama Kami</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-file-alt text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Proposal Skripsi</h3>
+                    <p class="text-sm opacity-80">Pengetikan, editing format, hingga konsultasi struktur.</p>
+                </div>
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-file-powerpoint text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Makalah & PPT</h3>
+                    <p class="text-sm opacity-80">Pembuatan PPT desain profesional dan penyuntingan makalah.</p>
+                </div>
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-keyboard text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Jasa Ketik & Edit</h3>
+                    <p class="text-sm opacity-80">Ketik dari foto, scan, tulisan tangan, serta merapikan layout.</p>
+                </div>
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-book-open text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Artikel (Jurnal, dll)</h3>
+                    <p class="text-sm opacity-80">Format artikel sesuai template jurnal dan proofreading.</p>
+                </div>
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-school text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Tugas Kuliah & Sekolah</h3>
+                    <p class="text-sm opacity-80">Review jurnal, resume, analisis, dan input data Excel.</p>
+                </div>
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-highlighter text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Rangkuman Materi</h3>
+                    <p class="text-sm opacity-80">Rangkuman terstruktur, bab buku, hingga mind map.</p>
+                </div>
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-chalkboard-teacher text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Modul Ajar</h3>
+                    <p class="text-sm opacity-80">Pembuatan dan format modul ajar lengkap dengan LKPD.</p>
+                </div>
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-search text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Cek Plagiasi</h3>
+                    <p class="text-sm opacity-80">Cek similarity untuk file pendek/panjang beserta laporan.</p>
+                </div>
+                <div class="bg-white/90 p-6 rounded-2xl shadow-sm border border-pinkmuda/30 hover:shadow-md transition">
+                    <i class="fas fa-sync-alt text-3xl text-pink-custom mb-4"></i>
+                    <h3 class="font-bold text-lg mb-2">Parafrase Sistematis</h3>
+                    <p class="text-sm opacity-80">Penyuntingan paragraf dan revisi berdasarkan laporan similarity.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- Daftar Harga Layanan Tabel -->
+    <section id="tarif" class="py-16 px-4 relative z-10">
+        <div class="max-w-5xl mx-auto">
+            <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-8 shadow-sm">
+                <h2 class="text-2xl font-bold text-textgelap">Daftar Harga Layanan</h2>
+            </div>
+            
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-sm border border-pinkmuda overflow-hidden">
+                <!-- Hapus div overflow-x-auto agar tidak muncul scroll -->
+                <table class="w-full text-left border-collapse block md:table">
+                    <!-- Sembunyikan thead di mobile, tampilkan di md ke atas -->
+                    <thead class="hidden md:table-header-group">
+                        <tr class="bg-pinkmuda/60 text-textgelap">
+                            <th class="py-4 px-6 font-bold whitespace-nowrap">Jenis Layanan</th>
+                            <th class="py-4 px-6 font-bold text-right whitespace-nowrap">Harga</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm md:text-base block md:table-row-group">
+                        
+                        <!-- 1. Skripsi -->
+                        <tr class="block md:table-row bg-krem/60 border-y border-pinkmuda/30">
+                            <td colspan="2" class="block md:table-cell py-3 px-5 md:px-6 font-bold text-pastelPink-dark">1. Skripsi</td>
+                        </tr>
+                        <tr class="flex flex-col md:table-row border-b border-gray-100 hover:bg-pinkmuda/20 transition">
+                            <td class="block md:table-cell pt-4 pb-1 md:py-4 px-5 md:px-6 opacity-80">Pengerjaan dari 0 (ada judul) sampai ACC</td>
+                            <!-- Ubah perataan teks harga menjadi kiri di mobile, dan kanan di desktop (md:text-right) -->
+                            <td class="block md:table-cell pb-4 pt-1 md:py-4 px-5 md:px-6 font-bold text-left md:text-right text-textgelap md:whitespace-nowrap">
+                                Start Rp2.500.000 <span class="inline-block bg-red-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ml-1 align-middle">PROMO</span><br>
+                                <span class="text-xs font-normal opacity-70">(Tergantung tingkat kesulitan)</span>
+                            </td>
+                        </tr>
+                        
+                        <!-- 2. Proposal dan Hasil -->
+                        <tr class="block md:table-row bg-krem/60 border-y border-pinkmuda/30">
+                            <td colspan="2" class="block md:table-cell py-3 px-5 md:px-6 font-bold text-pastelPink-dark">2. Proposal dan Hasil</td>
+                        </tr>
+                        <tr class="flex flex-col md:table-row border-b border-gray-100 hover:bg-pinkmuda/20 transition">
+                            <td class="block md:table-cell pt-4 pb-1 md:py-4 px-5 md:px-6 opacity-80">Pengerjaan dari 0 (ada judul) tanpa revisi</td>
+                            <td class="block md:table-cell pb-4 pt-1 md:py-4 px-5 md:px-6 font-bold text-left md:text-right text-textgelap md:whitespace-nowrap">
+                                Rp600.000 <span class="inline-block bg-red-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ml-1 align-middle">PROMO</span>
+                            </td>
+                        </tr>
+                        <tr class="flex flex-col md:table-row border-b border-gray-100 hover:bg-pinkmuda/20 transition">
+                            <td class="block md:table-cell pt-4 pb-1 md:py-4 px-5 md:px-6 opacity-80">Pengerjaan dari 0 (ada judul) revisi 2 kali</td>
+                            <td class="block md:table-cell pb-4 pt-1 md:py-4 px-5 md:px-6 font-bold text-left md:text-right text-textgelap md:whitespace-nowrap">
+                                Rp800.000 <span class="inline-block bg-red-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ml-1 align-middle">PROMO</span>
+                            </td>
+                        </tr>
+                        <tr class="flex flex-col md:table-row border-b border-gray-100 hover:bg-pinkmuda/20 transition">
+                            <td class="block md:table-cell pt-4 pb-1 md:py-4 px-5 md:px-6 opacity-80">Pengerjaan fix ACC</td>
+                            <td class="block md:table-cell pb-4 pt-1 md:py-4 px-5 md:px-6 font-bold text-left md:text-right text-textgelap md:whitespace-nowrap">
+                                Rp1.000.000 <span class="inline-block bg-red-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ml-1 align-middle">PROMO</span>
+                            </td>
+                        </tr>
+
+                        <!-- 3. Makalah dan PPT -->
+                        <tr class="block md:table-row bg-krem/60 border-y border-pinkmuda/30">
+                            <td colspan="2" class="block md:table-cell py-3 px-5 md:px-6 font-bold text-pastelPink-dark">3. Makalah dan PPT</td>
+                        </tr>
+                        <tr class="flex flex-col md:table-row border-b border-gray-100 hover:bg-pinkmuda/20 transition">
+                            <td class="block md:table-cell pt-4 pb-1 md:py-4 px-5 md:px-6 opacity-80">Makalah</td>
+                            <td class="block md:table-cell pb-4 pt-1 md:py-4 px-5 md:px-6 font-bold text-left md:text-right text-textgelap">
+                                Start Rp50.000/file <span class="inline-block bg-red-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ml-1 align-middle">PROMO</span><br>
+                                <span class="text-xs font-normal opacity-70">(Sesuai tingkat kesulitan)</span>
+                            </td>
+                        </tr>
+                        <tr class="flex flex-col md:table-row border-b border-gray-100 hover:bg-pinkmuda/20 transition">
+                            <td class="block md:table-cell pt-4 pb-1 md:py-4 px-5 md:px-6 opacity-80">PPT</td>
+                            <td class="block md:table-cell pb-4 pt-1 md:py-4 px-5 md:px-6 font-bold text-left md:text-right text-textgelap">
+                                Start Rp20.000/file <span class="inline-block bg-red-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ml-1 align-middle">PROMO</span><br>
+                                <span class="text-xs font-normal opacity-70">(Sesuai banyaknya halaman)</span>
+                            </td>
+                        </tr>
+
+                        <!-- 4. Cek Plagiasi dan Parafrase -->
+                        <tr class="block md:table-row bg-krem/60 border-y border-pinkmuda/30">
+                            <td colspan="2" class="block md:table-cell py-3 px-5 md:px-6 font-bold text-pastelPink-dark">4. Cek Plagiasi Sistem dan Parafrase</td>
+                        </tr>
+                        <tr class="flex flex-col md:table-row border-b border-gray-100 hover:bg-pinkmuda/20 transition">
+                            <td class="block md:table-cell pt-4 pb-1 md:py-4 px-5 md:px-6 opacity-80">Cek plagiasi</td>
+                            <td class="block md:table-cell pb-4 pt-1 md:py-4 px-5 md:px-6 font-bold text-left md:text-right text-textgelap md:whitespace-nowrap">
+                                Rp15.000/file <span class="inline-block bg-red-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ml-1 align-middle">PROMO</span>
+                            </td>
+                        </tr>
+                        <tr class="flex flex-col md:table-row hover:bg-pinkmuda/20 transition">
+                            <td class="block md:table-cell pt-4 pb-1 md:py-4 px-5 md:px-6 opacity-80">Parafrase sistem</td>
+                            <td class="block md:table-cell pb-4 pt-1 md:py-4 px-5 md:px-6 font-bold text-left md:text-right text-textgelap md:whitespace-nowrap">
+                                Rp55.000/80 hal <span class="inline-block bg-red-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ml-1 align-middle">PROMO</span>
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bagian Layanan Spesial (2 Kontainer) -->
+    <section id="spesial" class="py-16 px-6 max-w-5xl mx-auto space-y-8">
+        
+        <!-- Kontainer Spesial 1: Les Online Microsoft Dasar -->
+        <div class="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl flex flex-wrap justify-center md:justify-between items-center gap-6 md:rotate-[-1deg] transform hover:rotate-0 transition-transform border border-white relative z-10 w-full">
+            <div class="text-center md:text-left flex-1 min-w-[280px] max-w-md">
+                <div class="inline-block bg-pinkmuda/40 px-5 py-2 rounded-full text-sm font-bold text-pastelPink-dark mb-4 shadow-sm border border-pinkmuda">
+                    ✨ Layanan Spesial!
+                </div>
+                <h3 class="text-3xl md:text-4xl font-bold mb-4 leading-tight text-brown-dark">Les Online Belajar<br>Microsoft Dasar</h3>
+                <p class="text-brown text-lg mb-0">Kuasai tools esensial agar bisa ngerjain tugas sendiri dengan lebih cepat! Kelas privat yang santai, interaktif, dan mudah dipahami.</p>
+            </div>
+            
+            <div class="flex flex-col items-center justify-center pt-4 md:pt-0">
+                <i class="fas fa-laptop-code text-7xl text-pastelPink-dark drop-shadow-md mb-6 hidden md:block"></i>
+                <a href="https://wa.me/6281237827324?text=Halo%2C%20saya%20tertarik%20dengan%20Les%20Online%20Microsoft%20Dasar" target="_blank" class="inline-block bg-pastelPink-dark text-white font-bold text-lg px-8 py-4 rounded-full hover:bg-brown-dark transition-all shadow-md whitespace-nowrap">
+                    Daftar Les Sekarang
+                </a>
+            </div>
+        </div>
+
+        <!-- Kontainer Spesial 3: Jasa Pembuatan Website -->
+        <div class="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl flex flex-wrap justify-center md:justify-between items-center gap-6 md:rotate-[-1deg] transform hover:rotate-0 transition-transform border border-white relative z-10 w-full">
+            <div class="text-center md:text-left flex-1 min-w-[280px] max-w-md">
+                <div class="inline-block bg-pinkmuda/40 px-5 py-2 rounded-full text-sm font-bold text-pastelPink-dark mb-4 shadow-sm border border-pinkmuda">
+                    ✨ Layanan Spesial Web!
+                </div>
+                <h3 class="text-2xl md:text-3xl font-bold mb-4 leading-tight text-brown-dark">Jasa Pembuatan Website Teman Akademik, Murah & Kilat!</h3>
+                <p class="text-brown text-base md:text-lg mb-2">Anda butuh website? Untuk kebutuhan Usaha, Kantor, Sekolah, Kampus, Organisasi atau Pribadi?</p>
+                <p class="text-brown text-base md:text-lg mb-2">Mau satu hari langsung Online? Kami jawabannya!</p>
+<div class="mb-2">
+  <p class="text-red-600 text-base md:text-lg font-bold">Promo Mulai</p>
+  <p class="text-red-600 text-3xl md:text-4xl font-black tracking-wide">Rp 300.000,-</p>
+</div>
+                <p class="text-brown text-sm opacity-90 mb-0 italic">Silahkan hubungi kami untuk mewujudkan website impian anda, dijamin memuaskan.</p>
+            </div>
+            
+            <div class="flex flex-col items-center justify-center pt-4 md:pt-0">
+                <i class="fas fa-globe text-7xl text-pastelPink-dark drop-shadow-md mb-6 hidden md:block"></i>
+                <a href="https://wa.me/6281237827324?text=Halo%2C%20saya%20tertarik%20dengan%20Jasa%20Pembuatan%20Website%20Teman%20Akademik" target="_blank" class="inline-block bg-pastelPink-dark text-white font-bold text-lg px-8 py-4 rounded-full hover:bg-brown-dark transition-all shadow-md whitespace-nowrap">
+                    Order Website Sekarang
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Paket Harga Promosi Section -->
+    <section id="promosi" class="py-16 px-4 bg-white/70 backdrop-blur-sm">
+        <div class="max-w-5xl mx-auto">
+            <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-8 shadow-sm">
+                <h2 class="text-2xl font-bold text-textgelap">Paket Teman AKRAB Akedemik</h2>
+            </div>
+
+            <!-- Pricing Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Paket Pelajar -->
+                <div class="bg-white/95 rounded-3xl p-8 shadow-md border-t-8 border-green-400 relative hover:shadow-lg transition">
+                    <h3 class="text-xl font-bold mb-2">Paket Pelajar</h3>
+                    <div class="text-3xl font-bold mb-4">Rp25.000</div>
+                    <ul class="space-y-3 mb-8 text-sm opacity-90">
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Untuk tugas sekolah sederhana</li>
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Maksimal 5 halaman (bahan tersedia)</li>
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Format dasar Word</li>
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i>1 kali revisi kesalahan ketik</li>
+                    </ul>
+                </div>
+                <!-- Paket Mahasiswa -->
+                <div class="bg-white/95 rounded-3xl p-8 shadow-lg border-t-8 border-pink-custom transform md:-translate-y-4 relative hover:shadow-xl transition">
+                    <div class="absolute top-0 right-0 bg-pink-custom text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl">TERLARIS</div>
+                    <h3 class="text-xl font-bold mb-2">Paket Mahasiswa</h3>
+                    <div class="text-3xl font-bold mb-4">Rp75.000</div>
+                    <ul class="space-y-3 mb-8 text-sm opacity-90">
+                        <li><i class="fas fa-check-circle text-pink-custom mr-2"></i>Makalah & presentasi sederhana</li>
+                        <li><i class="fas fa-check-circle text-pink-custom mr-2"></i>Format makalah max 10 halaman</li>
+                        <li><i class="fas fa-check-circle text-pink-custom mr-2"></i>PPT max 5 slide</li>
+                        <li><i class="fas fa-check-circle text-pink-custom mr-2"></i>1 kali revisi minor</li>
+                    </ul>
+                </div>
+                <!-- Paket Dokumen -->
+                <div class="bg-white/95 rounded-3xl p-8 shadow-md border-t-8 border-blue-400 relative hover:shadow-lg transition">
+                    <h3 class="text-xl font-bold mb-2">Paket Dokumen</h3>
+                    <div class="text-3xl font-bold mb-4">Rp150.000</div>
+                    <ul class="space-y-3 mb-8 text-sm opacity-90">
+                        <li><i class="fas fa-check-circle text-blue-500 mr-2"></i>Untuk penataan proposal</li>
+                        <li><i class="fas fa-check-circle text-blue-500 mr-2"></i>Pemformatan max 30 halaman</li>
+                        <li><i class="fas fa-check-circle text-blue-500 mr-2"></i>Nomor halaman, daftar isi otomatis</li>
+                        <li><i class="fas fa-check-circle text-blue-500 mr-2"></i>1 kali revisi minor</li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <!-- Tombol Navigasi Tool Generator Tanpa Teks (Hanya Ikon) -->
+            <div class="flex justify-center items-center gap-4 mt-8">
+
+	<!-- Tombol Navigasi Tool Generator Tanpa Teks (Hanya Ikon) -->
+            <div class="mt-10 text-center">
+                <h4 class="text-lg font-bold text-textgelap mb-4">Generator Otomatis ✨ Makalah, 📚 Bahan Ajar,  📄 Artikel PTK, 🎯 Skenario Diferensiasi</h4>
+                <div class="flex justify-center items-center gap-4">
+                    <!-- Tombol Makalah AI -->
+                    <a href="makalah.html" title="Makalah AI" class="w-12 h-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-md flex items-center justify-center transition-transform hover:scale-110">
+                        <i class="fas fa-file-alt text-lg"></i>
+                    </a>
+                    <!-- Tombol Bahan Ajar -->
+                    <a href="bahanajar.html" title="Bahan Ajar" class="w-12 h-12 bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-md flex items-center justify-center transition-transform hover:scale-110">
+                        <i class="fas fa-layer-group text-lg"></i>
+                    </a>
+                    <!-- Tombol Artikel PTK -->
+                    <a href="artikel.html" title="Artikel PTK" class="w-12 h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md flex items-center justify-center transition-transform hover:scale-110">
+                        <i class="fas fa-graduation-cap text-lg"></i>
+                    </a>
+                    <!-- Tombol Skenario Diferensiasi -->
+                    <a href="diferensiasi.html" title="Skenario Diferensiasi" class="w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md flex items-center justify-center transition-transform hover:scale-110">
+                        <i class="fas fa-magic text-lg"></i>
+                    </a>
+                </div>
+            </div>
+    </section>
+
+    <!-- Syarat Ketentuan Section -->
+    <section id="syarat" class="py-16 px-4 relative z-10">
+        <div class="max-w-5xl mx-auto">
+            <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-8 shadow-sm">
+                <h2 class="text-2xl font-bold text-textgelap">Syarat dan Ketentuan Layanan</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
+                    <div class="font-bold text-pink-custom mb-2">1. Pemesanan</div>
+                    <p class="text-sm opacity-80">Jelaskan layanan, jumlah hal, format, dan tenggat waktu. Pengerjaan dimulai setelah pesanan dikonfirmasi.</p>
+                </div>
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
+                    <div class="font-bold text-pink-custom mb-2">2. Pembayaran</div>
+                    <p class="text-sm opacity-80">&lt;Rp50k penuh di awal. Rp50k-Rp200k DP 50%. &gt;Rp200k DP 30-50%. Pelunasan sebelum file final (tanpa watermark) diserahkan.</p>
+                </div>
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
+                    <div class="font-bold text-pink-custom mb-2">3. Waktu Pengerjaan</div>
+                    <p class="text-sm opacity-80">Dihitung setelah bahan lengkap. Pesanan normal ikut antrean, kilat dikenakan tambahan 25-50%.</p>
+                </div>
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
+                    <div class="font-bold text-pink-custom mb-2">4. Revisi</div>
+                    <p class="text-sm opacity-80">1x revisi minor (salah ketik/format). Tambah bab/halaman ada biaya tambahan. Revisi max 3 hari setelah hasil dikirim.</p>
+                </div>
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
+                    <div class="font-bold text-pink-custom mb-2">5. Tanggung Jawab</div>
+                    <p class="text-sm opacity-80">Pelanggan bertanggung jawab atas kebenaran data & sumber. Kesalahan pengerjaan dari kami diperbaiki gratis.</p>
+                </div>
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
+                    <div class="font-bold text-pink-custom mb-2">6. Etika Akademik</div>
+                    <p class="text-sm opacity-80">Tidak melayani pemalsuan data atau referensi fiktif. Tidak menjamin nilai atau kelulusan.</p>
+                </div>
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
+                    <div class="font-bold text-pink-custom mb-2">7. Kerahasiaan</div>
+                    <p class="text-sm opacity-80">Dokumen dijaga kerahasiaannya, tidak dipublikasikan tanpa izin, dan dihapus sesuai kebijakan.</p>
+                </div>
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
+                    <div class="font-bold text-pink-custom mb-2">8. Pembatalan</div>
+                    <p class="text-sm opacity-80">Setelah pengerjaan dimulai, dana tidak otomatis dikembalikan. Penyelesaian dilakukan transparan.</p>
+                </div>
+                <div class="bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-sm border border-white/50">
+                    <div class="font-bold text-pink-custom mb-2">9. Persetujuan</div>
+                    <p class="text-sm opacity-80">Dengan mengonfirmasi pesanan, pelanggan dianggap telah membaca dan menyetujui semua ketentuan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GALERI SLIDER (Efek Kartu Slide) -->
+    <section id="galeri" class="py-16 px-4 bg-white/40 backdrop-blur-sm border-t border-pinkmuda/30">
+        <div class="max-w-6xl mx-auto relative">
+            <div class="text-center mb-10">
+                <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-4 shadow-sm">
+                    <h2 class="text-2xl font-bold text-textgelap">Galeri & Portofolio</h2>
+                </div>
+                <p class="text-brown opacity-80 text-sm font-medium">Geser untuk melihat beberapa cuplikan hasil karya dan layanan kami.</p>
+            </div>
+            
+            <!-- Tombol Navigasi Slider Kiri -->
+            <button onclick="slideGaleri('left')" class="absolute left-0 top-1/2 -translate-y-1/2 -ml-2 sm:-ml-6 z-20 bg-white/90 text-pastelPink-dark w-12 h-12 rounded-full shadow-lg border border-pinkmuda flex items-center justify-center hover:bg-pastelPink hover:text-white transition focus:outline-none">
+                <i class="fas fa-chevron-left text-xl"></i>
             </button>
-          </div>
-        </div>
 
-      </div>
-
-      <!-- PANEL KANAN: EDITOR, LIVE PREVIEW & AI AUDIT -->
-      <div class="lg:col-span-8 space-y-6">
-
-        <!-- Editor Panel -->
-        <div class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1.5">Path / Nama Berkas</label>
-              <input type="text" id="targetFileName" placeholder="Contoh: index.html atau pages/about.html" class="w-full bg-slate-900 border border-slate-700 text-white text-xs font-mono rounded-xl p-3 focus:outline-none focus:border-blue-500">
+            <!-- Container Galeri Horizontal -->
+            <div id="galeri-container" class="flex overflow-x-auto snap-x snap-mandatory gap-6 scroll-smooth hide-scrollbar px-4 py-6">
+                <!-- Data kosong akan diisi oleh Javascript -->
+                <div class="w-full text-center text-sm opacity-70 py-10" id="galeri-loading">
+                    <i class="fas fa-spinner fa-spin text-3xl mb-2 text-pastelPink-dark"></i><br>Memuat foto galeri...
+                </div>
             </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1.5">Pesan Commit</label>
-              <input type="text" id="commitMessage" placeholder="Cth: Update perbaikan layout dan warna" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded-xl p-3 focus:outline-none focus:border-blue-500">
-            </div>
-          </div>
 
-          <!-- Code Area -->
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <label class="block text-xs font-semibold text-slate-400">Kode Editor (HTML/JS/CSS)</label>
-              <div class="flex items-center gap-2">
-                <button onclick="inspectBugWithAI()" class="bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/40 px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
-                  <i class="fas fa-bug-slash text-yellow-400"></i> Inspeksi Bug (AI)
-                </button>
-                <button onclick="updateLivePreview()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded-lg text-xs font-medium transition flex items-center gap-1">
-                  <i class="fas fa-eye text-blue-400"></i> Update Preview
-                </button>
-              </div>
-            </div>
-            <textarea id="codeEditor" rows="12" placeholder="<!-- Masukkan atau edit kode HTML/JS Anda di sini -->" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs font-mono p-4 rounded-xl focus:outline-none focus:border-blue-500 leading-relaxed"></textarea>
-          </div>
-
-          <!-- Status Result Alert -->
-          <div id="aiStatusBox" class="hidden p-4 rounded-xl text-xs border"></div>
-
-          <!-- Submit Button -->
-          <div class="flex justify-end pt-2 border-t border-slate-800">
-            <button onclick="confirmDeploy()" id="btnDeploy" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl text-xs transition shadow-lg shadow-emerald-600/20 flex items-center gap-2">
-              <i class="fas fa-cloud-arrow-up"></i> Deploy ke GitHub
+            <!-- Tombol Navigasi Slider Kanan -->
+            <button onclick="slideGaleri('right')" class="absolute right-0 top-1/2 -translate-y-1/2 -mr-2 sm:-mr-6 z-20 bg-white/90 text-pastelPink-dark w-12 h-12 rounded-full shadow-lg border border-pinkmuda flex items-center justify-center hover:bg-pastelPink hover:text-white transition focus:outline-none">
+                <i class="fas fa-chevron-right text-xl"></i>
             </button>
-          </div>
-
         </div>
+    </section>
 
-        <!-- Live Preview Panel -->
-        <div class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl">
-          <h2 class="font-bold text-sm text-slate-200 mb-3 flex items-center justify-between">
-            <span><i class="fas fa-desktop text-emerald-400 mr-2"></i> Live Visual Preview (Sandbox)</span>
-            <span class="text-[10px] text-slate-500">Memastikan tampilan sempurna sebelum rilis</span>
-          </h2>
-          <div class="w-full h-[400px] bg-white rounded-xl overflow-hidden border border-slate-700">
-            <iframe id="previewIframe" class="w-full h-full border-0"></iframe>
-          </div>
-        </div>
-
-      </div>
-
-    </main>
-
-  </div>
-
-  <!-- MODAL KONFIRMASI DEPLOY -->
-  <div id="deployModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
-    <div class="glass-panel rounded-3xl p-6 sm:p-8 max-w-md w-full border border-slate-800 text-center shadow-2xl">
-      <div class="w-16 h-16 bg-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-500/30">
-        <i class="fas fa-shield-halved text-3xl"></i>
-      </div>
-      <h3 class="text-lg font-bold text-white mb-2">Konfirmasi Rilis Deployment</h3>
-      <p class="text-xs text-slate-400 mb-6" id="deployModalDesc">Apakah Anda yakin ingin memublikasikan perubahan berkas ini ke repositori utama?</p>
-      
-      <div class="flex gap-3">
-        <button onclick="closeModal('deployModal')" class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition">Batal</button>
-        <button onclick="executeDeploy()" class="flex-1 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-lg">
-          <i class="fas fa-check-circle"></i> Ya, Publish Sekarang
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // URL WEB APP GOOGLE APPS SCRIPT BACKEND ANDA
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec";
-
-    let repoFilesData = [];
-    let currentAutoFixedCode = "";
-
-    // 0. LOGIKA VERIFIKASI PIN ADMIN
-    window.addEventListener('DOMContentLoaded', () => {
-      const token = sessionStorage.getItem('ADMIN_SESSION_TOKEN');
-      if (token) {
-        showDashboard();
-      }
-      
-      // Mengaktifkan submit via tombol 'Enter' pada input PIN
-      document.getElementById('adminPinInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') submitAdminPin();
-      });
-    });
-
-    async function submitAdminPin() {
-      const pin = document.getElementById('adminPinInput').value.trim();
-      const errBox = document.getElementById('pinErrorMsg');
-      const btn = document.getElementById('btnAuthPin');
-
-      if (!pin) {
-        errBox.innerText = "Masukkan PIN Admin terlebih dahulu!";
-        errBox.classList.remove('hidden');
-        return;
-      }
-
-      errBox.classList.add('hidden');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fas fa-spinner loading-spin"></i> Memeriksa PIN...`;
-
-      try {
-        const response = await fetch(GAS_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'verifyAdminPin', pin: pin })
-        });
-        const res = await response.json();
-
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fas fa-key"></i> Verifikasi PIN`;
-
-        if (res && res.success) {
-          sessionStorage.setItem('ADMIN_SESSION_TOKEN', res.sessionToken);
-          showDashboard();
-        } else {
-          errBox.innerText = res ? res.message : "PIN Admin tidak valid!";
-          errBox.classList.remove('hidden');
-        }
-      } catch (err) {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fas fa-key"></i> Verifikasi PIN`;
-        errBox.innerText = "Error koneksi: " + err.toString();
-        errBox.classList.remove('hidden');
-      }
-    }
-
-    function showDashboard() {
-      document.getElementById('pinAuthOverlay').classList.add('hidden');
-      const mainContent = document.getElementById('mainContentArea');
-      mainContent.classList.remove('hidden');
-      mainContent.classList.add('flex');
-      loadRepoFiles();
-    }
-
-    function logoutAdmin() {
-      sessionStorage.removeItem('ADMIN_SESSION_TOKEN');
-      location.reload();
-    }
-
-    // 1. MEMUAT DAFTAR FILE REPOSITORI VIA FETCH
-    async function loadRepoFiles() {
-      const container = document.getElementById('fileListContainer');
-      const syncIcon = document.getElementById('syncIcon');
-      if (syncIcon) syncIcon.classList.add('loading-spin');
-
-      container.innerHTML = `
-        <div class="text-center py-8 text-slate-500 text-xs">
-          <i class="fas fa-spinner loading-spin text-xl mb-2 text-blue-500"></i><br>
-          Memuat daftar berkas dari GitHub...
-        </div>
-      `;
-
-      try {
-        const response = await fetch(`${GAS_URL}?action=getRepositoryFiles`);
-        const res = await response.json();
-
-        if (syncIcon) syncIcon.classList.remove('loading-spin');
-
-        if (res && res.success && Array.isArray(res.files)) {
-          repoFilesData = res.files;
-          document.getElementById('fileCount').innerText = `${res.files.length} berkas`;
-          renderFileList(res.files);
-        } else {
-          container.innerHTML = `
-            <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs text-center space-y-1">
-              <i class="fas fa-exclamation-triangle text-lg mb-1 block"></i>
-              <div class="font-bold">Gagal Memuat Repositori</div>
-              <div class="text-[11px] opacity-80">${res ? res.message : 'Respon kosong.'}</div>
+    <!-- TESTIMONI KLIEN -->
+    <section id="testimoni" class="py-16 bg-white/70 backdrop-blur-sm px-4 border-t border-pinkmuda/30">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-10">
+                <div class="inline-block bg-pinkmuda px-6 py-2 rounded-full mb-4 shadow-sm">
+                    <h2 class="text-2xl font-bold text-textgelap">Testimoni Klien</h2>
+                </div>
+                <p class="text-brown opacity-80 text-sm font-medium">Apa kata mereka yang telah menggunakan jasa Teman Akademik?</p>
             </div>
-          `;
-        }
-      } catch (err) {
-        if (syncIcon) syncIcon.classList.remove('loading-spin');
-        container.innerHTML = `
-          <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs text-center space-y-1">
-            <i class="fas fa-times-circle text-lg mb-1 block"></i>
-            <div class="font-bold">Error Koneksi Fetch</div>
-            <div class="text-[11px] opacity-80">${err.message || err.toString()}</div>
-          </div>
-        `;
-      }
-    }
+            
+            <!-- List Testimoni Approved -->
+            <div id="testimoni-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-16">
+                <div class="col-span-full text-center text-sm opacity-70 py-10" id="testi-loading">
+                    <i class="fas fa-spinner fa-spin text-3xl mb-2 text-pastelPink-dark"></i><br>Memuat testimoni...
+                </div>
+            </div>
 
-    function renderFileList(files) {
-      const container = document.getElementById('fileListContainer');
-      if (!files || files.length === 0) {
-        container.innerHTML = `<div class="text-slate-500 text-xs py-4 text-center">Tidak ada berkas ditemukan.</div>`;
-        return;
-      }
-
-      container.innerHTML = files.map(f => `
-        <div onclick="loadFileToEditor('${f.path}')" class="p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-slate-800/80 flex items-center justify-between cursor-pointer transition group">
-          <div class="flex items-center gap-2.5 truncate">
-            <i class="${getFileIcon(f.path)} text-slate-400 group-hover:text-blue-400 transition"></i>
-            <span class="text-xs text-slate-300 font-mono truncate">${f.path}</span>
-          </div>
-          <span class="text-[10px] text-slate-500">${((f.size || 0) / 1024).toFixed(1)} KB</span>
+            <!-- Form Submit Testimoni Baru -->
+            <div class="bg-white/95 p-8 rounded-3xl shadow-lg border border-pinkmuda max-w-2xl mx-auto relative overflow-hidden backdrop-blur-md">
+                <!-- Dekorasi Background -->
+                <div class="absolute top-0 right-0 w-32 h-32 bg-pinkmuda opacity-20 rounded-bl-full pointer-events-none"></div>
+                
+                <h3 class="text-2xl font-bold mb-2 text-brown-dark text-center relative z-10">Pernah menggunakan jasa kami?</h3>
+                <p class="text-sm text-center mb-8 opacity-70 relative z-10">Tinggalkan ulasan dan pengalaman Anda di bawah ini.</p>
+                
+                <form id="form-testimoni" onsubmit="kirimTestimoni(event)" class="space-y-5 relative z-10">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-semibold mb-1 text-brown-dark">Nama / Panggilan</label>
+                            <input type="text" id="testi-nama" required class="w-full px-4 py-3 rounded-xl border border-pinkmuda/50 focus:outline-none focus:ring-2 focus:ring-pastelPink-dark bg-krem/50 shadow-inner placeholder-gray-400" placeholder="Misal: Andi">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-1 text-brown-dark">Asal Kampus / Instansi</label>
+                            <input type="text" id="testi-instansi" required class="w-full px-4 py-3 rounded-xl border border-pinkmuda/50 focus:outline-none focus:ring-2 focus:ring-pastelPink-dark bg-krem/50 shadow-inner placeholder-gray-400" placeholder="Misal: Univ. Nusa Cendana">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1 text-brown-dark">Pesan Testimoni</label>
+                        <textarea id="testi-pesan" rows="4" required class="w-full px-4 py-3 rounded-xl border border-pinkmuda/50 focus:outline-none focus:ring-2 focus:ring-pastelPink-dark bg-krem/50 shadow-inner placeholder-gray-400" placeholder="Ketik ulasan Anda di sini..."></textarea>
+                    </div>
+                    <button type="submit" id="btn-kirim-testi" class="w-full bg-pastelPink-dark text-white font-bold py-3.5 rounded-xl hover:bg-brown-dark transition-all shadow-md hover:shadow-lg flex justify-center items-center gap-2">
+                        <i class="fas fa-paper-plane"></i> <span>Kirim Testimoni</span>
+                        <i id="spinner-testi" class="fas fa-spinner fa-spin hidden ml-2"></i>
+                    </button>
+                    <!-- Pesan Sukses -->
+                    <div id="pesan-sukses" class="bg-green-100 border border-green-300 text-green-700 px-4 py-3 rounded-xl text-sm text-center font-medium hidden">
+                        <i class="fas fa-check-circle mr-1"></i> Terima kasih! Testimoni Anda berhasil dikirim dan sedang menunggu persetujuan admin.
+                    </div>
+                </form>
+            </div>
         </div>
-      `).join('');
-    }
+    </section>
 
-    function getFileIcon(path) {
-      if (!path) return 'fas fa-file text-slate-400';
-      if (path.endsWith('.html')) return 'fas fa-code text-orange-400';
-      if (path.endsWith('.js')) return 'fab fa-js text-yellow-400';
-      if (path.endsWith('.css')) return 'fab fa-css3-alt text-blue-400';
-      return 'fas fa-file text-slate-400';
-    }
+    <!-- Footer -->
+    <footer id="kontak" class="bg-textgelap text-white py-12 mt-4 relative z-20">
+        <div class="max-w-5xl mx-auto px-4 text-center">
+            <h3 class="text-2xl font-bold mb-6">Hubungi Saya untuk Konsultasi</h3>
+            <div class="flex justify-center gap-6 mb-8 text-2xl">
+                <a href="https://www.facebook.com/etynd.muda/" class="hover:text-pinkmuda transition transform hover:scale-110"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/ettynmuda/" class="hover:text-pinkmuda transition transform hover:scale-110"><i class="fab fa-instagram"></i></a>
+                <a href="https://wa.me/6281237827324" class="hover:text-green-400 transition transform hover:scale-110"><i class="fab fa-whatsapp"></i></a>
+            </div>
+            <div class="border-t border-gray-600 w-24 mx-auto mb-6"></div>
+            <p class="opacity-70 text-sm">© 2026 Teman Akademik - Ettyn Muda. All rights reserved.</p>
+        </div>
+    </footer>
 
-    // 2. MEMUAT DOKUMEN KE EDITOR VIA FETCH
-    async function loadFileToEditor(filePath) {
-      document.getElementById('targetFileName').value = filePath;
-      document.getElementById('codeEditor').value = "Mengambil isi berkas...";
+    <!-- Script Toggle Menu Mobile, Slider & Integrasi GAS -->
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec"; 
 
-      try {
-        const response = await fetch(`${GAS_URL}?action=getFileContentFromRepo&filePath=${encodeURIComponent(filePath)}`);
-        const res = await response.json();
-
-        if (res && res.success) {
-          document.getElementById('codeEditor').value = res.content || "";
-          updateLivePreview();
-          fetchHistory();
-        } else {
-          alert(res ? res.message : "Gagal mengambil isi berkas.");
+        // Fungsi Buka / Tutup Menu Mobile
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('hamburger-icon');
+            menu.classList.toggle('hidden');
+            
+            if (menu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
         }
-      } catch (err) {
-        alert("Error Fetch: " + err.toString());
-      }
-    }
 
-    // 3. LIVE PREVIEW SCRIPT
-    function updateLivePreview() {
-      const code = document.getElementById('codeEditor').value;
-      const iframe = document.getElementById('previewIframe');
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-      doc.open();
-      doc.write(code);
-      doc.close();
-    }
-
-    // 4. INSPEKSI BUG AI (GEMINI) VIA FETCH POST
-    async function inspectBugWithAI() {
-      const code = document.getElementById('codeEditor').value;
-      const box = document.getElementById('aiStatusBox');
-      
-      if (!code.trim()) return alert("Isi kode di editor terlebih dahulu!");
-
-      box.className = "p-4 rounded-xl text-xs border border-blue-500/30 bg-blue-500/10 text-blue-300 block";
-      box.innerHTML = `<i class="fas fa-spinner loading-spin mr-2"></i> Sedang memeriksa potensi bug dan kesalahan sintaks dengan AI...`;
-
-      try {
-        const response = await fetch(GAS_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'inspectAndFixCodeWithGemini', htmlContent: code })
-        });
-        const res = await response.json();
-
-        if (res && res.success && res.audit) {
-          const audit = res.audit;
-          if (audit.hasBug) {
-            currentAutoFixedCode = audit.fixedCode;
-            box.className = "p-4 rounded-xl text-xs border border-amber-500/40 bg-amber-500/10 text-amber-300 block space-y-2";
-            box.innerHTML = `
-              <div><strong>⚠️ Terdeteksi Potential Bug / Kesalahan:</strong> ${audit.summary}</div>
-              <button onclick="applyAIFix()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-3 py-1.5 rounded-lg text-[11px] transition">
-                <i class="fas fa-wand-magic-sparkles mr-1"></i> Terapkan Perbaikan Otomatis AI
-              </button>
-            `;
-          } else {
-            box.className = "p-4 rounded-xl text-xs border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 block";
-            box.innerHTML = `<i class="fas fa-check-circle mr-1"></i> Kode bersih! Tidak ditemukan bug atau kesalahan sintaks secara umum.`;
-          }
-        } else {
-          box.className = "p-4 rounded-xl text-xs border border-red-500/40 bg-red-500/10 text-red-300 block";
-          box.innerHTML = `Gagal audit: ${res ? res.message : 'Respon gagal'}`;
+        // Fungsi Slider Galeri Horizontal
+        function slideGaleri(direction) {
+            const container = document.getElementById('galeri-container');
+            const scrollAmount = 320;
+            if(direction === 'left') {
+                container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            } else {
+                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
         }
-      } catch (err) {
-        box.className = "p-4 rounded-xl text-xs border border-red-500/40 bg-red-500/10 text-red-300 block";
-        box.innerHTML = `Error Audit: ${err.toString()}`;
-      }
-    }
 
-    function applyAIFix() {
-      if (currentAutoFixedCode) {
-        document.getElementById('codeEditor').value = currentAutoFixedCode;
-        updateLivePreview();
-        const box = document.getElementById('aiStatusBox');
-        box.className = "p-4 rounded-xl text-xs border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 block";
-        box.innerHTML = `<i class="fas fa-check-circle mr-1"></i> Perbaikan AI berhasil diterapkan ke editor!`;
-      }
-    }
+        // Ambil Data Galeri & Testimoni dari Google Sheets
+        async function loadPublicData() {
+            try {
+                const response = await fetch(GAS_URL + "?action=getPublicData");
+                const data = await response.json();
+                
+                // 1. Render HTML Galeri
+                const galeriContainer = document.getElementById('galeri-container');
+                if (data.galeri && data.galeri.length > 0) {
+                    galeriContainer.innerHTML = data.galeri.map(url => `
+                        <!-- Kartu Galeri -->
+                        <div class="min-w-[260px] md:min-w-[300px] h-[260px] md:h-[300px] snap-center shrink-0 rounded-2xl overflow-hidden shadow-md border-2 border-white hover:shadow-xl transition-shadow group relative">
+                            <img src="${url}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" alt="Galeri Portofolio">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
+                                <span class="text-white text-sm font-semibold shadow-sm"><i class="fas fa-search-plus mr-1"></i> Lihat Detail</span>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    galeriContainer.innerHTML = '<p class="w-full text-center text-sm opacity-50 py-10">Belum ada foto galeri saat ini.</p>';
+                }
 
-    // 5. RIWAYAT COMMIT & ROLLBACK VIA FETCH
-async function fetchHistory() {
-  const fileName = document.getElementById('targetFileName').value.trim();
-  const select = document.getElementById('commitSelect');
+                // 2. Render HTML Testimoni
+                const testiContainer = document.getElementById('testimoni-container');
+                if (data.testimoni && data.testimoni.length > 0) {
+                    testiContainer.innerHTML = data.testimoni.map(t => `
+                        <!-- Kartu Testimoni -->
+                        <div class="bg-white/95 p-6 rounded-2xl shadow-sm border border-pinkmuda/50 hover:shadow-md transition relative transform hover:-translate-y-1">
+                            <i class="fas fa-quote-right text-4xl text-pinkmuda/30 absolute top-4 right-4"></i>
+                            <div class="flex text-yellow-400 text-xs mb-3">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-sm italic mb-5 relative z-10 text-gray-600 break-words leading-relaxed whitespace-pre-line">"${t.pesan}"</p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-pastelPink-light flex items-center justify-center text-brown-dark font-bold text-lg border border-pinkmuda">
+                                    ${t.nama.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <div class="font-bold text-brown-dark text-sm">${t.nama}</div>
+                                    <div class="text-[11px] text-pastelPink-dark font-medium">${t.instansi}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    testiContainer.innerHTML = '<p class="col-span-full text-center text-sm opacity-50 py-10">Belum ada testimoni saat ini.</p>';
+                }
 
-  if (!fileName) {
-    alert("Pilih atau isi nama berkas terlebih dahulu untuk melihat riwayat commit!");
-    return;
-  }
-
-  select.innerHTML = `<option value="">-- Memuat Riwayat Commit... --</option>`;
-
-  try {
-    const response = await fetch(`${GAS_URL}?action=getCommitHistory&filePath=${encodeURIComponent(fileName)}`);
-    const commits = await response.json();
-
-    select.innerHTML = '';
-
-    if (!commits || !Array.isArray(commits) || commits.length === 0) {
-      select.innerHTML = `<option value="">-- Tidak Ada Riwayat Commit --</option>`;
-      return;
-    }
-
-    const defaultOpt = document.createElement('option');
-    defaultOpt.value = "";
-    defaultOpt.textContent = `-- Pilih Commit untuk Rollback (${commits.length} Ditemukan) --`;
-    select.appendChild(defaultOpt);
-
-    commits.forEach(c => {
-      const opt = document.createElement('option');
-      opt.value = c.sha;
-      opt.textContent = `[${c.shortSha}] ${c.message} (${c.date})`;
-      select.appendChild(opt);
-    });
-
-  } catch (err) {
-    select.innerHTML = `<option value="">-- Gagal Memuat Riwayat --</option>`;
-    alert("Gagal mengambil riwayat commit: " + err.toString());
-  }
-}
-
-    async function confirmRollback() {
-      const fileName = document.getElementById('targetFileName').value;
-      const sha = document.getElementById('commitSelect').value;
-      if (!fileName || !sha) return alert("Pilih berkas dan commit target terlebih dahulu!");
-
-      if (confirm(`Apakah Anda yakin ingin mengembalikan berkas '${fileName}' ke commit [${sha.substring(0,7)}]?`)) {
-        try {
-          const response = await fetch(GAS_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'rollbackToCommit', fileName: fileName, targetSha: sha })
-          });
-          const res = await response.json();
-          alert(res ? res.message : "Rollback selesai.");
-          if (res && res.success) {
-            loadFileToEditor(fileName);
-            loadRepoFiles();
-          }
-        } catch (err) {
-          alert("Gagal Rollback: " + err.toString());
+            } catch (err) {
+                document.getElementById('galeri-loading').innerHTML = "Gagal memuat galeri. Silakan periksa koneksi.";
+                document.getElementById('testi-loading').innerHTML = "Gagal memuat testimoni. Silakan periksa koneksi.";
+            }
         }
-      }
-    }
 
-    // 6. DEPLOYMENT CONFIRMATION VIA FETCH POST
-    function confirmDeploy() {
-      const fileName = document.getElementById('targetFileName').value;
-      const code = document.getElementById('codeEditor').value;
+        // Fungsi Kirim Form Testimoni
+        async function kirimTestimoni(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-kirim-testi');
+            const spinner = document.getElementById('spinner-testi');
+            const pesanSukses = document.getElementById('pesan-sukses');
+            
+            btn.disabled = true;
+            spinner.classList.remove('hidden');
+            pesanSukses.classList.add('hidden');
+            
+            const payload = {
+                action: 'submitTestimoni',
+                nama: document.getElementById('testi-nama').value,
+                instansi: document.getElementById('testi-instansi').value,
+                pesan: document.getElementById('testi-pesan').value
+            };
 
-      if (!fileName || !code) return alert("Nama berkas dan isi kode tidak boleh kosong!");
-
-      document.getElementById('deployModalDesc').innerText = `Berkas: '${fileName}' akan diunggah ke repositori utama.`;
-      document.getElementById('deployModal').classList.remove('hidden');
-    }
-
-    async function executeDeploy() {
-      closeModal('deployModal');
-      const fileName = document.getElementById('targetFileName').value;
-      const code = document.getElementById('codeEditor').value;
-      const msg = document.getElementById('commitMessage').value || `Update ${fileName}`;
-
-      const btn = document.getElementById('btnDeploy');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fas fa-spinner loading-spin"></i> Mengunggah...`;
-
-      try {
-        const response = await fetch(GAS_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'deployFile', fileName: fileName, htmlContent: code, commitMessage: msg })
-        });
-        const res = await response.json();
-
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fas fa-cloud-arrow-up"></i> Deploy ke GitHub`;
-        alert(res ? res.message : "Selesai.");
-        if (res && res.success) {
-          loadRepoFiles();
-          fetchHistory();
+            try {
+                await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                document.getElementById('form-testimoni').reset();
+                pesanSukses.classList.remove('hidden');
+                
+                setTimeout(() => pesanSukses.classList.add('hidden'), 5000);
+            } catch (err) {
+                alert("Gagal mengirim testimoni. Terjadi kesalahan jaringan.");
+            } finally {
+                btn.disabled = false;
+                spinner.classList.add('hidden');
+            }
         }
-      } catch (err) {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fas fa-cloud-arrow-up"></i> Deploy ke GitHub`;
-        alert("Gagal Deploy: " + err.toString());
-      }
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).classList.add('hidden');
-    }
-  </script>
+    </script>
 </body>
 </html>
