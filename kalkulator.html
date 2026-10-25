@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Estimasi Biaya - Teman Akademik Ettyn</title>
+    <link rel="icon" type="image/ico" href="TA.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = { 
+            theme: { 
+                extend: { 
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] }, 
+                    colors: { 
+                        krem: '#FAF3E0', 
+                        pinkmuda: '#F4C2C2', 
+                        textgelap: '#4A3B32', 
+                        pastelPink: { light: '#FADADD', DEFAULT: '#F4C2C2', dark: '#D77A7A' }, 
+                        brown: { DEFAULT: '#6B5B53', dark: '#4A3B32' } 
+                    } 
+                } 
+            } 
+        }
+    </script>
+    <style>
+        body { 
+            background-color: #FAF3E0; 
+            color: #4A3B32; 
+            background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='%234A3B32' stroke-width='2' opacity='0.05'%3E%3Cpath d='M50 60 h50 v60 h-50 z' /%3E%3Ctext x='160' y='80' font-family='Georgia, serif' font-size='28' font-style='italic' fill='%234A3B32' stroke='none'%3EE=mc²%3C/text%3E%3Ctext x='60' y='240' font-family='Georgia, serif' font-size='36' fill='%234A3B32' stroke='none'%3Eπ%3C/text%3E%3C/g%3E%3C/svg%3E"); 
+            background-repeat: repeat; 
+            background-attachment: fixed; 
+        }
+        .card-custom { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Navbar Sederhana -->
+    <nav class="w-full bg-krem/90 backdrop-blur-md border-b border-pinkmuda shadow-sm py-4 px-6">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="font-bold text-lg text-textgelap flex items-center gap-2">
+                🎓 Teman Akademik
+            </a>
+            <a href="index.html" class="text-xs bg-brown-dark text-white px-4 py-2 rounded-xl hover:bg-brown transition font-medium">
+                <i class="fas fa-arrow-left mr-1"></i> Kembali ke Beranda
+            </a>
+        </div>
+    </nav>
+
+    <!-- Konten Utama Kalkulator -->
+    <main class="py-12 px-4 max-w-4xl mx-auto w-full flex-1">
+        <div class="text-center mb-10">
+            <div class="inline-block bg-pinkmuda px-5 py-1.5 rounded-full mb-3 shadow-sm">
+                <span class="text-xs font-bold text-pastelPink-dark uppercase tracking-wider">Simulasi Anggaran</span>
+            </div>
+            <h1 class="text-2xl md:text-4xl font-bold text-textgelap mb-2">Kalkulator Estimasi Biaya Instan</h1>
+            <p class="text-sm md:text-base text-brown opacity-90">Sesuaikan jenjang, jenis layanan, jumlah halaman, dan kecepatan pengerjaan untuk menghitung estimasi biaya tugas Anda.</p>
+        </div>
+
+        <div class="card-custom rounded-3xl p-6 md:p-8 shadow-xl border border-pinkmuda grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            <!-- Kolom Pengaturan (Kiri) -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <!-- 1. Jenjang Pendidikan -->
+                <div>
+                    <label class="block text-xs font-bold text-textgelap uppercase tracking-wider mb-2">1. Jenjang Pendidikan</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" onclick="setJenjang(1, 'SMP / SMA', this)" class="jenjang-btn py-2.5 px-3 text-xs font-bold rounded-xl border border-pinkmuda bg-krem/50 text-textgelap transition hover:border-pastelPink-dark">SMP / SMA</button>
+                        <button type="button" onclick="setJenjang(1.5, 'Sarjana (S-1)', this)" class="jenjang-btn py-2.5 px-3 text-xs font-bold rounded-xl border border-pastelPink-dark bg-pastelPink-dark text-white transition shadow-sm">Sarjana (S-1)</button>
+                        <button type="button" onclick="setJenjang(2.2, 'Magister (S-2 / S-3)', this)" class="jenjang-btn py-2.5 px-3 text-xs font-bold rounded-xl border border-pinkmuda bg-krem/50 text-textgelap transition hover:border-pastelPink-dark">Magister (S-2/3)</button>
+                    </div>
+                </div>
+
+                <!-- 2. Jenis Layanan / Dokumen -->
+                <div>
+                    <label class="block text-xs font-bold text-textgelap uppercase tracking-wider mb-2">2. Kebutuhan Dokumen</label>
+                    <select id="layananSelect" onchange="hitungTotal()" class="w-full px-4 py-3 rounded-xl border border-pinkmuda bg-krem/50 text-sm font-semibold text-textgelap focus:outline-none focus:ring-2 focus:ring-pastelPink-dark">
+                        <option value="5000">Tugas / Makalah Pendek (per hal)</option>
+                        <option value="15000" selected>Format & Penataan Skripsi (per hal)</option>
+                        <option value="25000">Parafrase & Cek Plagiasi (per hal)</option>
+                        <option value="40000">Penyusunan Bab / Analisis (per hal)</option>
+                    </select>
+                </div>
+
+                <!-- 3. Jumlah Halaman (Slider) -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-xs font-bold text-textgelap uppercase tracking-wider">3. Jumlah Halaman</label>
+                        <span id="labelHalaman" class="font-bold text-pastelPink-dark text-sm">25 Halaman</span>
+                    </div>
+                    <input type="range" id="sliderHalaman" min="5" max="120" value="25" oninput="updateHalaman(this.value)" class="w-full accent-pastelPink-dark cursor-pointer">
+                    <div class="flex justify-between text-[11px] opacity-60 mt-1">
+                        <span>5 Hal</span>
+                        <span>60 Hal</span>
+                        <span>120 Hal</span>
+                    </div>
+                </div>
+
+                <!-- 4. Kecepatan Pengerjaan -->
+                <div>
+                    <label class="block text-xs font-bold text-textgelap uppercase tracking-wider mb-2">4. Kecepatan Pengerjaan</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" onclick="setKecepatan(1, 'Standar (3-5 Hari)', this)" class="kecepatan-btn py-2.5 px-4 text-xs font-bold rounded-xl border border-pastelPink-dark bg-pastelPink-dark text-white transition shadow-sm">
+                            Standar (3-5 Hari)
+                        </button>
+                        <button type="button" onclick="setKecepatan(1.3, 'Kilat ⚡ (24 Jam)', this)" class="kecepatan-btn py-2.5 px-4 text-xs font-bold rounded-xl border border-pinkmuda bg-krem/50 text-textgelap transition hover:border-pastelPink-dark">
+                            Kilat ⚡ (24 Jam)
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Kolom Hasil Estimasi (Kanan) -->
+            <div class="lg:col-span-5 bg-krem/70 border border-pinkmuda p-6 md:p-8 rounded-3xl text-center flex flex-col justify-between shadow-inner">
+                <div>
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-xs font-bold uppercase tracking-wider text-brown opacity-85">Estimasi Investasi</span>
+                        <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2.5 py-1 rounded-full border border-green-200">100% Transparan</span>
+                    </div>
+                    
+                    <div id="hasilTotal" class="text-3xl sm:text-4xl font-extrabold text-brown-dark mb-3">
+                        Rp125.000
+                    </div>
+                    
+                    <p class="text-xs text-brown opacity-80 leading-relaxed mb-6">
+                        *Sudah termasuk format standar, cover, kata pengantar, dan garansi revisi minor gratis selama 7 hari.
+                    </p>
+                </div>
+
+                <a id="btnPesanWhatsapp" href="#" target="_blank" class="w-full bg-pastelPink-dark hover:bg-brown-dark text-white font-bold py-4 rounded-2xl transition-all shadow-md flex items-center justify-center gap-2 text-sm">
+                    <i class="fab fa-whatsapp text-lg"></i> Pesan Estimasi Ini
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer Sederhana -->
+    <footer class="bg-textgelap text-white py-6 text-center text-xs opacity-80">
+        <p>© 2026 Teman Akademik - Ettyn Muda. All rights reserved.</p>
+    </footer>
+
+    <!-- Logika Kalkulator JavaScript -->
+    <script>
+        let multiplierJenjang = 1.5;
+        let pengaliKecepatan = 1;
+        let teksJenjang = "Sarjana (S-1)";
+        let teksKecepatan = "Standar (3-5 Hari)";
+
+        function setJenjang(nilai, nama, element) {
+            multiplierJenjang = nilai;
+            teksJenjang = nama;
+            document.querySelectorAll('.jenjang-btn').forEach(btn => {
+                btn.className = "jenjang-btn py-2.5 px-3 text-xs font-bold rounded-xl border border-pinkmuda bg-krem/50 text-textgelap transition hover:border-pastelPink-dark";
+            });
+            element.className = "jenjang-btn py-2.5 px-3 text-xs font-bold rounded-xl border border-pastelPink-dark bg-pastelPink-dark text-white transition shadow-sm";
+            hitungTotal();
+        }
+
+        function setKecepatan(nilai, nama, element) {
+            pengaliKecepatan = nilai;
+            teksKecepatan = nama;
+            document.querySelectorAll('.kecepatan-btn').forEach(btn => {
+                btn.className = "kecepatan-btn py-2.5 px-4 text-xs font-bold rounded-xl border border-pinkmuda bg-krem/50 text-textgelap transition hover:border-pastelPink-dark";
+            });
+            element.className = "kecepatan-btn py-2.5 px-4 text-xs font-bold rounded-xl border border-pastelPink-dark bg-pastelPink-dark text-white transition shadow-sm";
+            hitungTotal();
+        }
+
+        function updateHalaman(val) {
+            document.getElementById('labelHalaman').innerText = val + " Halaman";
+            hitungTotal();
+        }
+
+        function hitungTotal() {
+            const tarifDasar = parseFloat(document.getElementById('layananSelect').value);
+            const jumlahHal = parseInt(document.getElementById('sliderHalaman').value);
+            
+            // Rumus Perhitungan Total
+            let total = tarifDasar * jumlahHal * multiplierJenjang * pengaliKecepatan;
+            
+            // Pembulatan ke kelipatan terdekat agar rapi
+            total = Math.round(total / 5000) * 5000;
+
+            // Format ke Rupiah
+            const formattedRp = "Rp " + total.toLocaleString('id-ID');
+            document.getElementById('hasilTotal').innerText = formattedRp;
+
+            // Update Link WhatsApp Otomatis
+            const jenisLayananText = document.getElementById('layananSelect').options[document.getElementById('layananSelect').selectedIndex].text;
+            const pesanWa = `Halo Kak Ettyn, saya ingin memesan layanan akademik.\n\n*Detail Pesanan:*\n- Jenjang: ${teksJenjang}\n- Layanan: ${jenisLayananText}\n- Jumlah Halaman: ${jumlahHal} Hal\n- Kecepatan: ${teksKecepatan}\n- Estimasi Biaya: ${formattedRp}\n\nMohon konfirmasinya ya Kak!`;
+            
+            document.getElementById('btnPesanWhatsapp').href = `https://wa.me/6281237827324?text=${encodeURIComponent(pesanWa)}`;
+        }
+
+        // Jalankan perhitungan awal saat halaman dimuat
+        hitungTotal();
+    </script>
+</body>
+</html>
