@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pengecek Format AI - Teman Akademik</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Library untuk Ekstraksi DOCX dan PDF -->
+    
+    <!-- Library Ekstraksi & ZIP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-    </script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
@@ -20,90 +21,110 @@
 
     <div class="max-w-4xl mx-auto">
         <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-slate-900 mb-2">AI Format Checker</h1>
-            <p class="text-slate-500">Unggah file atau paste draf untuk analisis urutan Bab, Tabel, dan Gambar.</p>
+            <h1 class="text-3xl font-bold text-slate-900 mb-2">Pengecek Format Dokumen 360°</h1>
+            <p class="text-slate-500">Analisis fisik margin & font (Khusus DOCX) serta urutan penomoran via AI.</p>
         </header>
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8 mb-6">
             
             <!-- Area Upload File -->
             <div class="mb-6">
-                <label class="block text-sm font-semibold text-slate-700 mb-2">Unggah Dokumen (PDF, DOCX, TXT):</label>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Unggah Dokumen (Wajib DOCX untuk cek fisik margin/font):</label>
                 <div class="flex items-center justify-center w-full">
                     <label for="fileUpload" class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-lg cursor-pointer bg-slate-50 hover:bg-slate-100 transition">
                         <div class="flex flex-col items-center justify-center pt-5 pb-6">
                             <svg class="w-8 h-8 mb-2 text-slate-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                             </svg>
-                            <p class="mb-1 text-sm text-slate-500" id="uploadText"><span class="font-semibold">Klik untuk unggah</span> atau seret file ke sini</p>
-                            <p class="text-xs text-slate-400">PDF, DOCX, atau TXT</p>
+                            <p class="mb-1 text-sm text-slate-500" id="uploadText"><span class="font-semibold">Klik untuk unggah</span> atau seret file (.docx, .pdf)</p>
                         </div>
                         <input id="fileUpload" type="file" class="hidden" accept=".pdf, .docx, .txt" onchange="handleFileUpload(event)" />
                     </label>
                 </div>
             </div>
 
-            <label for="documentText" class="block text-sm font-semibold text-slate-700 mb-2">
-                Atau Teks Kerangka (Hasil ekstraksi file akan muncul di sini):
-            </label>
-            <textarea id="documentText" rows="10" 
-                class="w-full p-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                placeholder="Paste draf Skripsi/Makalah Anda di sini..."></textarea>
+            <!-- Hasil Cek Fisik XML (Muncul Langsung Tanpa Koin) -->
+            <div id="physicalResultArea" class="hidden mb-6 bg-slate-100 rounded-lg p-5 border border-slate-200">
+                <h3 class="font-bold text-lg text-slate-800 mb-3 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Pengecekan Fisik Dokumen (Lokal)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700">
+                    <div>
+                        <p class="font-semibold mb-1">📐 Margin Kertas:</p>
+                        <ul id="marginList" class="list-disc ml-5 text-slate-600"></ul>
+                    </div>
+                    <div>
+                        <p class="font-semibold mb-1">🔤 Font & Spasi (Normal Style):</p>
+                        <ul id="fontList" class="list-disc ml-5 text-slate-600"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <label for="documentText" class="block text-sm font-semibold text-slate-700 mb-2">Teks Kerangka (Hasil ekstraksi untuk AI):</label>
+            <textarea id="documentText" rows="6" class="w-full p-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm text-slate-600" placeholder="Hasil ekstrak teks..."></textarea>
             
             <div class="mt-4 flex justify-end">
-                <button id="checkBtn" onclick="analyzeDocument()" 
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition shadow-sm flex items-center justify-center min-w-[200px]">
-                    Cek Format Sekarang
+                <button id="checkBtn" onclick="analyzeDocument()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition shadow-sm flex items-center justify-center min-w-[200px]">
+                    Lanjutkan Cek Urutan via AI
                 </button>
             </div>
         </div>
 
-        <!-- Result Section -->
+        <!-- Result Section AI -->
         <div id="resultArea" class="hidden">
-            <h2 class="text-xl font-bold text-slate-800 mb-4">Hasil Analisis AI:</h2>
+            <h2 class="text-xl font-bold text-slate-800 mb-4">Hasil Analisis Hierarki AI:</h2>
             <div class="space-y-4">
                 <div class="bg-white rounded-lg shadow-sm border border-red-100 p-5">
                     <h3 class="font-semibold text-lg text-slate-800 mb-2 flex items-center">
                         <span class="w-2 h-2 rounded-full bg-red-500 mr-2"></span> Kesalahan Bab/Sub Bab
                     </h3>
-                    <ul id="resBab" class="list-disc list-inside text-slate-600 space-y-1 ml-2"></ul>
+                    <ul id="resBab" class="list-disc list-inside text-slate-600 space-y-1 ml-2 text-sm"></ul>
                 </div>
                 <div class="bg-white rounded-lg shadow-sm border border-orange-100 p-5">
                     <h3 class="font-semibold text-lg text-slate-800 mb-2 flex items-center">
                         <span class="w-2 h-2 rounded-full bg-orange-500 mr-2"></span> Kesalahan Tabel/Gambar
                     </h3>
-                    <ul id="resMedia" class="list-disc list-inside text-slate-600 space-y-1 ml-2"></ul>
+                    <ul id="resMedia" class="list-disc list-inside text-slate-600 space-y-1 ml-2 text-sm"></ul>
                 </div>
                 <div class="bg-white rounded-lg shadow-sm border border-green-100 p-5">
                     <h3 class="font-semibold text-lg text-slate-800 mb-2 flex items-center">
                         <span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span> Saran Perbaikan
                     </h3>
-                    <ul id="resSuggestion" class="list-disc list-inside text-slate-600 space-y-1 ml-2"></ul>
+                    <ul id="resSuggestion" class="list-disc list-inside text-slate-600 space-y-1 ml-2 text-sm"></ul>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec"; 
+        const GAS_URL = "GANTI_DENGAN_URL_GAS_ANDA"; 
 
-        // Fungsi Ekstraksi File
+        // Fungsi Utama Ekstraksi
         async function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
 
             const uploadText = document.getElementById('uploadText');
             const textArea = document.getElementById('documentText');
+            const physicalArea = document.getElementById('physicalResultArea');
+            
             uploadText.innerHTML = `<span class="text-blue-500 animate-pulse">Mengekstrak ${file.name}...</span>`;
-            textArea.value = "Sedang mengekstrak teks dari dokumen...";
+            textArea.value = "Sedang mengekstrak...";
+            physicalArea.classList.add('hidden');
 
             try {
                 if (file.name.endsWith('.docx')) {
+                    // 1. Ekstrak Teks untuk AI
                     const arrayBuffer = await file.arrayBuffer();
-                    const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
-                    textArea.value = result.value;
+                    const textResult = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+                    textArea.value = textResult.value;
+
+                    // 2. Analisis Metadata Fisik Lokal (JSZip)
+                    await analyzeDocxPhysical(file);
                 } 
                 else if (file.name.endsWith('.pdf')) {
+                    // Khusus PDF, ekstrak teks saja
                     const arrayBuffer = await file.arrayBuffer();
                     const typedarray = new Uint8Array(arrayBuffer);
                     const pdf = await pdfjsLib.getDocument(typedarray).promise;
@@ -114,10 +135,9 @@
                         text += content.items.map(item => item.str).join(' ') + "\n";
                     }
                     textArea.value = text;
-                } 
-                else if (file.name.endsWith('.txt')) {
-                    const text = await file.text();
-                    textArea.value = text;
+                    document.getElementById('marginList').innerHTML = "<li>Cek fisik hanya berlaku untuk format .docx</li>";
+                    document.getElementById('fontList').innerHTML = "<li>Cek fisik hanya berlaku untuk format .docx</li>";
+                    physicalArea.classList.remove('hidden');
                 } 
                 else {
                     throw new Error("Format file tidak didukung.");
@@ -130,43 +150,120 @@
             }
         }
 
-        // Fungsi Analisis AI
+        // Sub-Fungsi Analisis Fisik DOCX (XML)
+        async function analyzeDocxPhysical(file) {
+            const zip = new JSZip();
+            const loadedZip = await zip.loadAsync(file);
+            const parser = new DOMParser();
+
+            let marginHTML = "<li>Data margin tidak ditemukan.</li>";
+            if (loadedZip.file("word/document.xml")) {
+                const docXmlText = await loadedZip.file("word/document.xml").async("string");
+                const docXml = parser.parseFromString(docXmlText, "application/xml");
+                const margins = docXml.getElementsByTagName("w:pgMar");
+                if (margins.length > 0) {
+                    const m = margins[margins.length - 1];
+                    const top = (m.getAttribute("w:top") / 567).toFixed(2);
+                    const bottom = (m.getAttribute("w:bottom") / 567).toFixed(2);
+                    const left = (m.getAttribute("w:left") / 567).toFixed(2);
+                    const right = (m.getAttribute("w:right") / 567).toFixed(2);
+                    
+                    // Logic pewarnaan jika tidak standar skripsi (Contoh standar: Kiri 4, Atas 4, Kanan 3, Bawah 3)
+                    const formatCheck = (val, expected) => Math.abs(val - expected) < 0.2 ? `<span class="text-green-600 font-bold">${val} cm</span>` : `<span class="text-red-500 font-bold">${val} cm (Standar: ${expected})</span>`;
+                    
+                    marginHTML = `
+                        <li>Atas: ${formatCheck(top, 4)}</li>
+                        <li>Kiri: ${formatCheck(left, 4)}</li>
+                        <li>Bawah: ${formatCheck(bottom, 3)}</li>
+                        <li>Kanan: ${formatCheck(right, 3)}</li>
+                    `;
+                }
+            }
+
+            let styleHTML = "<li>Data font tidak ditemukan.</li>";
+            if (loadedZip.file("word/styles.xml")) {
+                const stylesXmlText = await loadedZip.file("word/styles.xml").async("string");
+                const stylesXml = parser.parseFromString(stylesXmlText, "application/xml");
+                const docDefaults = stylesXml.getElementsByTagName("w:docDefaults")[0];
+                if (docDefaults) {
+                    const rFonts = docDefaults.getElementsByTagName("w:rFonts")[0];
+                    let fontName = rFonts ? (rFonts.getAttribute("w:ascii") || rFonts.getAttribute("w:hAnsi")) : "Tidak terdeteksi";
+                    if (fontName !== "Times New Roman") fontName = `<span class="text-red-500 font-bold">${fontName} (Standar: Times New Roman)</span>`;
+                    else fontName = `<span class="text-green-600 font-bold">${fontName}</span>`;
+
+                    const sz = docDefaults.getElementsByTagName("w:sz")[0];
+                    let fontSize = sz ? (sz.getAttribute("w:val") / 2) : 0;
+                    if (fontSize !== 12) fontSize = `<span class="text-red-500 font-bold">${fontSize} pt (Standar: 12 pt)</span>`;
+                    else fontSize = `<span class="text-green-600 font-bold">${fontSize} pt</span>`;
+
+                    const spacing = docDefaults.getElementsByTagName("w:spacing")[0];
+                    let spasiBaris = "Single";
+                    if (spacing) {
+                        const lineVal = parseInt(spacing.getAttribute("w:line"));
+                        if (lineVal === 240) spasiBaris = `<span class="text-red-500 font-bold">1.0 / Single (Standar: 1.5)</span>`;
+                        else if (lineVal === 360) spasiBaris = `<span class="text-green-600 font-bold">1.5 Lines</span>`;
+                        else if (lineVal === 480) spasiBaris = `<span class="text-red-500 font-bold">2.0 / Double (Standar: 1.5)</span>`;
+                        else spasiBaris = `Custom (${lineVal} twips)`;
+                    }
+
+                    styleHTML = `
+                        <li>Jenis Huruf: ${fontName}</li>
+                        <li>Ukuran Huruf: ${fontSize}</li>
+                        <li>Spasi Baris: ${spasiBaris}</li>
+                    `;
+                }
+            }
+
+            document.getElementById('marginList').innerHTML = marginHTML;
+            document.getElementById('fontList').innerHTML = styleHTML;
+            document.getElementById('physicalResultArea').classList.remove('hidden');
+        }
+
+        // Fungsi API Gemini (Menggunakan Koin)
         async function analyzeDocument() {
             const text = document.getElementById('documentText').value;
             const btn = document.getElementById('checkBtn');
             const resultArea = document.getElementById('resultArea');
 
-            if(!text.trim() || text === "Sedang mengekstrak teks dari dokumen...") {
-                return alert("Teks masih kosong atau sedang diproses!");
+            // TODO: Pastikan username & password ini ditarik dari sistem login Anda
+            const username = 'isi_dengan_username_user_login'; 
+            const password = 'isi_dengan_password_user_login';
+
+            if(!text.trim() || text.includes("Sedang mengekstrak")) {
+                return alert("Teks masih kosong atau belum selesai diproses!");
             }
 
-            btn.innerHTML = `<svg class="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> AI Menganalisis...`;
+            btn.innerHTML = `<svg class="animate-spin h-5 w-5 mr-3 text-white inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Memproses...`;
             btn.disabled = true;
             resultArea.classList.add('hidden');
 
             try {
-const response = await fetch(GAS_URL, {
-    method: 'POST',
-    body: JSON.stringify({
-        action: 'checkFormatAkademik',
-        username: 'isi_dengan_username_user_login', // Tarik dari sesi login Anda
-        password: 'isi_dengan_password_user_login',
-        documentText: text 
-    })
-});
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'checkFormatAkademik',
+                        username: username,
+                        password: password,
+                        documentText: text 
+                    })
+                });
                 
                 const data = await response.json();
                 
-                renderList('resBab', data.bab, 'Urutan Bab dan Sub Bab sudah sesuai.');
-                renderList('resMedia', data.media, 'Penomoran Tabel dan Gambar berurutan dengan baik.');
-                renderList('resSuggestion', data.saran, 'Tidak ada saran tambahan, format sudah rapi.');
-                
-                resultArea.classList.remove('hidden');
-
+                if (data.success) {
+                    renderList('resBab', data.bab, 'Urutan Bab dan Sub Bab sudah sesuai.');
+                    renderList('resMedia', data.media, 'Penomoran Tabel dan Gambar berurutan dengan baik.');
+                    renderList('resSuggestion', data.saran, 'Tidak ada saran tambahan, format sudah rapi.');
+                    alert(`Pengecekan urutan selesai!\nSisa koin Anda: ${data.sisaKoin}`);
+                    resultArea.classList.remove('hidden');
+                } else {
+                    alert("Gagal: " + data.message);
+                }
             } catch (error) {
                 alert("Gagal menghubungi server AI. Detail: " + error);
             } finally {
-                btn.innerHTML = "Cek Format Sekarang";
+                btn.innerHTML = "Lanjutkan Cek Urutan via AI";
                 btn.disabled = false;
             }
         }
