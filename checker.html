@@ -43,20 +43,28 @@
                 </div>
             </div>
 
-            <!-- Hasil Cek Fisik XML -->
-            <div id="physicalResultArea" class="hidden mb-6 bg-slate-100 rounded-lg p-5 border border-slate-200">
-                <h3 class="font-bold text-lg text-slate-800 mb-3 flex items-center">
+            <!-- Hasil Cek Fisik XML (Muncul Langsung Tanpa Koin) -->
+            <div id="physicalResultArea" class="hidden mb-6 bg-slate-100 rounded-lg p-5 border border-slate-200 shadow-inner">
+                <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center border-b border-slate-300 pb-2">
                     <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    Pengecekan Fisik Dokumen (Lokal)
+                    Pengecekan Fisik Dokumen (Akurasi 100% via OpenXML)
                 </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700">
-                    <div>
-                        <p class="font-semibold mb-1">📐 Margin Kertas:</p>
-                        <ul id="marginList" class="list-disc ml-5 text-slate-600"></ul>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-slate-700">
+                    <div class="bg-white p-3 rounded border border-slate-200">
+                        <p class="font-semibold text-blue-800 mb-1 border-b pb-1">📐 Tata Letak</p>
+                        <ul id="layoutList" class="space-y-1 mt-2 text-xs"></ul>
                     </div>
-                    <div>
-                        <p class="font-semibold mb-1">🔤 Font & Spasi (Normal Style):</p>
-                        <ul id="fontList" class="list-disc ml-5 text-slate-600"></ul>
+                    <div class="bg-white p-3 rounded border border-slate-200">
+                        <p class="font-semibold text-blue-800 mb-1 border-b pb-1">🔤 Tipografi</p>
+                        <ul id="fontList" class="space-y-1 mt-2 text-xs"></ul>
+                    </div>
+                    <div class="bg-white p-3 rounded border border-slate-200">
+                        <p class="font-semibold text-blue-800 mb-1 border-b pb-1">📊 Objek & Media</p>
+                        <ul id="objectList" class="space-y-1 mt-2 text-xs"></ul>
+                    </div>
+                    <div class="bg-white p-3 rounded border border-slate-200">
+                        <p class="font-semibold text-blue-800 mb-1 border-b pb-1">📄 Metadata</p>
+                        <ul id="metaList" class="space-y-1 mt-2 text-xs"></ul>
                     </div>
                 </div>
             </div>
@@ -146,74 +154,143 @@
             }
         }
 
-        // Sub-Fungsi Analisis Fisik DOCX (XML)
+        // Sub-Fungsi Analisis Fisik DOCX (OpenXML Komprehensif)
         async function analyzeDocxPhysical(file) {
             const zip = new JSZip();
             const loadedZip = await zip.loadAsync(file);
             const parser = new DOMParser();
 
-            let marginHTML = "<li>Data margin tidak ditemukan.</li>";
-            if (loadedZip.file("word/document.xml")) {
-                const docXmlText = await loadedZip.file("word/document.xml").async("string");
-                const docXml = parser.parseFromString(docXmlText, "application/xml");
-                const margins = docXml.getElementsByTagName("w:pgMar");
-                if (margins.length > 0) {
-                    const m = margins[margins.length - 1];
-                    const top = (m.getAttribute("w:top") / 567).toFixed(2);
-                    const bottom = (m.getAttribute("w:bottom") / 567).toFixed(2);
-                    const left = (m.getAttribute("w:left") / 567).toFixed(2);
-                    const right = (m.getAttribute("w:right") / 567).toFixed(2);
+            // Utilitas Format & Standar
+            const isMatch = (val, expected, tolerance = 0.2) => Math.abs(val - expected) <= tolerance;
+            const passHTML = (text) => `<span class="text-green-600 font-bold">✔ ${text}</span>`;
+            const failHTML = (text, standard) => `<span class="text-red-500 font-bold">✖ ${text}</span> <br><span class="text-slate-400 text-[10px]">(Std: ${standard})</span>`;
+
+            // Variabel Penampung
+            let layoutHTML = "<li>Gagal membaca tata letak.</li>";
+            let styleHTML = "<li>Gagal membaca tipografi.</li>";
+            let objectHTML = "<li>Gagal membaca objek.</li>";
+            let metaHTML = "<li>Gagal membaca metadata.</li>";
+
+            try {
+                // 1. ANALISIS DOKUMEN UTAMA (word/document.xml)
+                if (loadedZip.file("word/document.xml")) {
+                    const docXmlText = await loadedZip.file("word/document.xml").async("string");
+                    const docXml = parser.parseFromString(docXmlText, "application/xml");
                     
-                    const formatCheck = (val, expected) => Math.abs(val - expected) < 0.2 ? `<span class="text-green-600 font-bold">${val} cm</span>` : `<span class="text-red-500 font-bold">${val} cm (Standar: ${expected})</span>`;
+                    // --- Cek Tata Letak (Margin & Ukuran Kertas) ---
+                    const margins = docXml.getElementsByTagName("w:pgMar");
+                    const sizes = docXml.getElementsByTagName("w:pgSz");
                     
-                    marginHTML = `
-                        <li>Atas: ${formatCheck(top, 4)}</li>
-                        <li>Kiri: ${formatCheck(left, 4)}</li>
-                        <li>Bawah: ${formatCheck(bottom, 3)}</li>
-                        <li>Kanan: ${formatCheck(right, 3)}</li>
-                    `;
-                }
-            }
+                    if (margins.length > 0 && sizes.length > 0) {
+                        const m = margins[margins.length - 1];
+                        const s = sizes[sizes.length - 1];
+                        
+                        const top = (m.getAttribute("w:top") / 567).toFixed(2);
+                        const bottom = (m.getAttribute("w:bottom") / 567).toFixed(2);
+                        const left = (m.getAttribute("w:left") / 567).toFixed(2);
+                        const right = (m.getAttribute("w:right") / 567).toFixed(2);
+                        
+                        const width = (s.getAttribute("w:w") / 567).toFixed(1);
+                        const height = (s.getAttribute("w:h") / 567).toFixed(1);
+                        
+                        // Deteksi Kertas A4 (Lebar ~21cm, Tinggi ~29.7cm)
+                        const isA4 = isMatch(width, 21.0, 0.5) && isMatch(height, 29.7, 0.5);
+                        const paperStr = isA4 ? passHTML(`A4 (${width}x${height} cm)`) : failHTML(`${width}x${height} cm`, "A4 (21x29.7 cm)");
 
-            let styleHTML = "<li>Data font tidak ditemukan.</li>";
-            if (loadedZip.file("word/styles.xml")) {
-                const stylesXmlText = await loadedZip.file("word/styles.xml").async("string");
-                const stylesXml = parser.parseFromString(stylesXmlText, "application/xml");
-                const docDefaults = stylesXml.getElementsByTagName("w:docDefaults")[0];
-                if (docDefaults) {
-                    const rFonts = docDefaults.getElementsByTagName("w:rFonts")[0];
-                    let fontName = rFonts ? (rFonts.getAttribute("w:ascii") || rFonts.getAttribute("w:hAnsi")) : "Tidak terdeteksi";
-                    if (fontName !== "Times New Roman") fontName = `<span class="text-red-500 font-bold">${fontName} (Standar: Times New Roman)</span>`;
-                    else fontName = `<span class="text-green-600 font-bold">${fontName}</span>`;
-
-                    const sz = docDefaults.getElementsByTagName("w:sz")[0];
-                    let fontSize = sz ? (sz.getAttribute("w:val") / 2) : 0;
-                    if (fontSize !== 12) fontSize = `<span class="text-red-500 font-bold">${fontSize} pt (Standar: 12 pt)</span>`;
-                    else fontSize = `<span class="text-green-600 font-bold">${fontSize} pt</span>`;
-
-                    const spacing = docDefaults.getElementsByTagName("w:spacing")[0];
-                    let spasiBaris = "Single";
-                    if (spacing) {
-                        const lineVal = parseInt(spacing.getAttribute("w:line"));
-                        if (lineVal === 240) spasiBaris = `<span class="text-red-500 font-bold">1.0 / Single (Standar: 1.5)</span>`;
-                        else if (lineVal === 360) spasiBaris = `<span class="text-green-600 font-bold">1.5 Lines</span>`;
-                        else if (lineVal === 480) spasiBaris = `<span class="text-red-500 font-bold">2.0 / Double (Standar: 1.5)</span>`;
-                        else spasiBaris = `Custom (${lineVal} twips)`;
+                        layoutHTML = `
+                            <li class="mb-1"><b>Kertas:</b><br> ${paperStr}</li>
+                            <li><b>Margin Atas:</b> ${isMatch(top, 4) ? passHTML(top) : failHTML(top, 4)}</li>
+                            <li><b>Margin Kiri:</b> ${isMatch(left, 4) ? passHTML(left) : failHTML(left, 4)}</li>
+                            <li><b>Margin Bawah:</b> ${isMatch(bottom, 3) ? passHTML(bottom) : failHTML(bottom, 3)}</li>
+                            <li><b>Margin Kanan:</b> ${isMatch(right, 3) ? passHTML(right) : failHTML(right, 3)}</li>
+                        `;
                     }
 
-                    styleHTML = `
-                        <li>Jenis Huruf: ${fontName}</li>
-                        <li>Ukuran Huruf: ${fontSize}</li>
-                        <li>Spasi Baris: ${spasiBaris}</li>
+                    // --- Cek Objek (Tabel & Gambar) ---
+                    const tables = docXml.getElementsByTagName("w:tbl").length;
+                    const images = docXml.getElementsByTagName("w:drawing").length;
+                    
+                    // --- Cek Perataan Paragraf (Justify) ---
+                    const justifications = docXml.getElementsByTagName("w:jc");
+                    let hasJustify = false;
+                    for(let i=0; i<justifications.length; i++) {
+                        if(justifications[i].getAttribute("w:val") === "both") hasJustify = true;
+                    }
+                    const justifyStr = hasJustify ? passHTML("Rata Kiri-Kanan (Justify) Terdeteksi") : failHTML("Tidak Rata Kiri-Kanan", "Justify (w:val=both)");
+
+                    objectHTML = `
+                        <li class="mb-1"><b>Tabel Ditemukan:</b> <span class="font-bold text-slate-700">${tables} tabel</span></li>
+                        <li class="mb-1"><b>Gambar Ditemukan:</b> <span class="font-bold text-slate-700">${images} gambar</span></li>
+                        <li class="mb-1 border-t pt-1 mt-1"><b>Perataan Teks Utama:</b><br>${justifyStr}</li>
                     `;
                 }
+
+                // 2. ANALISIS TIPOGRAFI (word/styles.xml)
+                if (loadedZip.file("word/styles.xml")) {
+                    const stylesXmlText = await loadedZip.file("word/styles.xml").async("string");
+                    const stylesXml = parser.parseFromString(stylesXmlText, "application/xml");
+                    const docDefaults = stylesXml.getElementsByTagName("w:docDefaults")[0];
+                    
+                    if (docDefaults) {
+                        const rFonts = docDefaults.getElementsByTagName("w:rFonts")[0];
+                        let fontName = rFonts ? (rFonts.getAttribute("w:ascii") || rFonts.getAttribute("w:hAnsi")) : "Tidak terdeteksi";
+                        fontName = (fontName === "Times New Roman") ? passHTML(fontName) : failHTML(fontName, "Times New Roman");
+
+                        const sz = docDefaults.getElementsByTagName("w:sz")[0];
+                        let fontSize = sz ? (sz.getAttribute("w:val") / 2) : 0;
+                        fontSize = (fontSize === 12) ? passHTML(fontSize + " pt") : failHTML(fontSize + " pt", "12 pt");
+
+                        const spacing = docDefaults.getElementsByTagName("w:spacing")[0];
+                        let spasiBaris = "Single";
+                        if (spacing) {
+                            const lineVal = parseInt(spacing.getAttribute("w:line"));
+                            if (lineVal === 240) spasiBaris = failHTML("1.0 (Single)", "1.5 Lines");
+                            else if (lineVal === 360) spasiBaris = passHTML("1.5 Lines");
+                            else if (lineVal === 480) spasiBaris = failHTML("2.0 (Double)", "1.5 Lines");
+                            else spasiBaris = `Custom (${lineVal} twips)`;
+                        }
+
+                        styleHTML = `
+                            <li class="mb-1"><b>Jenis Font:</b><br> ${fontName}</li>
+                            <li class="mb-1"><b>Ukuran:</b><br> ${fontSize}</li>
+                            <li class="mb-1"><b>Spasi Baris:</b><br> ${spasiBaris}</li>
+                        `;
+                    }
+                }
+
+                // 3. ANALISIS METADATA (docProps/app.xml)
+                if (loadedZip.file("docProps/app.xml")) {
+                    const appXmlText = await loadedZip.file("docProps/app.xml").async("string");
+                    const appXml = parser.parseFromString(appXmlText, "application/xml");
+                    
+                    const getProp = (tag) => {
+                        const el = appXml.getElementsByTagName(tag)[0];
+                        return el ? el.textContent : "0";
+                    };
+
+                    const pages = getProp("Pages");
+                    const words = getProp("Words");
+                    const characters = getProp("Characters");
+
+                    metaHTML = `
+                        <li class="mb-1"><b>Estimasi Halaman:</b><br> <span class="font-bold text-slate-700">${pages} Hal</span></li>
+                        <li class="mb-1"><b>Estimasi Kata:</b><br> <span class="font-bold text-slate-700">${words} Kata</span></li>
+                        <li class="mb-1"><b>Total Karakter:</b><br> <span class="font-bold text-slate-700">${characters} Karakter</span></li>
+                    `;
+                }
+
+            } catch (error) {
+                console.error("OpenXML Error: ", error);
             }
 
-            document.getElementById('marginList').innerHTML = marginHTML;
+            document.getElementById('layoutList').innerHTML = layoutHTML;
             document.getElementById('fontList').innerHTML = styleHTML;
+            document.getElementById('objectList').innerHTML = objectHTML;
+            document.getElementById('metaList').innerHTML = metaHTML;
+            
             document.getElementById('physicalResultArea').classList.remove('hidden');
         }
-
+        
         // Fungsi API Gemini (Tanpa Cek Login)
         async function analyzeDocument() {
             const text = document.getElementById('documentText').value;
