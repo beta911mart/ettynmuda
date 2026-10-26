@@ -301,6 +301,18 @@
                 return alert("Teks masih kosong atau belum selesai diproses!");
             }
 
+            // EKSTRAK TEKS FISIK DARI UI UNTUK DIKIRIM KE TELEGRAM
+            let physicalText = "File PDF / Teks Manual (Bukan DOCX)";
+            if (!document.getElementById('physicalResultArea').classList.contains('hidden')) {
+                // Tarik teks UI dan buang baris kosong
+                const getListText = (id) => document.getElementById(id).innerText.split('\n').filter(t => t.trim()).join(' | ');
+                
+                physicalText = `Tata Letak: ${getListText('layoutList')}\n`;
+                physicalText += `Tipografi: ${getListText('fontList')}\n`;
+                physicalText += `Objek: ${getListText('objectList')}\n`;
+                physicalText += `Metadata: ${getListText('metaList')}`;
+            }
+
             btn.innerHTML = `<svg class="animate-spin h-5 w-5 mr-3 text-white inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Memproses...`;
             btn.disabled = true;
             resultArea.classList.add('hidden');
@@ -311,11 +323,10 @@
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({
                         action: 'checkFormatAkademik',
-                        // Kirim username statis agar lolos pengecekan JS,
-                        // Pastikan di Code.gs fungsi handleCheckFormat dimodifikasi untuk mengabaikan login.
                         username: 'tamu_gratis', 
                         password: '',
-                        documentText: text 
+                        documentText: text,
+                        physicalData: physicalText // <--- MENGIRIM DATA FISIK KE CODE.GS
                     })
                 });
                 
