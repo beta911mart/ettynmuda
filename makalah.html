@@ -626,11 +626,18 @@
             const btn = document.getElementById('btn-generate');
             const btnText = document.getElementById('btn-generate-text');
             const btnSpinner = document.getElementById('btn-generate-spinner');
+            
+            // Deklarasi elemen overlay loader global
+            const globalLoader = document.getElementById('global-loader');
 
             btn.disabled = true;
             btnText.innerText = 'Menyusun Makalah... (Bisa memakan waktu 30-60 dtk)';
             btnSpinner.classList.remove('hidden');
             btn.classList.replace('bg-white', 'bg-emerald-50');
+
+            // 1. TAMPILKAN OVERLAY LAYAR PENUH
+            globalLoader.classList.remove('hidden');
+            globalLoader.classList.add('flex');
 
             try {
                 const response = await fetch(GAS_WEBAPP_URL, {
@@ -668,6 +675,10 @@
                 btn.disabled = false; 
                 btnSpinner.classList.add('hidden');
                 btn.classList.replace('bg-emerald-50', 'bg-white');
+                
+                // 2. SEMBUNYIKAN OVERLAY LAYAR PENUH
+                globalLoader.classList.add('hidden');
+                globalLoader.classList.remove('flex');
             }
         }
         
@@ -694,5 +705,11 @@
         
         cekStatusKoin();
     </script>
+    <!-- Global Uploading Overlay -->
+    <div id="global-loader" class="fixed inset-0 bg-slate-900/80 z-[100] hidden items-center justify-center flex-col text-white">
+        <i class="fas fa-circle-notch fa-spin text-5xl mb-4 text-emerald-500"></i>
+        <h2 class="text-xl font-bold">Sedang Memproses...</h2>
+        <p class="text-sm text-slate-300 mt-2">Menyusun makalah utuh (30-60 detik).</p>
+    </div>
 </body>
 </html>
