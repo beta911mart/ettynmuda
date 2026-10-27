@@ -14,7 +14,9 @@
     
     <!-- Pustaka PDF.js untuk AI PDF Summarizer -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-
+    
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+   
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -70,6 +72,12 @@
             @page { margin: 2.5cm; }
         }
     </style>
+    <script>
+  // Mengaktifkan mesin Mermaid agar merender otomatis elemen .mermaid
+  document.addEventListener("DOMContentLoaded", function() {
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  });
+</script>
 </head>
 <body class="bg-slate-50">
 
@@ -332,7 +340,16 @@
         <i id="toast-icon" class="fas fa-info-circle text-xl"></i>
         <span id="toast-message" class="text-sm leading-snug"></span>
     </div>
-
+    
+    <figure class="academic-figure">
+      <!-- Ini adalah wadah HTML biasa, BUKAN tag script -->
+      <div class="mermaid">
+        graph TD 
+        A["Kemajemukan Agama"] --> B["Tantangan Pluralisme"]
+      </div>
+      <figcaption>Peta Konsep</figcaption>
+    </figure>
+    
     <script>
         const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec";
 
