@@ -344,16 +344,19 @@
             const div = document.createElement('div');
             div.innerHTML = `
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-full flex flex-col">
-                    <div class="flex flex-wrap gap-4 mb-4 items-center justify-between">
-                        <div class="flex gap-4">
-                            <select id="para-style" class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-accent focus:border-accent block p-2.5">
-                                <option value="academic">Academic Formal</option>
-                                <option value="natural">Natural Professional</option>
-                                <option value="id_formal">Bahasa Indonesia Formal</option>
-                            </select>
-                            <label class="flex items-center text-sm text-gray-600 gap-2"><input type="checkbox" checked class="rounded text-accent"> Retain Citations</label>
+                    <div class="flex flex-wrap gap-4 mb-4 items-center justify-between border-b pb-4">
+                        <div class="flex gap-2">
+                            <input type="text" id="auth-user" placeholder="Username" class="p-2 border rounded-lg text-sm bg-gray-50 focus:ring-accent w-32">
+                            <input type="password" id="auth-pass" placeholder="Password" class="p-2 border rounded-lg text-sm bg-gray-50 focus:ring-accent w-32">
                         </div>
-                        <button id="btn-paraphrase" class="bg-accent hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium shadow transition"><i class="fas fa-wand-magic-sparkles mr-2"></i> Paraphrase</button>
+                        <div class="flex gap-4 items-center">
+                            <select id="para-style" class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-accent block p-2.5">
+                                <option value="Academic Formal">Academic Formal</option>
+                                <option value="Natural Professional">Natural Professional</option>
+                                <option value="Bahasa Indonesia Formal">Bahasa Indonesia Formal</option>
+                            </select>
+                            <button id="btn-paraphrase" class="bg-accent hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium shadow transition"><i class="fas fa-wand-magic-sparkles mr-2"></i> Paraphrase (1 Koin)</button>
+                        </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
                         <div class="flex flex-col gap-2">
@@ -374,39 +377,53 @@
                     </div>
                 </div>
             `;
-
-            setTimeout(() => {
-                document.getElementById('btn-paraphrase').addEventListener('click', runParaphrase);
-            }, 0);
+            setTimeout(() => { document.getElementById('btn-paraphrase').addEventListener('click', runParaphrase); }, 0);
             return div;
         }
 
         async function runParaphrase() {
+            const user = document.getElementById('auth-user').value;
+            const pass = document.getElementById('auth-pass').value;
             const source = document.getElementById('para-source').value;
-            if (!source) return showToast('Please enter text to paraphrase', 'error');
+            const style = document.getElementById('para-style').value;
+            
+            if (!user || !pass) return showToast('Username dan Password wajib diisi!', 'error');
+            if (!source) return showToast('Teks asli tidak boleh kosong.', 'error');
             
             const btn = document.getElementById('btn-paraphrase');
             const output = document.getElementById('para-output');
+            const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwjEvkS8po1LcYzW1j-8z8bm_vLr_QQsrkwHVoykheVafC6-ocb-BS4Lmac5cf1EL7C/exec"; // Ganti dengan URL eksekusi GAS Anda
             
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing via GAS...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Memproses...';
             btn.disabled = true;
             document.getElementById('para-placeholder').style.display = 'none';
 
-            // Data di sini dikonfigurasi untuk diteruskan ke Apps Script doPost
-            // Implementasi fetch() Google Apps Script (simulasi callback asinkronus)
-            setTimeout(() => {
-                output.innerHTML = `
-                    <div class="bg-blue-50 border-l-4 border-blue-400 p-3 text-xs text-blue-700 mb-3">
-                        <i class="fas fa-check-circle"></i> Permintaan berhasil diproses oleh backend Google Apps Script.
-                    </div>
-                    <p class="fade-in">${source.replace(/\n/g, '<br>')}</p>
-                `;
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'generateParaphrase',
+                        username: user,
+                        password: pass,
+                        promptData: { text: source, style: style }
+                    })
+                });
                 
-                AppState.stats.paraphrased++;
-                btn.innerHTML = '<i class="fas fa-wand-magic-sparkles mr-2"></i> Paraphrase';
+                const data = await response.json();
+                
+                if (data.success) {
+                    output.innerHTML = `<div class="bg-blue-50 border-l-4 border-blue-400 p-3 text-xs text-blue-700 mb-3"><i class="fas fa-coins"></i> Koin tersisa: ${data.sisaKoin}</div><div class="fade-in">${data.htmlData}</div>`;
+                    showToast('Paraphrase berhasil!');
+                } else {
+                    throw new Error(data.message || 'Gagal memproses data');
+                }
+            } catch (err) {
+                showToast('Error: ' + err.message, 'error');
+                document.getElementById('para-placeholder').style.display = 'flex';
+            } finally {
+                btn.innerHTML = '<i class="fas fa-wand-magic-sparkles mr-2"></i> Paraphrase (1 Koin)';
                 btn.disabled = false;
-                showToast('Paraphrase request completed by backend');
-            }, 1500);
+            }
         }
 
         function copyParaphrase() {
