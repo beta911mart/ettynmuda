@@ -114,15 +114,15 @@
                     <button onclick="toggleSidebar()" class="lg:hidden text-slate-600 hover:text-emerald-600 focus:outline-none p-2 -ml-2 rounded-lg hover:bg-slate-100">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
-                    <h2 class="text-lg sm:text-xl font-bold text-slate-800 truncate hidden sm:block">✨ Teman Akademik Generator Makalah</h2>
-                    <h2 class="text-lg font-bold text-slate-800 sm:hidden">✨ Makalah AI</h2>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-800 truncate hidden sm:block">🧩 Teman Akademik Generator Makalah</h2>
+                    <h2 class="text-lg font-bold text-slate-800 sm:hidden">🧩 Makalah AI</h2>
                 </div>
                 
                 <div class="flex items-center gap-2 sm:gap-4">
                     <div class="relative">
                         <select onchange="if(this.value) window.location.href=this.value;" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold py-2 px-3 rounded-lg border border-slate-200 focus:outline-none cursor-pointer">
-                            <option value="" disabled selected>📂 Pindah Tool...</option>
-                            <option value="artikel.html">📄 Artikel PTK</option>
+                            <option value="" disabled selected>🔄 Pindah Tool...</option>
+                            <option value="artikel.html">📝 Artikel PTK</option>
                             <option value="diferensiasi.html">🎯 Skenario Diferensiasi</option>
                             <option value="bahanajar.html">📚 Bahan Ajar</option>
                         </select>
@@ -233,6 +233,7 @@
                                 </button>
                             </div>
 
+                            <!-- Kontainer Output Makalah -->
                             <div id="ai-result-content" class="generated-content w-full"></div>
                         </div>
                         
@@ -338,6 +339,36 @@
         let isLoggedin = false;
         let currentUser = { username: "", password: "", koin: 0 };
         let extractedPdfText = "";
+
+        // ==========================================
+        // FUNGSI BARU: FILTER CSS KOTOR DARI SERVER
+        // ==========================================
+        function injectSafeHTML(rawHtml, targetId) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(rawHtml, 'text/html');
+            
+            // 1. Ambil dan amankan CSS dari server
+            let scopedCSS = '';
+            const styles = doc.querySelectorAll('style');
+            styles.forEach(style => {
+                let css = style.innerHTML;
+                // Ganti target 'body' agar hanya berdampak pada div konten, lalu hapus max-width perusak
+                css = css.replace(/body\s*{([^}]*)}/gi, (match, rules) => {
+                    let safeRules = rules
+                        .replace(/max-width\s*:\s*210mm\s*;/gi, '')
+                        .replace(/padding\s*:\s*20mm\s*;/gi, '')
+                        .replace(/margin\s*:\s*0 auto\s*;/gi, '');
+                    return `#${targetId} { ${safeRules} }`;
+                });
+                scopedCSS += css;
+            });
+
+            // 2. Ambil isi konten murni (tanpa tag html, head, body bawaan server)
+            const content = doc.body.innerHTML;
+            
+            // 3. Masukkan HTML yang sudah aman ke kontainer
+            document.getElementById(targetId).innerHTML = `<style>${scopedCSS}</style>` + content;
+        }
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -464,7 +495,7 @@
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 
                 let fullText = "";
-                const maxPages = Math.min(pdf.numPages, 10); // Maksimal 10 halaman
+                const maxPages = Math.min(pdf.numPages, 10); 
                 
                 for (let i = 1; i <= maxPages; i++) {
                     const page = await pdf.getPage(i);
@@ -507,17 +538,18 @@
                     document.getElementById('ai-empty-state').classList.add('hidden');
                     document.getElementById('ai-result-container').classList.remove('hidden');
                     
-                    document.getElementById('ai-result-content').innerHTML = `
-                        <div>
-                            ${data.htmlData}
-                            <div class="mt-8 p-6 bg-amber-50 border border-amber-200 rounded-2xl text-center shadow-inner">
-                                <i class="fas fa-lock text-3xl text-amber-500 mb-2"></i>
-                                <h4 class="font-bold text-slate-800 text-lg">Pratinjau Gratis Berhasil Dibuat</h4>
-                                <p class="text-xs text-slate-600 mt-1 mb-4">Gunakan 1 Koin untuk menghasilkan seluruh Bab Makalah lengkap sampai Daftar Pustaka.</p>
-                                <button onclick="showLoginModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-3 rounded-xl transition">
-                                    Login / Top Up Koin
-                                </button>
-                            </div>
+                    // Gunakan fungsi injeksi aman
+                    injectSafeHTML(data.htmlData, 'ai-result-content');
+                    
+                    // Tambahkan banner promosi gratis
+                    document.getElementById('ai-result-content').innerHTML += `
+                        <div class="mt-8 p-6 bg-amber-50 border border-amber-200 rounded-2xl text-center shadow-inner">
+                            <i class="fas fa-lock text-3xl text-amber-500 mb-2"></i>
+                            <h4 class="font-bold text-slate-800 text-lg">Pratinjau Gratis Berhasil Dibuat</h4>
+                            <p class="text-xs text-slate-600 mt-1 mb-4">Gunakan 1 Koin untuk menghasilkan seluruh Bab Makalah lengkap sampai Daftar Pustaka.</p>
+                            <button onclick="showLoginModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-3 rounded-xl transition">
+                                Login / Top Up Koin
+                            </button>
                         </div>
                     `;
                     
@@ -616,7 +648,8 @@
                     document.getElementById('ai-empty-state').classList.add('hidden');
                     document.getElementById('ai-result-container').classList.remove('hidden');
                     
-                    document.getElementById('ai-result-content').innerHTML = data.htmlData;
+                    // Gunakan fungsi injeksi aman
+                    injectSafeHTML(data.htmlData, 'ai-result-content');
                     
                     currentUser.koin = data.sisaKoin;
                     document.getElementById('saldo-koin').innerText = currentUser.koin;
