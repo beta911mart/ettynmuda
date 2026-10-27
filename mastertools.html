@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Tools - Teman Akademik Ettyn</title>
+    <link rel="icon" type="image/ico" href="TA.ico">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
+                    colors: {
+                        krem: '#FAF3E0',
+                        pinkmuda: '#F4C2C2',
+                        textgelap: '#4A3B32',
+                        pastelPink: { light: '#FADADD', DEFAULT: '#F4C2C2', dark: '#D77A7A' },
+                        brown: { DEFAULT: '#6B5B53', dark: '#4A3B32' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Latar Belakang Edukasi Identik dengan Index */
+        body { 
+            background-color: #FAF3E0; 
+            color: #4A3B32; 
+            background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='%234A3B32' stroke-width='2' opacity='0.05'%3E%3C!-- Buku --%3E%3Cpath d='M50 60 h50 v60 h-50 z' /%3E%3Cpath d='M50 60 l-15 -15 h50 l15 15' /%3E%3Cpath d='M100 60 l-15 -15 v60 l15 15' /%3E%3Cpath d='M55 75 h35 M55 90 h35 M55 105 h35' /%3E%3C!-- Pena/Pensil --%3E%3Cpath d='M300 70 l25 -25 l15 15 l-25 25 z' /%3E%3Cpath d='M300 70 l-35 35 l15 15 l35 -35' /%3E%3Cpath d='M265 105 l-12 18 l18 -12' /%3E%3C!-- Rumus --%3E%3Ctext x='160' y='80' font-family='Georgia, serif' font-size='28' font-style='italic' fill='%234A3B32' stroke='none'%3EE=mc²%3C/text%3E%3Ctext x='60' y='240' font-family='Georgia, serif' font-size='36' fill='%234A3B32' stroke='none'%3Eπ%3C/text%3E%3Ctext x='290' y='280' font-family='Georgia, serif' font-size='28' fill='%234A3B32' stroke='none'%3E∫ x dx%3C/text%3E%3Ctext x='160' y='330' font-family='Georgia, serif' font-size='26' fill='%234A3B32' stroke='none'%3E√a²+b²%3C/text%3E%3C!-- Kubus --%3E%3Crect x='170' y='210' width='60' height='60' /%3E%3Cpath d='M170 210 l20 -20 h60 l-20 20' /%3E%3Cpath d='M230 210 l20 -20 v60 l-20 20' /%3E%3C!-- Penggaris --%3E%3Cpath d='M80 300 v60 h60 z' /%3E%3Ccircle cx='95' cy='340' r='4' fill='%234A3B32' /%3E%3Ccircle cx='115' cy='340' r='4' fill='%234A3B32' /%3E%3C!-- Bola/Atom --%3E%3Ccircle cx='330' cy='160' r='35' /%3E%3Cellipse cx='330' cy='160' rx='35' ry='12' transform='rotate(45 330 160)' /%3E%3Cellipse cx='330' cy='160' rx='35' ry='12' transform='rotate(-45 330 160)' /%3E%3Ccircle cx='330' cy='160' r='5' fill='%234A3B32' /%3E%3C/g%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col relative">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 w-full bg-krem/90 backdrop-blur-md z-50 border-b border-pinkmuda shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <a href="/" class="font-bold text-xl text-textgelap hover:opacity-80 transition flex items-center gap-2">
+                    🎓 Teman Akademik
+                </a>
+                <div class="flex items-center gap-3">
+                    <a href="/" class="text-xs sm:text-sm bg-pinkmuda/30 text-pastelPink-dark border border-pinkmuda px-4 py-2 rounded-lg hover:bg-pinkmuda transition font-bold flex items-center gap-2">
+                        <i class="fas fa-home"></i> <span class="hidden sm:inline">Beranda Utama</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <div class="pt-28 pb-10 px-4 text-center relative z-10">
+        <h1 class="text-3xl md:text-5xl font-bold mb-3 text-brown-dark drop-shadow-sm">Master Tools</h1>
+        <p class="text-base md:text-lg text-brown opacity-90 max-w-2xl mx-auto font-medium">
+            Pusat akses cepat ke seluruh generator cerdas dan utilitas akademik unggulan dari Teman Akademik Ettyn.
+        </p>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-6xl mx-auto px-4 pb-20 w-full relative z-10 space-y-12">
+
+        <!-- KATEGORI 1: PRO / BERBAYAR -->
+        <section>
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-pinkmuda/50 pb-2">
+                <i class="fas fa-crown text-2xl text-yellow-500"></i>
+                <h2 class="text-2xl font-bold text-textgelap">Layanan AI Premium (PRO)</h2>
+                <span class="ml-2 bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded-full border border-yellow-300">Butuh Koin</span>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                
+                <!-- Tool: Artikel -->
+                <a href="https://ettynmuda.my.id/artikel.html" class="block bg-white/95 p-6 rounded-2xl shadow-sm border border-pinkmuda/50 hover:shadow-xl hover:-translate-y-1 transition transform relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 bg-gradient-to-r from-red-500 to-pink-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider shadow-sm">PRO</div>
+                    <div class="w-14 h-14 bg-red-50 text-red-500 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition border border-red-100 shadow-sm">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-brown-dark group-hover:text-red-500 transition mb-1">Artikel PTK Otomatis</h3>
+                    <p class="text-xs text-brown opacity-80 leading-relaxed">Susun laporan Penelitian Tindakan Kelas standar jurnal secara instan.</p>
+                </a>
+
+                <!-- Tool: Bahan Ajar -->
+                <a href="https://ettynmuda.my.id/bahanajar.html" class="block bg-white/95 p-6 rounded-2xl shadow-sm border border-pinkmuda/50 hover:shadow-xl hover:-translate-y-1 transition transform relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 bg-gradient-to-r from-red-500 to-pink-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider shadow-sm">PRO</div>
+                    <div class="w-14 h-14 bg-purple-50 text-purple-500 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition border border-purple-100 shadow-sm">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-brown-dark group-hover:text-purple-600 transition mb-1">Generator Bahan Ajar</h3>
+                    <p class="text-xs text-brown opacity-80 leading-relaxed">Buat modul bahan ajar Kurikulum Merdeka (Struktur A-Q) dengan AI.</p>
+                </a>
+
+                <!-- Tool: Makalah -->
+                <a href="https://ettynmuda.my.id/makalah.html" class="block bg-white/95 p-6 rounded-2xl shadow-sm border border-pinkmuda/50 hover:shadow-xl hover:-translate-y-1 transition transform relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 bg-gradient-to-r from-red-500 to-pink-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider shadow-sm">PRO</div>
+                    <div class="w-14 h-14 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition border border-blue-100 shadow-sm">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-brown-dark group-hover:text-blue-600 transition mb-1">Pembuat Makalah</h3>
+                    <p class="text-xs text-brown opacity-80 leading-relaxed">Hasilkan makalah akademik komprehensif Bab I hingga Daftar Pustaka.</p>
+                </a>
+
+                <!-- Tool: Skenario Diferensiasi -->
+                <a href="https://ettynmuda.my.id/diferensiasi.html" class="block bg-white/95 p-6 rounded-2xl shadow-sm border border-pinkmuda/50 hover:shadow-xl hover:-translate-y-1 transition transform relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 bg-gradient-to-r from-red-500 to-pink-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider shadow-sm">PRO</div>
+                    <div class="w-14 h-14 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition border border-emerald-100 shadow-sm">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-brown-dark group-hover:text-emerald-600 transition mb-1">Skenario Diferensiasi</h3>
+                    <p class="text-xs text-brown opacity-80 leading-relaxed">Rancang Rencana Pembelajaran Berdiferensiasi secara otomatis.</p>
+                </a>
+
+            </div>
+        </section>
+
+
+        <!-- KATEGORI 2: GRATIS -->
+        <section>
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-pinkmuda/50 pb-2 mt-8">
+                <i class="fas fa-box-open text-2xl text-green-500"></i>
+                <h2 class="text-2xl font-bold text-textgelap">Utilitas Akademik (GRATIS)</h2>
+                <span class="ml-2 bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full border border-green-300">Bebas Akses</span>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+                
+                <!-- Tool: Parafrase & Cek AI -->
+                <a href="https://ettynmuda.my.id/parafrase.html" class="block bg-white/95 p-6 rounded-2xl shadow-sm border border-pinkmuda/50 hover:shadow-xl hover:-translate-y-1 transition transform relative overflow-hidden group flex items-start gap-5">
+                    <div class="absolute top-0 right-0 bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider shadow-sm">GRATIS</div>
+                    <div class="w-16 h-16 shrink-0 bg-teal-50 text-teal-500 rounded-xl flex items-center justify-center text-3xl group-hover:scale-110 transition border border-teal-100 shadow-sm">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl text-brown-dark group-hover:text-teal-600 transition mb-1">Cek Deteksi AI & Parafrase</h3>
+                        <p class="text-sm text-brown opacity-80 leading-relaxed">Ubah kalimat kaku hasil AI menjadi lebih natural seperti tulisan manusia dan cek tingkat pendeteksian tulisan Anda.</p>
+                    </div>
+                </a>
+
+                <!-- Tool: Kalkulator Jasa -->
+                <a href="https://ettynmuda.my.id/kalkulator.html" class="block bg-white/95 p-6 rounded-2xl shadow-sm border border-pinkmuda/50 hover:shadow-xl hover:-translate-y-1 transition transform relative overflow-hidden group flex items-start gap-5">
+                    <div class="absolute top-0 right-0 bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider shadow-sm">GRATIS</div>
+                    <div class="w-16 h-16 shrink-0 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center text-3xl group-hover:scale-110 transition border border-orange-100 shadow-sm">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl text-brown-dark group-hover:text-orange-500 transition mb-1">Estimasi Biaya Jasa</h3>
+                        <p class="text-sm text-brown opacity-80 leading-relaxed">Hitung perkiraan biaya jika Anda ingin memesan jasa ketik, pembuatan makalah, atau pengolahan dokumen secara manual oleh tim kami.</p>
+                    </div>
+                </a>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-textgelap text-white py-6 relative z-20 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p class="opacity-70 text-sm">© 2026 Teman Akademik - Ettyn Muda. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
