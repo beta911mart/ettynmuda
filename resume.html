@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101827">
+<title>CV Studio — Generator CV Profesional</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--app-bg:#0b1220;--panel:#111c2e;--line:#26344a;--muted:#9aabc2;--accent:#4f8cff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--app-bg);color:#e8eef8;font-family:'DM Sans',sans-serif}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app-header{background:rgba(12,20,34,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px}
+.field{width:100%;background:#0b1424;border:1px solid #304159;border-radius:10px;padding:10px 12px;color:#eef4ff;font-size:13px;outline:none;transition:.15s}
+.field:focus{border-color:#6da1ff;box-shadow:0 0 0 3px #4f8cff20}
+.field::placeholder{color:#74859e}
+.label{display:block;color:#bdcbe0;font-size:12px;font-weight:700;margin:0 0 7px}
+.help{color:#8294ad;font-size:11px;line-height:1.5}
+.section-title{font-size:12px;text-transform:uppercase;letter-spacing:.11em;color:#9fb6d6;font-weight:800}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #34445c;border-radius:10px;padding:10px 13px;font-size:12px;font-weight:700;background:#17243a;color:#e9f1ff;transition:.15s}
+.btn:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.btn-primary{background:#3977e8;border-color:#3977e8;color:white}
+.btn-green{background:#087e68;border-color:#087e68;color:white}
+.btn-quiet{background:transparent}
+.choice{border:1px solid #34445c;border-radius:11px;padding:11px;background:#0c1728;color:#b9c8dd;text-align:left;font-size:12px;font-weight:700}
+.choice.active{border-color:#6da1ff;background:#1b3152;color:white;box-shadow:inset 0 0 0 1px #6da1ff25}
+.preview-shell{background:#080e18;border:1px solid #25334a;border-radius:18px;padding:20px;min-height:700px;overflow:auto;display:flex;justify-content:center;align-items:flex-start}
+#cvPage{width:794px;min-width:794px;min-height:1123px;background:white;color:#182235;box-shadow:0 18px 55px #0007;transform-origin:top center;overflow:hidden;font-family:'DM Sans',sans-serif}
+#cvPage *{box-sizing:border-box}
+.cv-modern{--cv-accent:#2459a9}
+.cv-page-inner{min-height:1123px}
+.cv-name{font-family:'Manrope',sans-serif;letter-spacing:-.04em}
+.cv-section-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.13em;margin:0 0 12px;display:flex;align-items:center;gap:9px}
+.cv-section-title:after{content:"";height:1px;flex:1;background:#d9e1eb}
+.cv-text{font-size:11px;line-height:1.6;color:#425168;white-space:pre-line;overflow-wrap:anywhere}
+.cv-muted{color:#65758b}
+.cv-entry{margin-bottom:17px;break-inside:avoid}
+.cv-entry-title{font-size:12px;font-weight:800;color:#1d2b40}
+.cv-entry-meta{font-size:10px;color:#6d7d92;margin-top:3px}
+.cv-bullet-list{margin:7px 0 0;padding-left:16px;font-size:10.5px;line-height:1.55;color:#425168}
+.cv-bullet-list li{padding-left:2px;margin:2px 0}
+.cv-chip{display:inline-block;font-size:9px;font-weight:700;padding:5px 8px;border-radius:6px;margin:0 4px 5px 0;background:#edf3fa;color:#31435c}
+.layout-classic .cv-section-title:after{display:none}
+.layout-minimal .cv-section-title{letter-spacing:.18em}
+.layout-creative .cv-section-title{border-left:3px solid var(--cv-accent);padding-left:9px}
+.photo-placeholder{display:flex;align-items:center;justify-content:center;background:#e9eef5;color:#63748c;font-weight:800}
+@media(max-width:900px){.preview-shell{min-height:560px;padding:12px}#cvPage{transform-origin:top left}.workspace{grid-template-columns:1fr!important}.header-actions{flex-wrap:wrap;justify-content:flex-end}}
+@media print{
+ @page{size:A4;margin:0}
+ body{background:white!important;color:#111!important}
+ .app-header,.editor-column,.preview-toolbar,.no-print{display:none!important}
+ main,.workspace,.preview-column,.preview-shell{display:block!important;padding:0!important;margin:0!important;width:auto!important;max-width:none!important;min-height:0!important;overflow:visible!important;background:white!important;border:0!important}
+ #cvPage{width:210mm!important;min-width:0!important;min-height:297mm!important;height:auto!important;transform:none!important;box-shadow:none!important;overflow:visible!important;margin:0!important}
+ #cvPage .cv-page-inner{min-height:297mm!important}
+ #cvPage .cv-entry{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header class="app-header sticky top-0 z-30">
+ <div class="max-w-[1600px] mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-4">
+  <div class="flex items-center gap-3 min-w-0">
+   <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg font-extrabold" style="background:linear-gradient(135deg,#4788ff,#7257e8)">CV</div>
+   <div class="min-w-0"><h1 class="font-extrabold text-sm md:text-base tracking-tight">CV Studio</h1><p class="text-[11px] text-slate-400">Generator CV modern • A4 • Siap cetak</p></div>
+  </div>
+  <div class="header-actions flex items-center gap-2">
+   <button class="btn btn-quiet hidden sm:inline-flex" onclick="exportJSON()">Simpan Data</button>
+   <button class="btn hidden sm:inline-flex" onclick="document.getElementById('importFile').click()">Buka Data</button>
+   <button class="btn" onclick="window.print()">Cetak / PDF</button>
+   <button class="btn btn-green" onclick="downloadPNG()">Unduh PNG</button>
+  </div>
+ </div>
+</header>
+<main class="max-w-[1600px] mx-auto p-3 md:p-6">
+ <div class="grid workspace grid-cols-1 xl:grid-cols-[minmax(390px,0.92fr)_minmax(520px,1.08fr)] gap-5 items-start">
+  <section class="editor-column space-y-4">
+   <div class="panel p-4 md:p-5">
+    <div class="flex items-start justify-between gap-3 mb-4"><div><h2 class="font-extrabold text-base">Buat CV Anda</h2><p class="help mt-1">Isi informasi yang relevan. Bagian yang kosong otomatis disembunyikan.</p></div><button class="btn" onclick="resetForm()">Reset</button></div>
+    <div class="section-title mb-3">1 · Gaya dan target</div>
+    <label class="label">Target pekerjaan / headline</label>
+    <input class="field mb-3" id="jobTitle" placeholder="Contoh: Staf Administrasi, Teknisi Jaringan, Fresh Graduate">
+    <label class="label">Kategori posisi (untuk saran gaya, bukan label di CV)</label>
+    <select class="field mb-4" id="jobCategory">
+     <option value="general">Umum / Profesional</option><option value="admin">Administrasi / Operasional</option><option value="retail">Retail / Kasir / Pelayanan</option><option value="sales">Sales / Marketing</option><option value="tech">IT / Teknologi</option><option value="education">Pendidikan</option><option value="public">Instansi / Pemerintahan</option><option value="creative">Kreatif / Media</option><option value="entry">Fresh Graduate / Entry Level</option>
+    </select>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4" id="layoutChoices">
+     <button class="choice active" data-layout="modern" onclick="setLayout('modern')">Modern<br><span class="help">Dua kolom</span></button>
+     <button class="choice" data-layout="classic" onclick="setLayout('classic')">Formal<br><span class="help">Rapi & konservatif</span></button>
+     <button class="choice" data-layout="minimal" onclick="setLayout('minimal')">Minimal<br><span class="help">ATS-friendly</span></button>
+     <button class="choice" data-layout="creative" onclick="setLayout('creative')">Creative<br><span class="help">Visual modern</span></button>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+     <div><label class="label">Warna aksen</label><div class="flex gap-2 items-center"><input id="accentColor" type="color" value="#2459a9" class="h-10 w-12 rounded-lg bg-transparent border border-slate-600 p-1"><select id="fontChoice" class="field"><option value="sans">Sans modern</option><option value="serif">Serif formal</option></select></div></div>
+     <div><label class="label">Foto profil (opsional)</label><input class="field" id="photoInput" type="file" accept="image/*"><button class="text-[11px] text-blue-300 mt-2" onclick="removePhoto()">Hapus foto</button></div>
+    </div>
+    <p class="help mt-3">Tips: desain modern tidak harus penuh warna. Gunakan warna aksen secukupnya dan utamakan isi yang mudah dipindai perekrut.</p>
+   </div>
+
+   <div class="panel p-4 md:p-5 space-y-4">
+    <div class="section-title">2 · Informasi kontak</div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+     <div><label class="label">Nama lengkap *</label><input id="fullName" class="field" placeholder="Nama sesuai identitas"></div>
+     <div><label class="label">Email profesional</label><input id="email" type="email" class="field" placeholder="nama@email.com"></div>
+     <div><label class="label">Telepon / WhatsApp</label><input id="phone" class="field" placeholder="+62 ..."></div>
+     <div><label class="label">Lokasi</label><input id="location" class="field" placeholder="Kota, Provinsi"></div>
+     <div><label class="label">LinkedIn (opsional)</label><input id="linkedin" class="field" placeholder="linkedin.com/in/username"></div>
+     <div><label class="label">Portofolio / website</label><input id="portfolio" class="field" placeholder="website atau tautan portofolio"></div>
+    </div>
+    <div><label class="label">Profil profesional</label><textarea id="summary" rows="4" class="field" placeholder="2–4 kalimat: pengalaman atau latar belakang, keahlian utama, dan kontribusi yang dapat Anda berikan. Hindari klaim umum tanpa contoh."></textarea><p class="help mt-1">Saran: sesuaikan ringkasan dengan posisi yang dilamar. Jangan menulis “pekerja keras” saja tanpa bukti atau konteks.</p></div>
+   </div>
+
+   <div class="panel p-4 md:p-5 space-y-3">
+    <div class="flex items-center justify-between gap-2"><div><div class="section-title">3 · Pengalaman kerja</div><p class="help mt-1">Tuliskan pencapaian dan dampak, bukan hanya tugas rutin.</p></div><button class="btn" onclick="addExperience()">+ Tambah</button></div>
+    <div id="experienceFields" class="space-y-3"></div>
+    <p class="help">Contoh bullet: “Mengelola laporan mingguan untuk 4 unit kerja” atau “Mempercepat proses administrasi dari 3 hari menjadi 1 hari” — gunakan angka hanya jika benar.</p>
+   </div>
+
+   <div class="panel p-4 md:p-5 space-y-3">
+    <div class="flex items-center justify-between gap-2"><div><div class="section-title">4 · Pendidikan</div><p class="help mt-1">Cantumkan pendidikan paling relevan terlebih dahulu.</p></div><button class="btn" onclick="addEducation()">+ Tambah</button></div>
+    <div id="educationFields" class="space-y-3"></div>
+   </div>
+
+   <div class="panel p-4 md:p-5 space-y-3">
+    <div class="flex items-center justify-between gap-2"><div><div class="section-title">5 · Keahlian</div><p class="help mt-1">Pisahkan dengan koma; utamakan keterampilan yang relevan.</p></div></div>
+    <label class="label">Keahlian teknis dan profesional</label><textarea id="skills" rows="3" class="field" placeholder="Microsoft Excel, administrasi data, pelayanan pelanggan, troubleshooting jaringan"></textarea>
+    <label class="label">Bahasa</label><textarea id="languages" rows="2" class="field" placeholder="Bahasa Indonesia — fasih&#10;Bahasa Inggris — menengah"></textarea>
+   </div>
+
+   <div class="panel p-4 md:p-5 space-y-3">
+    <div class="flex items-center justify-between gap-2"><div><div class="section-title">6 · Proyek, sertifikasi, dan prestasi</div><p class="help mt-1">Opsional — tambahkan bila mendukung posisi yang dituju.</p></div></div>
+    <label class="label">Proyek relevan</label><textarea id="projects" rows="3" class="field" placeholder="Nama proyek | Peran | Tahun&#10;Jelaskan kontribusi atau hasil utama."></textarea>
+    <label class="label">Sertifikasi / pelatihan</label><textarea id="certifications" rows="2" class="field" placeholder="Nama sertifikasi — penerbit — tahun"></textarea>
+    <label class="label">Prestasi / kegiatan / organisasi</label><textarea id="achievements" rows="2" class="field" placeholder="Prestasi, kegiatan sukarela, atau organisasi yang relevan"></textarea>
+   </div>
+   <div class="flex flex-wrap gap-2 pb-4">
+    <button class="btn btn-primary" onclick="renderCV();document.getElementById('previewHeading').scrollIntoView({behavior:'smooth',block:'start'})">Perbarui Pratinjau</button>
+    <button class="btn" onclick="exportJSON()">Simpan Data CV</button><button class="btn" onclick="document.getElementById('importFile').click()">Impor Data CV</button>
+    <input type="file" id="importFile" accept=".json,application/json" class="hidden">
+   </div>
+  </section>
+
+  <section class="preview-column min-w-0 xl:sticky xl:top-[88px]">
+   <div id="previewHeading" class="preview-toolbar flex flex-wrap items-center justify-between gap-3 mb-3">
+    <div><h2 class="font-extrabold text-base">Pratinjau langsung</h2><p class="help mt-1">Proporsi A4 • Isi mengikuti data yang Anda masukkan</p></div>
+    <div class="flex items-center gap-2"><span id="pageStatus" class="text-[11px] text-slate-400">A4 · 1 halaman target</span><button class="btn" onclick="fitPreview()">Sesuaikan</button></div>
+   </div>
+   <div class="preview-shell" id="previewShell"><article id="cvPage" class="layout-modern"><div id="cvContent"></div></article></div>
+   <div class="panel p-4 mt-3 no-print"><div class="font-bold text-sm mb-1">Panduan singkat</div><p class="help">Untuk lamaran online, pilih desain Minimal bila sistem rekrutmen menggunakan pembacaan CV otomatis (ATS). Untuk dikirim langsung ke perekrut, Modern atau Classic juga sesuai. Pastikan seluruh informasi akurat dan sesuaikan isi dengan lowongan.</p></div>
+  </section>
+ </div>
+</main>
+<div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 hidden rounded-xl bg-slate-100 text-slate-900 px-4 py-3 shadow-2xl text-sm font-bold"></div>
+<script>
+const $ = id => document.getElementById(id);
+let currentLayout='modern', photoData='', experienceCount=0, educationCount=0;
+const fieldIds=['jobTitle','jobCategory','accentColor','fontChoice','fullName','email','phone','location','linkedin','portfolio','summary','skills','languages','projects','certifications','achievements'];
+const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const clean = value => String(value||'').trim();
+const lines = value => clean(value).split(/\n+/).map(s=>s.trim()).filter(Boolean);
+const splitBullets = value => clean(value).split(/\n+/).map(s=>s.replace(/^\s*[-•*]\s*/, '').trim()).filter(Boolean);
+function toast(message){const t=$('toast');t.textContent=message;t.classList.remove('hidden');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.add('hidden'),2600)}
+function addExperience(data={}) {
+ experienceCount++; const id='exp'+experienceCount;
+ const wrap=document.createElement('div');wrap.className='rounded-xl border border-slate-700 p-3 space-y-2';wrap.dataset.exp='1';
+ wrap.innerHTML=`<div class="flex justify-between items-center"><span class="text-xs font-bold text-slate-300">Pengalaman ${experienceCount}</span><button type="button" class="text-xs text-rose-300" onclick="this.closest('[data-exp]').remove();renderCV()">Hapus</button></div>
+ <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><input class="field exp-role" placeholder="Jabatan / posisi" value="${esc(data.role||'')}"><input class="field exp-company" placeholder="Nama perusahaan / organisasi" value="${esc(data.company||'')}"><input class="field exp-period" placeholder="Periode (mis. 2022–2025)" value="${esc(data.period||'')}"><input class="field exp-location" placeholder="Lokasi (opsional)" value="${esc(data.location||'')}"></div>
+ <textarea class="field exp-desc" rows="3" placeholder="Pencapaian atau tanggung jawab. Satu poin per baris.">${esc(data.description||'')}</textarea>`;
+ $('experienceFields').appendChild(wrap);wrap.querySelectorAll('input,textarea').forEach(el=>el.addEventListener('input',renderCV));if(!data.silent)renderCV();
+}
+function addEducation(data={}) {
+ educationCount++;const wrap=document.createElement('div');wrap.className='rounded-xl border border-slate-700 p-3 space-y-2';wrap.dataset.edu='1';
+ wrap.innerHTML=`<div class="flex justify-between items-center"><span class="text-xs font-bold text-slate-300">Pendidikan ${educationCount}</span><button type="button" class="text-xs text-rose-300" onclick="this.closest('[data-edu]').remove();renderCV()">Hapus</button></div>
+ <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><input class="field edu-school" placeholder="Nama sekolah / institusi" value="${esc(data.school||'')}"><input class="field edu-degree" placeholder="Jurusan / gelar" value="${esc(data.degree||'')}"><input class="field edu-period" placeholder="Tahun / periode" value="${esc(data.period||'')}"><input class="field edu-detail" placeholder="IPK / keterangan opsional" value="${esc(data.detail||'')}"></div>`;
+ $('educationFields').appendChild(wrap);wrap.querySelectorAll('input').forEach(el=>el.addEventListener('input',renderCV));if(!data.silent)renderCV();
+}
+function getEntries(selector, map) {return [...document.querySelectorAll(selector)].map(el=>Object.fromEntries(Object.entries(map).map(([key,cls])=>[key,clean(el.querySelector('.'+cls)?.value)]))).filter(item=>Object.values(item).some(Boolean))}
+function getData(){return {
+ jobTitle:$('jobTitle').value,jobCategory:$('jobCategory').value,accentColor:$('accentColor').value,fontChoice:$('fontChoice').value,
+ fullName:$('fullName').value,email:$('email').value,phone:$('phone').value,location:$('location').value,linkedin:$('linkedin').value,portfolio:$('portfolio').value,summary:$('summary').value,
+ experience:getEntries('[data-exp]',{role:'exp-role',company:'exp-company',period:'exp-period',location:'exp-location',description:'exp-desc'}),
+ education:getEntries('[data-edu]',{school:'edu-school',degree:'edu-degree',period:'edu-period',detail:'edu-detail'}),
+ skills:$('skills').value,languages:$('languages').value,projects:$('projects').value,certifications:$('certifications').value,achievements:$('achievements').value,layout:currentLayout,photoData
+}}
+function section(title,body){if(!body)return '';return `<section class="mb-6"><h2 class="cv-section-title" style="color:var(--cv-accent)">${esc(title)}</h2>${body}</section>`}
+function entryMarkup(items,type){
+ return items.map(item=>{
+  const title=type==='exp'?(item.role||item.company):(item.degree||item.school);
+  const sub=type==='exp'?[item.company,item.location].filter(Boolean).join(' · '):(item.school||'');
+  const period=item.period?`<span>${esc(item.period)}</span>`:'';
+  const detail=type==='exp'?splitBullets(item.description):[item.detail].filter(Boolean);
+  return `<div class="cv-entry"><div class="flex justify-between items-start gap-3"><div class="min-w-0"><div class="cv-entry-title">${esc(title||'')}</div>${sub?`<div class="cv-entry-meta">${esc(sub)}</div>`:''}</div><div class="cv-entry-meta text-right shrink-0">${period}</div></div>${detail.length?`<ul class="cv-bullet-list">${detail.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</div>`;
+ }).join('');
+}
+function renderCV(){
+ const d=getData(), accent=d.accentColor||'#2459a9';const page=$('cvPage');
+ page.className='layout-'+currentLayout;page.style.setProperty('--cv-accent',accent);
+ page.style.fontFamily=d.fontChoice==='serif'?"'Source Serif 4', Georgia, serif":"'DM Sans', Arial, sans-serif";
+ const name=clean(d.fullName)||'Nama Lengkap Anda', title=clean(d.jobTitle)||'Posisi atau bidang yang dituju';
+ const contacts=[d.email,d.phone,d.location,d.linkedin,d.portfolio].filter(Boolean);
+ const photo=d.photoData?`<img src="${d.photoData}" alt="Foto profil" style="width:100%;height:100%;object-fit:cover">`:`<div class="photo-placeholder" style="width:100%;height:100%;font-size:28px">${esc(name.split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase())}</div>`;
+ const contactMarkup=contacts.map((x,i)=>`<div class="text-[10px] leading-relaxed break-words mb-1">${esc(x)}</div>`).join('');
+ const skills=lines(d.skills.replace(/,/g,'\n'));
+ const skillMarkup=skills.map(s=>`<span class="cv-chip">${esc(s)}</span>`).join('');
+ const exp=entryMarkup(d.experience,'exp'), edu=entryMarkup(d.education,'edu');
+ const projectBody=lines(d.projects).map(x=>`<p class="cv-text mb-2">${esc(x)}</p>`).join('');
+ const certBody=lines(d.certifications).map(x=>`<p class="cv-text mb-1">${esc(x)}</p>`).join('');
+ const achievementBody=lines(d.achievements).map(x=>`<p class="cv-text mb-1">${esc(x)}</p>`).join('');
+ const langBody=lines(d.languages).map(x=>`<p class="cv-text mb-1">${esc(x)}</p>`).join('');
+ let html='';
+ if(currentLayout==='modern'){
+  html=`<div class="cv-page-inner grid" style="grid-template-columns:250px 1fr">
+   <aside style="background:#f2f5f9;padding:38px 25px;border-right:1px solid #e0e6ef">
+    <div class="rounded-2xl overflow-hidden mb-5" style="width:132px;height:150px;border:4px solid white;box-shadow:0 4px 15px #14243a18">${photo}</div>
+    <div class="cv-name text-[26px] font-extrabold leading-tight break-words">${esc(name)}</div><div class="mt-2 text-[11px] font-bold leading-relaxed" style="color:${accent}">${esc(title)}</div>
+    <div class="mt-6 pt-4 border-t border-slate-200">${contactMarkup}</div>
+    ${skillMarkup?`<div class="mt-6 pt-4 border-t border-slate-200"><h2 class="cv-section-title" style="color:${accent}">Keahlian</h2>${skillMarkup}</div>`:''}
+    ${langBody?`<div class="mt-5 pt-4 border-t border-slate-200"><h2 class="cv-section-title" style="color:${accent}">Bahasa</h2>${langBody}</div>`:''}
+    ${certBody?`<div class="mt-5 pt-4 border-t border-slate-200"><h2 class="cv-section-title" style="color:${accent}">Sertifikasi</h2>${certBody}</div>`:''}
+   </aside>
+   <div style="padding:43px 35px 36px">
+    ${section('Profil Profesional',d.summary?`<p class="cv-text">${esc(d.summary)}</p>`:'')}
+    ${section('Pengalaman Kerja',exp)}
+    ${section('Pendidikan',edu)}
+    ${section('Proyek Relevan',projectBody)}
+    ${section('Prestasi & Organisasi',achievementBody)}
+   </div></div>`;
+ } else if(currentLayout==='classic'){
+  html=`<div class="cv-page-inner" style="padding:48px 55px">
+   <header class="flex items-center gap-6 pb-6 mb-7" style="border-bottom:2px solid ${accent}">
+    <div class="rounded-xl overflow-hidden shrink-0" style="width:100px;height:112px">${photo}</div><div class="min-w-0 flex-1"><h1 class="cv-name text-[30px] font-bold leading-tight">${esc(name)}</h1><p class="text-sm font-bold mt-2" style="color:${accent}">${esc(title)}</p><div class="mt-3 grid grid-cols-2 gap-x-4">${contactMarkup}</div></div>
+   </header>
+   ${section('Profil Profesional',d.summary?`<p class="cv-text">${esc(d.summary)}</p>`:'')}
+   ${section('Pengalaman Kerja',exp)}${section('Pendidikan',edu)}
+   <div class="grid grid-cols-2 gap-8">${section('Keahlian',skillMarkup)}${section('Bahasa',langBody)}</div>
+   ${section('Proyek Relevan',projectBody)}<div class="grid grid-cols-2 gap-8">${section('Sertifikasi',certBody)}${section('Prestasi & Organisasi',achievementBody)}</div>
+  </div>`;
+ } else if(currentLayout==='minimal'){
+  html=`<div class="cv-page-inner" style="padding:50px 58px">
+   <header class="pb-5 mb-7" style="border-bottom:1px solid #cbd5e1"><h1 class="cv-name text-[32px] font-extrabold">${esc(name)}</h1><p class="text-sm font-semibold mt-1" style="color:${accent}">${esc(title)}</p><div class="flex flex-wrap gap-x-4 gap-y-1 mt-3">${contacts.map(c=>`<span class="text-[10px] text-slate-500 break-all">${esc(c)}</span>`).join('')}</div></header>
+   ${section('Ringkasan',d.summary?`<p class="cv-text">${esc(d.summary)}</p>`:'')}
+   ${section('Pengalaman Profesional',exp)}${section('Pendidikan',edu)}
+   ${section('Keahlian',skillMarkup)}<div class="grid grid-cols-2 gap-8">${section('Proyek',projectBody)}${section('Sertifikasi',certBody)}</div>
+   <div class="grid grid-cols-2 gap-8">${section('Bahasa',langBody)}${section('Prestasi & Organisasi',achievementBody)}</div>
+  </div>`;
+ } else {
+  html=`<div class="cv-page-inner">
+   <header style="background:${accent};color:white;padding:43px 45px 35px">
+    <div class="flex items-center gap-5"><div class="rounded-2xl overflow-hidden shrink-0" style="width:105px;height:120px;border:2px solid #ffffff70">${photo}</div><div class="min-w-0"><h1 class="cv-name text-[30px] font-extrabold leading-tight">${esc(name)}</h1><p class="text-sm mt-2 font-semibold" style="color:#e6edff">${esc(title)}</p><div class="mt-4 text-[10px] leading-relaxed" style="color:#e1eaff">${contacts.map(esc).join('　•　')}</div></div></div>
+   </header>
+   <div style="padding:34px 45px 45px">
+    ${section('Tentang Saya',d.summary?`<p class="cv-text">${esc(d.summary)}</p>`:'')}
+    ${section('Pengalaman Kerja',exp)}${section('Pendidikan',edu)}
+    <div class="grid grid-cols-2 gap-8">${section('Keahlian',skillMarkup)}${section('Bahasa',langBody)}</div>
+    ${section('Proyek Pilihan',projectBody)}<div class="grid grid-cols-2 gap-8">${section('Sertifikasi',certBody)}${section('Prestasi & Organisasi',achievementBody)}</div>
+   </div></div>`;
+ }
+ $('cvContent').innerHTML=html;
+ $('pageStatus').textContent=`A4 · ${document.querySelectorAll('#cvContent .cv-entry').length} entri pengalaman/pendidikan`;
+ fitPreview();
+ try{localStorage.setItem('cvStudioDraft',JSON.stringify(d))}catch(e){}
+}
+function fitPreview(){
+ const shell=$('previewShell'),page=$('cvPage');if(!shell||!page)return;
+ if(window.matchMedia('print').matches)return;
+ const available=Math.max(250,shell.clientWidth-40);const scale=Math.min(1,available/794);
+ page.style.transform=`scale(${scale})`;page.style.marginBottom=`${Math.max(0,(page.scrollHeight*scale)-page.scrollHeight)}px`;
+}
+function setLayout(layout){currentLayout=layout;document.querySelectorAll('[data-layout]').forEach(b=>b.classList.toggle('active',b.dataset.layout===layout));renderCV()}
+function downloadPNG(){
+ const page=$('cvPage');
+ if(typeof html2canvas!=='function'){toast('Fitur PNG membutuhkan koneksi internet untuk memuat pustaka ekspor. Gunakan Cetak / PDF sebagai alternatif.');return}
+ const oldTransform=page.style.transform;page.style.transform='none';toast('Menyiapkan gambar CV…');
+ html2canvas(page,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false,width:794,windowWidth:1100}).then(canvas=>{
+  const a=document.createElement('a');const name=clean($('fullName').value).replace(/[^\w\-]+/g,'_')||'CV';a.download=`CV_${name}.png`;a.href=canvas.toDataURL('image/png');a.click();page.style.transform=oldTransform;fitPreview();toast('Gambar CV berhasil disiapkan.');
+ }).catch(err=>{page.style.transform=oldTransform;fitPreview();toast('Ekspor PNG gagal. Coba Cetak / PDF.');console.error(err)});
+}
+function exportJSON(){const blob=new Blob([JSON.stringify(getData(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='data-cv.json';a.click();URL.revokeObjectURL(url);toast('Data CV disimpan.')}
+function importJSONFile(file){const reader=new FileReader();reader.onload=()=>{try{loadData(JSON.parse(reader.result));toast('Data CV berhasil dimuat.')}catch(e){toast('File JSON tidak valid.')}};reader.readAsText(file)}
+function loadData(d){
+ fieldIds.forEach(id=>{if(d[id]!==undefined&&$(id))$(id).value=d[id]});
+ currentLayout=d.layout||'modern';photoData=d.photoData||'';$('photoInput').value='';
+ $('experienceFields').innerHTML='';$('educationFields').innerHTML='';experienceCount=0;educationCount=0;
+ (d.experience||[]).forEach(x=>addExperience({...x,silent:true}));(d.education||[]).forEach(x=>addEducation({...x,silent:true}));
+ if(!d.experience?.length)addExperience({silent:true});if(!d.education?.length)addEducation({silent:true});
+ document.querySelectorAll('[data-layout]').forEach(b=>b.classList.toggle('active',b.dataset.layout===currentLayout));renderCV();
+}
+function removePhoto(){photoData='';$('photoInput').value='';renderCV()}
+function resetForm(){if(!confirm('Hapus isian saat ini dan mulai CV baru?'))return;fieldIds.forEach(id=>{if($(id))$(id).value=id==='accentColor'?'#2459a9':id==='jobCategory'?'general':id==='fontChoice'?'sans':''});photoData='';$('photoInput').value='';currentLayout='modern';$('experienceFields').innerHTML='';$('educationFields').innerHTML='';experienceCount=0;educationCount=0;addExperience({silent:true});addEducation({silent:true});setLayout('modern');renderCV();toast('Formulir dikosongkan.')}
+$('photoInput').addEventListener('change',e=>{const file=e.target.files?.[0];if(!file)return;if(!file.type.startsWith('image/')){toast('Pilih file gambar.');return}if(file.size>5*1024*1024){toast('Ukuran foto maksimal 5 MB.');e.target.value='';return}const reader=new FileReader();reader.onload=()=>{photoData=reader.result;renderCV()};reader.readAsDataURL(file)});
+$('importFile').addEventListener('change',e=>{const file=e.target.files?.[0];if(file)importJSONFile(file);e.target.value=''});
+fieldIds.forEach(id=>{const el=$(id);if(el)el.addEventListener('input',renderCV);if(el&&el.tagName==='SELECT')el.addEventListener('change',renderCV)});
+window.addEventListener('resize',fitPreview);
+window.addEventListener('beforeprint',()=>{$('cvPage').style.transform='none'});
+window.addEventListener('afterprint',fitPreview);
+const saved=(()=>{try{return JSON.parse(localStorage.getItem('cvStudioDraft')||'null')}catch(e){return null}})();
+if(saved){loadData(saved)}else{addExperience({silent:true});addEducation({silent:true});renderCV()}
+</script>
+</body>
+</html>
