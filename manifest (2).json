@@ -1,0 +1,22 @@
+{
+  "name": "Teman Akademik - Ettyn Muda",
+  "short_name": "Teman Akademik",
+  "description": "Solusi Tugas & Karya Ilmiahmu. Cepat, Rapi, dan Berkualitas.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF3E0",
+  "theme_color": "#F4C2C2",
+  "icons": [
+    {
+      "src": "TA.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "tumbnail.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
